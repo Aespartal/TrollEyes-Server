@@ -1,0 +1,13 @@
+server API 
+==========
+json?ob=carrito&op=add&id=?&cantidad=? (data=POST)
+json?ob=carrito&op=list (data=POST)
+json?ob=carrito&op=empty
+json?ob=carrito&op=remove&id=?&cantidad=?
+json?ob=carrito&op=buy
+
+Autentication
+=============
+json?ob=usuario&op=login&username=?&password=?
+json?ob=usuario&op=check
+json?ob=usuario&op=logout
