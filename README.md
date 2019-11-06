@@ -1,2 +1,2 @@
-# blogBUSTER
-La parte servidora del superblog de DAW
+# TrollEyes-Server
+Proyecto Trolleyes 2º DAW 2019
