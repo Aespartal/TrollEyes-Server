@@ -71,23 +71,6 @@ public class PostDao implements DaoInterface {
     }
 
     @Override
-    public List<BeanInterface> getAll() throws SQLException {
-        Statement stmt = oConnection.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT * FROM post LIMIT 100");
-        List<BeanInterface> listaPostBean = new ArrayList();
-        while (rs.next()) {
-            PostBean oPostBean = new PostBean();
-            oPostBean.setId(rs.getInt("id"));
-            oPostBean.setTitulo(rs.getString("titulo"));
-            oPostBean.setCuerpo(rs.getString("cuerpo"));
-            oPostBean.setEtiquetas(rs.getString("etiquetas"));          
-            oPostBean.setFecha(rs.getDate("fecha"));
-            listaPostBean.add(oPostBean);        
-        }
-        return listaPostBean;
-    }
-
-    @Override
     public Integer insert(BeanInterface oPostBeanParam) throws SQLException {
         PreparedStatement oPreparedStatement;
         String strsql = "INSERT INTO post (titulo,cuerpo,etiquetas,fecha) VALUES(?,?,?,?)";
