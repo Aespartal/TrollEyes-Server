@@ -1,18 +1,14 @@
 package net.ausiasmarch.factory;
 
-import java.sql.SQLException;
 import javax.servlet.http.HttpServletRequest;
-
 import net.ausiasmarch.service.CarritoService;
-import net.ausiasmarch.service.PostService;
 import net.ausiasmarch.service.UsuarioService;
-import net.ausiasmarch.setting.ConfigurationSettings;
 
 public class ServiceCall {
 
     HttpServletRequest oRequest;
 
-    public static String executeService(HttpServletRequest oRequest) throws SQLException {
+    public static String executeService(HttpServletRequest oRequest) throws Exception {
         String ob = oRequest.getParameter("ob");
         String op = oRequest.getParameter("op");
         String strResult = null;
@@ -31,7 +27,7 @@ public class ServiceCall {
             }
         }
         if (ob.equalsIgnoreCase("carrito")) {
-        	CarritoService oCarritoService = new CarritoService(oRequest);
+            CarritoService oCarritoService = new CarritoService(oRequest);
             switch (op) {
                 case "add":
                     strResult = oCarritoService.add();
@@ -39,14 +35,11 @@ public class ServiceCall {
                 case "list":
                     strResult = oCarritoService.list();
                     break;
-                case "empty":
-                    strResult = oCarritoService.empty();
-                    break;
                 case "remove":
                     strResult = oCarritoService.remove();
                     break;
-                case "buy":
-                    strResult = "Aun por hacer :P";
+                case "empty":
+                    strResult = oCarritoService.empty();
                     break;
             }
         }

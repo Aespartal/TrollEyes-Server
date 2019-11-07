@@ -133,30 +133,6 @@ public class PostService implements ServiceInterface {
 	}
 
 	@Override
-	public String getAll() throws SQLException {
-		ConnectionInterface oConnectionImplementation = ConnectionFactory
-				.getConnection(ConnectionSettings.connectionPool);
-		Connection oConnection = oConnectionImplementation.newConnection();
-		PostDao oPostDao = new PostDao(oConnection);
-		Gson oGson = GsonFactory.getGson();
-		String message = "";
-		List<BeanInterface> listaPostBean = oPostDao.getAll();
-		if (listaPostBean == null) {
-			message = "\"La lista está vacia\"";
-		} else {
-			// oGson = gh.getGson();
-			message = oGson.toJson(listaPostBean);
-		}
-		if (oConnection != null) {
-			oConnection.close();
-		}
-		if (oConnectionImplementation != null) {
-			oConnectionImplementation.disposeConnection();
-		}
-		return "{\"status\":200,\"message\":" + message + "}";
-	}
-
-	@Override
 	public String insert() throws SQLException {
 		ResponseBean oResponseBean;
 		Gson oGson = GsonFactory.getGson();

@@ -9,8 +9,6 @@ public interface DaoInterface {
 
     BeanInterface get(int id) throws SQLException;
 
-    List<BeanInterface> getAll() throws SQLException;
-
     int getCount() throws SQLException;
 
     ArrayList getPage(int page, int rpp, List<String> orden) throws SQLException;
