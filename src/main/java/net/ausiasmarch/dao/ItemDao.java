@@ -10,11 +10,11 @@ import java.util.List;
 import net.ausiasmarch.bean.BeanInterface;
 import net.ausiasmarch.bean.PostBean;
 
-public class PostDao implements DaoInterface {
+public class ItemDao implements DaoInterface {
 
     Connection oConnection = null;
 
-    public PostDao(Connection oConnection) {
+    public ItemDao(Connection oConnection) {
         this.oConnection = oConnection;
     }
 
@@ -69,7 +69,8 @@ public class PostDao implements DaoInterface {
         iResult = oPreparedStatement.executeUpdate();
         return iResult;
     }
-    
+
+
     @Override
     public Integer insert(BeanInterface oPostBeanParam) throws SQLException {
         PreparedStatement oPreparedStatement;

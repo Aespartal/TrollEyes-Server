@@ -9,42 +9,45 @@ import java.util.ArrayList;
 import java.util.List;
 import net.ausiasmarch.bean.BeanInterface;
 import net.ausiasmarch.bean.PostBean;
+import net.ausiasmarch.bean.ProductoBean;
 
-public class PostDao implements DaoInterface {
+public class ProductoDao implements DaoInterface {
 
     Connection oConnection = null;
 
-    public PostDao(Connection oConnection) {
+    public ProductoDao(Connection oConnection) {
         this.oConnection = oConnection;
     }
 
     @Override
-    public PostBean get(int id) throws SQLException {
+    public ProductoBean get(int id) throws SQLException {
         PreparedStatement oPreparedStatement;
         ResultSet oResultSet;
         String strSQL = "SELECT * FROM post WHERE id=?";
         oPreparedStatement = oConnection.prepareStatement(strSQL);
         oPreparedStatement.setInt(1, id);
         oResultSet = oPreparedStatement.executeQuery();
-        PostBean oPostBean;
+        ProductoBean oProductoBean;
         if (oResultSet.next()) {
-            oPostBean = new PostBean();
-            oPostBean.setId(oResultSet.getInt("id"));
-            oPostBean.setTitulo(oResultSet.getString("titulo"));
-            oPostBean.setCuerpo(oResultSet.getString("cuerpo"));
-            oPostBean.setEtiquetas(oResultSet.getString("etiquetas"));
-            oPostBean.setFecha(oResultSet.getDate("fecha"));
+            oProductoBean = new ProductoBean();
+            oProductoBean.setId(oResultSet.getInt("id"));
+            oProductoBean.setCodigo(oResultSet.getString("codigo"));
+            oProductoBean.setDescripcion(oResultSet.getString("descripcion"));     
+            oProductoBean.setExistencias(oResultSet.getInt("existencias"));
+            oProductoBean.setPrecio(oResultSet.getFloat("precio"));
+            oProductoBean.setImagen(oResultSet.getString("imagen"));
+            
         } else {
-            oPostBean = null;
+            oProductoBean = null;
         }
-        return oPostBean;
+        return oProductoBean;
     }
 
     @Override
     public int getCount() throws SQLException {
         PreparedStatement oPreparedStatement;
         ResultSet oResultSet;
-        String strSQL = "SELECT count(*) FROM post";
+        String strSQL = "SELECT count(*) FROM producto";
         oPreparedStatement = oConnection.prepareStatement(strSQL);
         oResultSet = oPreparedStatement.executeQuery();
         if (oResultSet.next()) {
@@ -55,31 +58,33 @@ public class PostDao implements DaoInterface {
     }
 
     @Override
-    public Integer update(BeanInterface oPostBeanParam) throws SQLException {
+    public Integer update(BeanInterface oProductoBeanParam) throws SQLException {
         PreparedStatement oPreparedStatement = null;
-        String strSQL = "UPDATE post SET titulo = ?, cuerpo = ?, etiquetas = ?, fecha=? WHERE id = ?";
+        String strSQL = "UPDATE producto SET codigo = ?, existencias = ?, descripcion = ?, precio=?, imagen=? WHERE id = ?";
         int iResult;
         oPreparedStatement = oConnection.prepareStatement(strSQL, Statement.RETURN_GENERATED_KEYS);
-        PostBean oPostBean = (PostBean) oPostBeanParam;
-        oPreparedStatement.setString(1, oPostBean.getTitulo());
-        oPreparedStatement.setString(2, oPostBean.getCuerpo());
-        oPreparedStatement.setString(3, oPostBean.getEtiquetas());
-        oPreparedStatement.setDate(4,  new java.sql.Date(oPostBean.getFecha().getTime()));                        
-        oPreparedStatement.setInt(5, oPostBean.getId());
+        ProductoBean oProductoBean = (ProductoBean) oProductoBeanParam;
+        oPreparedStatement.setString(1, oProductoBean.getCodigo());
+        oPreparedStatement.setInt(2, oProductoBean.getExistencias());
+        oPreparedStatement.setString(3, oProductoBean.getDescripcion());
+        oPreparedStatement.setFloat(4, oProductoBean.getPrecio());
+        oPreparedStatement.setString(5, oProductoBean.getImagen());
+        oPreparedStatement.setInt(6, oProductoBean.getId());
         iResult = oPreparedStatement.executeUpdate();
         return iResult;
     }
-    
+
     @Override
-    public Integer insert(BeanInterface oPostBeanParam) throws SQLException {
+    public Integer insert(BeanInterface oProductoBeanParam) throws SQLException {
         PreparedStatement oPreparedStatement;
-        String strsql = "INSERT INTO post (titulo,cuerpo,etiquetas,fecha) VALUES(?,?,?,?)";
+        String strsql = "INSERT INTO post (codigo,existencias,descripcion,precio,imagen) VALUES(?,?,?,?)";
         oPreparedStatement = oConnection.prepareStatement(strsql);
-        PostBean oPostBean = (PostBean) oPostBeanParam;
-        oPreparedStatement.setString(1, oPostBean.getTitulo());
-        oPreparedStatement.setString(2, oPostBean.getCuerpo());
-        oPreparedStatement.setString(3, oPostBean.getEtiquetas());
-        oPreparedStatement.setDate(4, new java.sql.Date(oPostBean.getFecha().getTime()));
+        ProductoBean oProductoBean = (ProductoBean) oProductoBeanParam;
+        oPreparedStatement.setString(1, oProductoBean.getCodigo());
+        oPreparedStatement.setInt(2, oProductoBean.getExistencias());
+        oPreparedStatement.setString(3, oProductoBean.getDescripcion());
+        oPreparedStatement.setFloat(4, oProductoBean.getPrecio());
+        oPreparedStatement.setString(5, oProductoBean.getImagen());
         int iResult = oPreparedStatement.executeUpdate();
         return iResult;
     }
@@ -90,7 +95,7 @@ public class PostDao implements DaoInterface {
         String strSQL = "";
         int iResult;
         strSQL = "DELETE ";
-        strSQL += " FROM post ";
+        strSQL += " FROM producto ";
         strSQL += " WHERE id=?";
         oPreparedStament = oConnection.prepareStatement(strSQL, Statement.RETURN_GENERATED_KEYS);
         oPreparedStament.setInt(1, id);
@@ -99,7 +104,7 @@ public class PostDao implements DaoInterface {
     }
 
     @Override
-    public ArrayList<PostBean> getPage(int page, int limit, List<String> orden) throws SQLException {
+    public ArrayList<ProductoBean> getPage(int page, int limit, List<String> orden) throws SQLException {
 
         PreparedStatement oPreparedStatement;
         ResultSet oResultSet;
@@ -112,11 +117,11 @@ public class PostDao implements DaoInterface {
         }
 
         if (orden == null) {
-        	oPreparedStatement = oConnection.prepareStatement("SELECT * FROM post LIMIT ? OFFSET ?");
+        	oPreparedStatement = oConnection.prepareStatement("SELECT * FROM producto LIMIT ? OFFSET ?");
         	oPreparedStatement.setInt(1, limit);
             oPreparedStatement.setInt(2, offset);
         } else {
-        	String sqlQuery = "SELECT * FROM post ";
+        	String sqlQuery = "SELECT * FROM producto ";
         	sqlQuery += "ORDER BY ";
         	for (int i = 1; i <= orden.size(); i++) {
         		if (orden.get((i-1)).equalsIgnoreCase("asc")) {
@@ -132,13 +137,13 @@ public class PostDao implements DaoInterface {
         	for (int i = 1; i < orden.size(); i++) {
         		if (orden.get((i-1)).equalsIgnoreCase("id")) {
         			oPreparedStatement.setInt(i, 1);
-        		} else if (orden.get((i-1)).equalsIgnoreCase("titulo")) {
+        		} else if (orden.get((i-1)).equalsIgnoreCase("codigo")) {
         			oPreparedStatement.setInt(i, 2);
-        		} else if (orden.get((i-1)).equalsIgnoreCase("cuerpo")) {
+        		} else if (orden.get((i-1)).equalsIgnoreCase("existencias")) {
         			oPreparedStatement.setInt(i, 3);
-        		} else if (orden.get((i-1)).equalsIgnoreCase("etiquetas")) {
+        		} else if (orden.get((i-1)).equalsIgnoreCase("descripcion")) {
         			oPreparedStatement.setInt(i, 4);
-        		} else if (orden.get((i-1)).equalsIgnoreCase("fecha")) {
+        		} else if (orden.get((i-1)).equalsIgnoreCase("precio")) {
         			oPreparedStatement.setInt(i, 5);
         		}
         		
@@ -149,19 +154,19 @@ public class PostDao implements DaoInterface {
         
         oResultSet = oPreparedStatement.executeQuery();
 
-        ArrayList<PostBean> oPostBeanList = new ArrayList<>();
+        ArrayList<ProductoBean> oProductoBeanList = new ArrayList<>();
         while (oResultSet.next()) {
-            PostBean oPostBean = new PostBean();
-            oPostBean.setId(oResultSet.getInt("id"));
-            oPostBean.setTitulo(oResultSet.getString("titulo"));
-            oPostBean.setCuerpo(oResultSet.getString("cuerpo"));
-            oPostBean.setEtiquetas(oResultSet.getString("etiquetas"));
-            oPostBean.setFecha(oResultSet.getDate("fecha"));
+            ProductoBean oProductoBean = new ProductoBean();
+            oProductoBean.setId(oResultSet.getInt("id"));
+            oProductoBean.setCodigo(oResultSet.getString("codigo"));
+            oProductoBean.setExistencias(oResultSet.getInt("existencia"));
+            oProductoBean.setDescripcion(oResultSet.getString("descripcion"));
+            oProductoBean.setPrecio(oResultSet.getFloat("precio"));
 
-            oPostBeanList.add(oPostBean);
+            oProductoBeanList.add(oProductoBean);
         }
 
-        return oPostBeanList;
+        return oProductoBeanList;
     }
 
 }
