@@ -67,7 +67,7 @@ public class TipoProductoDao implements DaoInterface {
     @Override
     public Integer insert(BeanInterface oUsuarioBeanParam) throws SQLException {
         PreparedStatement oPreparedStatement;
-        String strsql = "INSERT INTO tipo_producto descripcion=?";
+        String strsql = "INSERT INTO tipo_producto (descripcion) VALUES(?)";
         oPreparedStatement = oConnection.prepareStatement(strsql);
         TipoProductoBean oTipoUsuarioBean = (TipoProductoBean) oUsuarioBeanParam;
         oPreparedStatement.setString(1, oTipoUsuarioBean.getDescripcion());

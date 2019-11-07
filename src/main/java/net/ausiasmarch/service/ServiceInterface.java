@@ -15,4 +15,6 @@ public interface ServiceInterface {
 
     String update() throws Exception;
     
+    String fill() throws Exception;
+    
 }

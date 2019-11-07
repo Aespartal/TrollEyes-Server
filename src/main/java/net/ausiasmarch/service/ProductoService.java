@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import net.ausiasmarch.bean.ProductoBean;
@@ -223,4 +224,79 @@ public class ProductoService implements ServiceInterface {
             return oGson.toJson(oResponseBean);
         }
     }
+
+    @Override
+    public String fill() throws Exception {
+       ConnectionInterface oConnectionImplementation = ConnectionFactory
+                .getConnection(ConnectionSettings.connectionPool);
+        Connection oConnection = oConnectionImplementation.newConnection();
+        ResponseBean oResponseBean;
+        Gson oGson = GsonFactory.getGson();
+
+        ProductoDao oProductoDao = new ProductoDao(oConnection);
+        ProductoBean oProductoBean = new ProductoBean();
+        Integer number = Integer.parseInt(oRequest.getParameter("number"));
+        for (int i = 0; i < number; i++) {
+            String codigo = codigoRandom();
+            int existencias = existenciasRandom();
+            float precio = precioRandom();
+            int tipoProducto = tipoProductoRandom();
+            String descripcion = productoRandom();
+            oProductoBean.setCodigo(codigo);
+            oProductoBean.setExistencias(existencias);
+            oProductoBean.setPrecio(precio);
+            oProductoBean.setImagen("imagenrandom");
+            oProductoBean.setDescripcion(descripcion);
+            oProductoBean.setIdtipoProducto(tipoProducto);
+            oProductoDao.insert(oProductoBean);
+        }
+        oResponseBean = new ResponseBean(200, "Se ha añadido correctamente.");
+        if (oConnection != null) {
+            oConnection.close();
+        }
+        if (oConnectionImplementation != null) {
+            oConnectionImplementation.disposeConnection();
+        }
+
+        return oGson.toJson(oResponseBean);
+    }
+    
+      private String productoRandom() {
+        String[] p1 = {"Maquina de ", "Panatalon de", "Procesdor de ",
+            "Vaso de", "Piscina de", "Puerta de", "Pendrive de",
+            "Nevera de", "Botella de", "Ordenador de ", "Zapatilla de"};
+        String[] p2 = {"tubos de escape", "papel higienico", "hacer velas",
+            "pepinos", "mortadelos", "coches electricos", "plastico",
+            "hacer deporte", "fuertaco", " oro", " pisapapel"};
+        String productoRandom = "";
+
+            productoRandom += p1[(int) (Math.random() * p1.length) + 0];
+            productoRandom += p2[(int) (Math.random() * p2.length) + 0];
+
+        return productoRandom;
+    }
+      
+    private float precioRandom() { 
+      return (float) (Math.random() * (0 - 3000 + 1) + 3000); 
+    }  
+    
+    private int existenciasRandom() {
+        return (int) (Math.random() * (0 - 1000 + 1) + 1000);
+    }
+    private String codigoRandom() {
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        StringBuilder salt = new StringBuilder();
+        Random rnd = new Random();
+        while (salt.length() < 10) {
+            int index = (int) (rnd.nextFloat() * chars.length());
+            salt.append(chars.charAt(index));
+        }
+        String saltStr = salt.toString();
+        return saltStr;
+    }
+    
+    private int tipoProductoRandom() {
+        return (int) (Math.random() * (1 - 12 + 1) + 12);
+    }
+    
 }
