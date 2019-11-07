@@ -8,43 +8,41 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import net.ausiasmarch.bean.BeanInterface;
-import net.ausiasmarch.bean.PostBean;
+import net.ausiasmarch.bean.FacturaBean;
 
-public class PostDao implements DaoInterface {
+public class FacturaDao implements DaoInterface {
 
     Connection oConnection = null;
 
-    public PostDao(Connection oConnection) {
+    public FacturaDao(Connection oConnection) {
         this.oConnection = oConnection;
     }
 
     @Override
-    public PostBean get(int id) throws SQLException {
+    public FacturaBean get(int id) throws SQLException {
         PreparedStatement oPreparedStatement;
         ResultSet oResultSet;
-        String strSQL = "SELECT * FROM post WHERE id=?";
+        String strSQL = "SELECT * FROM factura WHERE id=?";
         oPreparedStatement = oConnection.prepareStatement(strSQL);
         oPreparedStatement.setInt(1, id);
         oResultSet = oPreparedStatement.executeQuery();
-        PostBean oPostBean;
+        FacturaBean oFacturaBean;
         if (oResultSet.next()) {
-            oPostBean = new PostBean();
-            oPostBean.setId(oResultSet.getInt("id"));
-            oPostBean.setTitulo(oResultSet.getString("titulo"));
-            oPostBean.setCuerpo(oResultSet.getString("cuerpo"));
-            oPostBean.setEtiquetas(oResultSet.getString("etiquetas"));
-            oPostBean.setFecha(oResultSet.getDate("fecha"));
+            oFacturaBean = new FacturaBean();
+            oFacturaBean.setId(oResultSet.getInt("id"));
+            oFacturaBean.setFecha(oResultSet.getDate("fecha"));
+            oFacturaBean.setIva(oResultSet.getInt("iva"));
         } else {
-            oPostBean = null;
+            oFacturaBean = null;
         }
-        return oPostBean;
+        return oFacturaBean;
     }
 
     @Override
     public int getCount() throws SQLException {
         PreparedStatement oPreparedStatement;
         ResultSet oResultSet;
-        String strSQL = "SELECT count(*) FROM post";
+        String strSQL = "SELECT count(*) FROM factura";
         oPreparedStatement = oConnection.prepareStatement(strSQL);
         oResultSet = oPreparedStatement.executeQuery();
         if (oResultSet.next()) {
@@ -55,31 +53,27 @@ public class PostDao implements DaoInterface {
     }
 
     @Override
-    public Integer update(BeanInterface oPostBeanParam) throws SQLException {
+    public Integer update(BeanInterface oFacturaBeanParam) throws SQLException {
         PreparedStatement oPreparedStatement = null;
-        String strSQL = "UPDATE post SET titulo = ?, cuerpo = ?, etiquetas = ?, fecha=? WHERE id = ?";
+        String strSQL = "UPDATE factura SET iva = ?, fecha = ? WHERE id = ?";
         int iResult;
         oPreparedStatement = oConnection.prepareStatement(strSQL, Statement.RETURN_GENERATED_KEYS);
-        PostBean oPostBean = (PostBean) oPostBeanParam;
-        oPreparedStatement.setString(1, oPostBean.getTitulo());
-        oPreparedStatement.setString(2, oPostBean.getCuerpo());
-        oPreparedStatement.setString(3, oPostBean.getEtiquetas());
-        oPreparedStatement.setDate(4,  new java.sql.Date(oPostBean.getFecha().getTime()));                        
-        oPreparedStatement.setInt(5, oPostBean.getId());
+        FacturaBean oFacturaBean = (FacturaBean) oFacturaBeanParam;
+        oPreparedStatement.setInt(1, oFacturaBean.getIva());
+        oPreparedStatement.setDate(2,  new java.sql.Date(oFacturaBean.getFecha().getTime()));                        
+        oPreparedStatement.setInt(3, oFacturaBean.getId());
         iResult = oPreparedStatement.executeUpdate();
         return iResult;
     }
 
     @Override
-    public Integer insert(BeanInterface oPostBeanParam) throws SQLException {
+    public Integer insert(BeanInterface oFacturaBeanParam) throws SQLException {
         PreparedStatement oPreparedStatement;
-        String strsql = "INSERT INTO post (titulo,cuerpo,etiquetas,fecha) VALUES(?,?,?,?)";
+        String strsql = "INSERT INTO factura (iva,fecha) VALUES(?,?)";
         oPreparedStatement = oConnection.prepareStatement(strsql);
-        PostBean oPostBean = (PostBean) oPostBeanParam;
-        oPreparedStatement.setString(1, oPostBean.getTitulo());
-        oPreparedStatement.setString(2, oPostBean.getCuerpo());
-        oPreparedStatement.setString(3, oPostBean.getEtiquetas());
-        oPreparedStatement.setDate(4, new java.sql.Date(oPostBean.getFecha().getTime()));
+        FacturaBean oFacturaBean = (FacturaBean) oFacturaBeanParam;
+        oPreparedStatement.setInt(1, oFacturaBean.getIva());
+        oPreparedStatement.setDate(2, new java.sql.Date(oFacturaBean.getFecha().getTime()));
         int iResult = oPreparedStatement.executeUpdate();
         return iResult;
     }
@@ -89,9 +83,7 @@ public class PostDao implements DaoInterface {
         PreparedStatement oPreparedStament = null;
         String strSQL = "";
         int iResult;
-        strSQL = "DELETE ";
-        strSQL += " FROM post ";
-        strSQL += " WHERE id=?";
+        strSQL = "DELETE FROM factura WHERE id=?";
         oPreparedStament = oConnection.prepareStatement(strSQL, Statement.RETURN_GENERATED_KEYS);
         oPreparedStament.setInt(1, id);
         iResult = oPreparedStament.executeUpdate();
@@ -99,7 +91,7 @@ public class PostDao implements DaoInterface {
     }
 
     @Override
-    public ArrayList<PostBean> getPage(int page, int limit, List<String> orden) throws SQLException {
+    public ArrayList<FacturaBean> getPage(int page, int limit, List<String> orden) throws SQLException {
 
         PreparedStatement oPreparedStatement;
         ResultSet oResultSet;
@@ -112,11 +104,11 @@ public class PostDao implements DaoInterface {
         }
 
         if (orden == null) {
-        	oPreparedStatement = oConnection.prepareStatement("SELECT * FROM post LIMIT ? OFFSET ?");
+        	oPreparedStatement = oConnection.prepareStatement("SELECT * FROM factura LIMIT ? OFFSET ?");
         	oPreparedStatement.setInt(1, limit);
             oPreparedStatement.setInt(2, offset);
         } else {
-        	String sqlQuery = "SELECT * FROM post ";
+        	String sqlQuery = "SELECT * FROM factura ";
         	sqlQuery += "ORDER BY ";
         	for (int i = 1; i <= orden.size(); i++) {
         		if (orden.get((i-1)).equalsIgnoreCase("asc")) {
@@ -132,16 +124,11 @@ public class PostDao implements DaoInterface {
         	for (int i = 1; i < orden.size(); i++) {
         		if (orden.get((i-1)).equalsIgnoreCase("id")) {
         			oPreparedStatement.setInt(i, 1);
-        		} else if (orden.get((i-1)).equalsIgnoreCase("titulo")) {
+        		} else if (orden.get((i-1)).equalsIgnoreCase("iva")) {
         			oPreparedStatement.setInt(i, 2);
-        		} else if (orden.get((i-1)).equalsIgnoreCase("cuerpo")) {
-        			oPreparedStatement.setInt(i, 3);
-        		} else if (orden.get((i-1)).equalsIgnoreCase("etiquetas")) {
-        			oPreparedStatement.setInt(i, 4);
         		} else if (orden.get((i-1)).equalsIgnoreCase("fecha")) {
-        			oPreparedStatement.setInt(i, 5);
-        		}
-        		
+        			oPreparedStatement.setInt(i, 3);
+        		}   		
         	}
         	oPreparedStatement.setInt((orden.size()), limit);
             oPreparedStatement.setInt((orden.size()+1), offset);
@@ -149,19 +136,15 @@ public class PostDao implements DaoInterface {
         
         oResultSet = oPreparedStatement.executeQuery();
 
-        ArrayList<PostBean> oPostBeanList = new ArrayList<>();
+        ArrayList<FacturaBean> oFacturaBeanList = new ArrayList<>();
         while (oResultSet.next()) {
-            PostBean oPostBean = new PostBean();
-            oPostBean.setId(oResultSet.getInt("id"));
-            oPostBean.setTitulo(oResultSet.getString("titulo"));
-            oPostBean.setCuerpo(oResultSet.getString("cuerpo"));
-            oPostBean.setEtiquetas(oResultSet.getString("etiquetas"));
-            oPostBean.setFecha(oResultSet.getDate("fecha"));
+            FacturaBean oFacturaBean = new FacturaBean();
+            oFacturaBean.setId(oResultSet.getInt("id"));
+            oFacturaBean.setId(oResultSet.getInt("iva"));
+            oFacturaBean.setFecha(oResultSet.getDate("fecha"));
 
-            oPostBeanList.add(oPostBean);
+            oFacturaBeanList.add(oFacturaBean);
         }
-
-        return oPostBeanList;
+        return oFacturaBeanList;
     }
-
 }
