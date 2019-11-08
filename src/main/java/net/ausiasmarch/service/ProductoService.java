@@ -225,7 +225,7 @@ public class ProductoService implements ServiceInterface {
         }
     }
 
-    @Override
+
     public String fill() throws Exception {
        ConnectionInterface oConnectionImplementation = ConnectionFactory
                 .getConnection(ConnectionSettings.connectionPool);
@@ -247,7 +247,7 @@ public class ProductoService implements ServiceInterface {
             oProductoBean.setPrecio(precio);
             oProductoBean.setImagen("imagenrandom");
             oProductoBean.setDescripcion(descripcion);
-            oProductoBean.setIdtipoProducto(tipoProducto);
+            oProductoBean.setTipo_producto_id(tipoProducto);
             oProductoDao.insert(oProductoBean);
         }
         oResponseBean = new ResponseBean(200, "Se ha añadido correctamente.");
@@ -267,7 +267,7 @@ public class ProductoService implements ServiceInterface {
             "Nevera de ", "Botella de ", "Ordenador de ", "Zapatilla de "};
         String[] p2 = {"tubos de escape", "papel higienico", "hacer velas",
             "pepinos", "mortadelos", "coches electricos", "plastico",
-            "hacer deporte", "fuertaco", " oro", "pisapapel"};
+            "hacer deporte", "fuertaco", "oro", "pisapapel"};
         String productoRandom = "";
 
             productoRandom += p1[(int) (Math.random() * p1.length) + 0];

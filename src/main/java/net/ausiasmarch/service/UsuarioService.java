@@ -1,5 +1,6 @@
 package net.ausiasmarch.service;
 
+import static com.google.common.base.Ascii.toLowerCase;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.sql.Connection;
@@ -115,7 +116,7 @@ public class UsuarioService {
             oUsuarioBean.setEmail(emailRandom());
             oUsuarioBean.setApellido1(apellido1);
             oUsuarioBean.setApellido2(apellido2);
-            oUsuarioBean.setIdTipoUsuario(2);
+            oUsuarioBean.setTipo_usuario_id(2);
             oUsuarioBean.setLogin(loginRandom(nombre, apellido1, apellido2));
             oUsuarioBean.setPassword("DA8AB09AB4889C6208116A675CAD0B13E335943BD7FC418782D054B32FDFBA04");
             oUsuarioDao.insert(oUsuarioBean);
@@ -179,7 +180,7 @@ public class UsuarioService {
 
     private String loginRandom(String nombre, String apellido1, String apellido2) {
         int numberRandom = (int) (Math.random() * 99 + 1);
-        String username = nombre.substring(0, 1).toLowerCase() + apellido1.substring(0, 2).toLowerCase() + apellido2.substring(0, 2).toLowerCase() + numberRandom;
+        String username = toLowerCase(nombre.substring(0, 2) + apellido1.substring(0, 2) + apellido2.substring(0, 2)) + numberRandom;
         return username;
     }
 }
