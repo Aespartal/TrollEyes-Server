@@ -1,5 +1,6 @@
 package net.ausiasmarch.service;
 
+import static com.google.common.base.Ascii.toLowerCase;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.sql.Connection;
@@ -179,7 +180,7 @@ public class UsuarioService {
 
     private String loginRandom(String nombre, String apellido1, String apellido2) {
         int numberRandom = (int) (Math.random() * 99 + 1);
-        String username = nombre.substring(0, 1) + apellido1.substring(0, 1) + apellido2.substring(0, 1) + numberRandom;
+        String username = toLowerCase(nombre.substring(0, 2) + apellido1.substring(0, 2) + apellido2.substring(0, 2)) + numberRandom;
         return username;
     }
 }

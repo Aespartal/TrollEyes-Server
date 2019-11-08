@@ -262,12 +262,12 @@ public class ProductoService implements ServiceInterface {
     }
     
       private String productoRandom() {
-        String[] p1 = {"Maquina de ", "Panatalon de", "Procesdor de ",
-            "Vaso de", "Piscina de", "Puerta de", "Pendrive de",
-            "Nevera de", "Botella de", "Ordenador de ", "Zapatilla de"};
+        String[] p1 = {"Maquina de ", "Panatalon de ", "Procesdor de ",
+            "Vaso de ", "Piscina de ", "Puerta de ", "Pendrive de ",
+            "Nevera de ", "Botella de ", "Ordenador de ", "Zapatilla de "};
         String[] p2 = {"tubos de escape", "papel higienico", "hacer velas",
             "pepinos", "mortadelos", "coches electricos", "plastico",
-            "hacer deporte", "fuertaco", " oro", " pisapapel"};
+            "hacer deporte", "fuertaco", "oro", "pisapapel"};
         String productoRandom = "";
 
             productoRandom += p1[(int) (Math.random() * p1.length) + 0];
