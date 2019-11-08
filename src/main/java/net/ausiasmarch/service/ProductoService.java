@@ -225,7 +225,7 @@ public class ProductoService implements ServiceInterface {
         }
     }
 
-    @Override
+
     public String fill() throws Exception {
        ConnectionInterface oConnectionImplementation = ConnectionFactory
                 .getConnection(ConnectionSettings.connectionPool);
@@ -247,7 +247,7 @@ public class ProductoService implements ServiceInterface {
             oProductoBean.setPrecio(precio);
             oProductoBean.setImagen("imagenrandom");
             oProductoBean.setDescripcion(descripcion);
-            oProductoBean.setIdtipoProducto(tipoProducto);
+            oProductoBean.setTipo_producto_id(tipoProducto);
             oProductoDao.insert(oProductoBean);
         }
         oResponseBean = new ResponseBean(200, "Se ha añadido correctamente.");

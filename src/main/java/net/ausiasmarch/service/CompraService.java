@@ -8,19 +8,19 @@ import java.util.Arrays;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import net.ausiasmarch.bean.TipoUsuarioBean;
+import net.ausiasmarch.bean.CompraBean;
 import net.ausiasmarch.bean.ResponseBean;
 import net.ausiasmarch.connection.ConnectionInterface;
-import net.ausiasmarch.dao.TipoUsuarioDao;
+import net.ausiasmarch.dao.CompraDao;
 import net.ausiasmarch.factory.ConnectionFactory;
 import net.ausiasmarch.factory.GsonFactory;
 import net.ausiasmarch.setting.ConnectionSettings;
 
-public class TipoUsuarioService implements ServiceInterface {
+public class CompraService implements ServiceInterface {
 
     HttpServletRequest oRequest = null;
 
-    public TipoUsuarioService(HttpServletRequest oRequest) {
+    public CompraService(HttpServletRequest oRequest) {
         this.oRequest = oRequest;
     }
 
@@ -32,10 +32,10 @@ public class TipoUsuarioService implements ServiceInterface {
             oConnectionImplementation = ConnectionFactory.getConnection(ConnectionSettings.connectionPool);
             oConnection = oConnectionImplementation.newConnection();
             int id = Integer.parseInt(oRequest.getParameter("id"));
-            TipoUsuarioDao oTipoUsuarioDao = new TipoUsuarioDao(oConnection);
-            TipoUsuarioBean oTipoUsuarioBean = oTipoUsuarioDao.get(id);
+            CompraDao oCompraDao = new CompraDao(oConnection);
+            CompraBean oCompraBean = oCompraDao.get(id);
             Gson oGson = GsonFactory.getGson();
-            String strJson = oGson.toJson(oTipoUsuarioBean);
+            String strJson = oGson.toJson(oCompraBean);
             return "{\"status\":200,\"message\":" + strJson + "}";
         } catch (Exception ex) {
             String msg = this.getClass().getName() + " get method ";
@@ -63,10 +63,10 @@ public class TipoUsuarioService implements ServiceInterface {
             if (oRequest.getParameter("order") != null) {
                 orden = Arrays.asList(oRequest.getParameter("order").split("\\s*,\\s*"));
             }
-            TipoUsuarioDao oUsuarioDao = new TipoUsuarioDao(oConnection);
-            ArrayList alTipoUsuarioBean = oUsuarioDao.getPage(iPage, iRpp, orden);
+            CompraDao oCompraDao = new CompraDao(oConnection);
+            ArrayList alCompraBean = oCompraDao.getPage(iPage, iRpp, orden);
             Gson oGson = GsonFactory.getGson();
-            String strJson = oGson.toJson(alTipoUsuarioBean);
+            String strJson = oGson.toJson(alCompraBean);
             return "{\"status\":200,\"message\":" + strJson + "}";
         } catch (Exception ex) {
             String msg = this.getClass().getName() + " get method ";
@@ -90,8 +90,8 @@ public class TipoUsuarioService implements ServiceInterface {
             oConnection = oConnectionImplementation.newConnection();
             ResponseBean oResponseBean;
             Gson oGson = GsonFactory.getGson();
-            TipoUsuarioDao oTipoUsuarioDao = new TipoUsuarioDao(oConnection);
-            Integer iCount = oTipoUsuarioDao.getCount();
+            CompraDao oCompraDao = new CompraDao(oConnection);
+            Integer iCount = oCompraDao.getCount();
             if (iCount < 0) {
                 oResponseBean = new ResponseBean(500, iCount.toString());
             } else {
@@ -122,11 +122,11 @@ public class TipoUsuarioService implements ServiceInterface {
             try {
                 oConnectionImplementation = ConnectionFactory.getConnection(ConnectionSettings.connectionPool);
                 oConnection = oConnectionImplementation.newConnection();
-                TipoUsuarioBean oTipoUsuarioBean = new TipoUsuarioBean();
+                CompraBean oCompraBean = new CompraBean();
                 String data = oRequest.getParameter("data");
-                oTipoUsuarioBean = oGson.fromJson(data, TipoUsuarioBean.class);
-                TipoUsuarioDao oTipoUsuarioDao = new TipoUsuarioDao(oConnection);
-                if (oTipoUsuarioDao.update(oTipoUsuarioBean) == 0) {
+                oCompraBean = oGson.fromJson(data, CompraBean.class);
+                CompraDao oCompraDao=  new CompraDao(oConnection);
+                if (oCompraDao.update(oCompraBean) == 0) {
                     oResponseBean = new ResponseBean(500, "KO");
                 } else {
                     oResponseBean = new ResponseBean(200, "OK");
@@ -161,9 +161,11 @@ public class TipoUsuarioService implements ServiceInterface {
             try {
                 oConnectionImplementation = ConnectionFactory.getConnection(ConnectionSettings.connectionPool);
                 oConnection = oConnectionImplementation.newConnection();
-                TipoUsuarioBean oTipoUsuarioBean = oGson.fromJson(oRequest.getParameter("data"), TipoUsuarioBean.class);
-                TipoUsuarioDao oTipoUsuarioDao = new TipoUsuarioDao(oConnection);
-                if (oTipoUsuarioDao.insert(oTipoUsuarioBean) == 0) {
+                final GsonBuilder builder = new GsonBuilder();
+                builder.excludeFieldsWithoutExposeAnnotation();
+                CompraBean oCompraBean = oGson.fromJson(oRequest.getParameter("data"), CompraBean.class);
+                CompraDao oCompraDao = new CompraDao(oConnection);
+                if (oCompraDao.insert(oCompraBean) == 0) {
                     oResponseBean = new ResponseBean(500, "KO");
                 } else {
                     oResponseBean = new ResponseBean(200, "OK");
@@ -197,9 +199,9 @@ public class TipoUsuarioService implements ServiceInterface {
             try {
                 oConnectionImplementation = ConnectionFactory.getConnection(ConnectionSettings.connectionPool);
                 oConnection = oConnectionImplementation.newConnection();
-                TipoUsuarioDao oTipoUsuarioDao = new TipoUsuarioDao(oConnection);
+                CompraDao oCompraDao = new CompraDao(oConnection);
                 int id = Integer.parseInt(oRequest.getParameter("id"));
-                if (oTipoUsuarioDao.remove(id) == 0) {
+                if (oCompraDao.remove(id) == 0) {
                     oResponseBean = new ResponseBean(500, "KO");
                 } else {
                     oResponseBean = new ResponseBean(200, "OK");

@@ -76,7 +76,7 @@ public class ProductoDao implements DaoInterface {
     @Override
     public Integer insert(BeanInterface oProductoBeanParam) throws SQLException {
         PreparedStatement oPreparedStatement;
-        String strsql = "INSERT INTO producto (codigo,existencias,descripcion,precio,imagen,FK_tipo_producto) VALUES(?,?,?,?,?,?)";
+        String strsql = "INSERT INTO producto (codigo,existencias,descripcion,precio,imagen,tipo_producto_id) VALUES(?,?,?,?,?,?)";
         oPreparedStatement = oConnection.prepareStatement(strsql);
         ProductoBean oProductoBean = (ProductoBean) oProductoBeanParam;
         oPreparedStatement.setString(1, oProductoBean.getCodigo());
@@ -84,7 +84,7 @@ public class ProductoDao implements DaoInterface {
         oPreparedStatement.setString(3, oProductoBean.getDescripcion());
         oPreparedStatement.setFloat(4, oProductoBean.getPrecio());
         oPreparedStatement.setString(5, oProductoBean.getImagen());
-        oPreparedStatement.setInt(6, oProductoBean.getIdtipoProducto());
+        oPreparedStatement.setInt(6, oProductoBean.getTipo_producto_id());
         int iResult = oPreparedStatement.executeUpdate();
         return iResult;
     }

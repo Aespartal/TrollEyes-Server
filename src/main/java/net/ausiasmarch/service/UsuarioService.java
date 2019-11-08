@@ -116,7 +116,7 @@ public class UsuarioService {
             oUsuarioBean.setEmail(emailRandom());
             oUsuarioBean.setApellido1(apellido1);
             oUsuarioBean.setApellido2(apellido2);
-            oUsuarioBean.setIdTipoUsuario(2);
+            oUsuarioBean.setTipo_usuario_id(2);
             oUsuarioBean.setLogin(loginRandom(nombre, apellido1, apellido2));
             oUsuarioBean.setPassword("DA8AB09AB4889C6208116A675CAD0B13E335943BD7FC418782D054B32FDFBA04");
             oUsuarioDao.insert(oUsuarioBean);

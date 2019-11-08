@@ -8,41 +8,41 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import net.ausiasmarch.bean.BeanInterface;
-import net.ausiasmarch.bean.FacturaBean;
+import net.ausiasmarch.bean.CompraBean;
 
-public class FacturaDao implements DaoInterface {
+public class CompraDao implements DaoInterface {
 
     Connection oConnection = null;
 
-    public FacturaDao(Connection oConnection) {
+    public CompraDao(Connection oConnection) {
         this.oConnection = oConnection;
     }
 
+    
     @Override
-    public FacturaBean get(int id) throws SQLException {
+    public CompraBean get(int id) throws SQLException {
         PreparedStatement oPreparedStatement;
         ResultSet oResultSet;
-        String strSQL = "SELECT * FROM factura WHERE id=?";
+        String strSQL = "SELECT * FROM compra WHERE id=?";
         oPreparedStatement = oConnection.prepareStatement(strSQL);
         oPreparedStatement.setInt(1, id);
         oResultSet = oPreparedStatement.executeQuery();
-        FacturaBean oFacturaBean;
+        CompraBean oCompraBean;
         if (oResultSet.next()) {
-            oFacturaBean = new FacturaBean();
-            oFacturaBean.setId(oResultSet.getInt("id"));
-            oFacturaBean.setFecha(oResultSet.getDate("fecha"));
-            oFacturaBean.setIva(oResultSet.getInt("iva"));
+            oCompraBean = new CompraBean();
+            oCompraBean.setId(oResultSet.getInt("id"));
+            oCompraBean.setCantidad(oResultSet.getInt("cantidad"));
         } else {
-            oFacturaBean = null;
+            oCompraBean = null;
         }
-        return oFacturaBean;
+        return oCompraBean;
     }
 
     @Override
     public int getCount() throws SQLException {
         PreparedStatement oPreparedStatement;
         ResultSet oResultSet;
-        String strSQL = "SELECT count(*) FROM factura";
+        String strSQL = "SELECT count(*) FROM compra";
         oPreparedStatement = oConnection.prepareStatement(strSQL);
         oResultSet = oPreparedStatement.executeQuery();
         if (oResultSet.next()) {
@@ -53,28 +53,27 @@ public class FacturaDao implements DaoInterface {
     }
 
     @Override
-    public Integer update(BeanInterface oFacturaBeanParam) throws SQLException {
+    public Integer update(BeanInterface oCompraBeanParam) throws SQLException {
         PreparedStatement oPreparedStatement = null;
-        String strSQL = "UPDATE factura SET iva = ?, fecha = ? WHERE id = ?";
+        String strSQL = "UPDATE compra SET cantidad = ? WHERE id = ?";
         int iResult;
         oPreparedStatement = oConnection.prepareStatement(strSQL, Statement.RETURN_GENERATED_KEYS);
-        FacturaBean oFacturaBean = (FacturaBean) oFacturaBeanParam;
-        oPreparedStatement.setInt(1, oFacturaBean.getIva());
-        oPreparedStatement.setDate(2,  new java.sql.Date(oFacturaBean.getFecha().getTime()));                        
-        oPreparedStatement.setInt(3, oFacturaBean.getId());
+        CompraBean oCompraBean = (CompraBean) oCompraBeanParam;
+        oPreparedStatement.setInt(1, oCompraBean.getCantidad());
         iResult = oPreparedStatement.executeUpdate();
         return iResult;
     }
 
     @Override
-    public Integer insert(BeanInterface oFacturaBeanParam) throws SQLException {
+    public Integer insert(BeanInterface oCompraBeanParam) throws SQLException {
         PreparedStatement oPreparedStatement;
-        String strsql = "INSERT INTO factura (iva,fecha,usuario_id) VALUES(?,?,?)";
+        String strsql = "INSERT INTO compra (cantidad,producto_id,factura_id) VALUES(?,?,?)";
         oPreparedStatement = oConnection.prepareStatement(strsql);
-        FacturaBean oFacturaBean = (FacturaBean) oFacturaBeanParam;
-        oPreparedStatement.setInt(1, oFacturaBean.getIva());
-        oPreparedStatement.setDate(2, new java.sql.Date(oFacturaBean.getFecha().getTime()));
-        oPreparedStatement.setInt(3, oFacturaBean.getUsuario_id());
+        CompraBean oItemBean = (CompraBean) oCompraBeanParam;
+        oPreparedStatement.setInt(1, oItemBean.getCantidad());
+        oPreparedStatement.setInt(2, oItemBean.getProducto_id());
+        oPreparedStatement.setInt(3, oItemBean.getFactura_id());
+        
         int iResult = oPreparedStatement.executeUpdate();
         return iResult;
     }
@@ -84,7 +83,7 @@ public class FacturaDao implements DaoInterface {
         PreparedStatement oPreparedStament = null;
         String strSQL = "";
         int iResult;
-        strSQL = "DELETE FROM factura WHERE id=?";
+        strSQL = "DELETE FROM compra WHERE id=?";
         oPreparedStament = oConnection.prepareStatement(strSQL, Statement.RETURN_GENERATED_KEYS);
         oPreparedStament.setInt(1, id);
         iResult = oPreparedStament.executeUpdate();
@@ -92,7 +91,7 @@ public class FacturaDao implements DaoInterface {
     }
 
     @Override
-    public ArrayList<FacturaBean> getPage(int page, int limit, List<String> orden) throws SQLException {
+    public ArrayList<CompraBean> getPage(int page, int limit, List<String> orden) throws SQLException {
 
         PreparedStatement oPreparedStatement;
         ResultSet oResultSet;
@@ -105,11 +104,11 @@ public class FacturaDao implements DaoInterface {
         }
 
         if (orden == null) {
-        	oPreparedStatement = oConnection.prepareStatement("SELECT * FROM factura LIMIT ? OFFSET ?");
+        	oPreparedStatement = oConnection.prepareStatement("SELECT * FROM compra LIMIT ? OFFSET ?");
         	oPreparedStatement.setInt(1, limit);
             oPreparedStatement.setInt(2, offset);
         } else {
-        	String sqlQuery = "SELECT * FROM factura ";
+        	String sqlQuery = "SELECT * FROM compra ";
         	sqlQuery += "ORDER BY ";
         	for (int i = 1; i <= orden.size(); i++) {
         		if (orden.get((i-1)).equalsIgnoreCase("asc")) {
@@ -125,11 +124,13 @@ public class FacturaDao implements DaoInterface {
         	for (int i = 1; i < orden.size(); i++) {
         		if (orden.get((i-1)).equalsIgnoreCase("id")) {
         			oPreparedStatement.setInt(i, 1);
-        		} else if (orden.get((i-1)).equalsIgnoreCase("iva")) {
+        		} else if (orden.get((i-1)).equalsIgnoreCase("cantidad")) {
         			oPreparedStatement.setInt(i, 2);
-        		} else if (orden.get((i-1)).equalsIgnoreCase("fecha")) {
+        		} else if (orden.get((i-1)).equalsIgnoreCase("factura_id")) {
         			oPreparedStatement.setInt(i, 3);
-        		}   		
+        		} else if (orden.get((i-1)).equalsIgnoreCase("producto_id")) {
+        			oPreparedStatement.setInt(i, 4);
+        		} 
         	}
         	oPreparedStatement.setInt((orden.size()), limit);
             oPreparedStatement.setInt((orden.size()+1), offset);
@@ -137,15 +138,16 @@ public class FacturaDao implements DaoInterface {
         
         oResultSet = oPreparedStatement.executeQuery();
 
-        ArrayList<FacturaBean> oFacturaBeanList = new ArrayList<>();
+        ArrayList<CompraBean> oCompraBeanList = new ArrayList<>();
         while (oResultSet.next()) {
-            FacturaBean oFacturaBean = new FacturaBean();
-            oFacturaBean.setId(oResultSet.getInt("id"));
-            oFacturaBean.setId(oResultSet.getInt("iva"));
-            oFacturaBean.setFecha(oResultSet.getDate("fecha"));
+            CompraBean oCompraBean = new CompraBean();
+            oCompraBean.setId(oResultSet.getInt("id"));
+            oCompraBean.setCantidad(oResultSet.getInt("cantidad"));
+            oCompraBean.setFactura_id(oResultSet.getInt("factura_id"));
+            oCompraBean.setProducto_id(oResultSet.getInt("producto_id"));
 
-            oFacturaBeanList.add(oFacturaBean);
+            oCompraBeanList.add(oCompraBean);
         }
-        return oFacturaBeanList;
+        return oCompraBeanList;
     }
 }

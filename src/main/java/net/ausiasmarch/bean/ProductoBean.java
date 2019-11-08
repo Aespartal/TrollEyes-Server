@@ -17,10 +17,9 @@ public class ProductoBean implements BeanInterface {
     private float precio;
     @Expose
     private String imagen;
+    @Expose
+    private int tipo_producto_id;
 
-    
-    private int idtipoProducto;
-    private TipoProductoBean oTipoProducto;
 
     public ProductoBean() {
     }
@@ -35,24 +34,14 @@ public class ProductoBean implements BeanInterface {
 
     
     
-    public int getIdtipoProducto() {
-        return idtipoProducto;
+    public int getTipo_producto_id() {
+        return tipo_producto_id;
     }
 
-    public void setIdtipoProducto(int idtipoProducto) {
-        this.idtipoProducto = idtipoProducto;
+    public void setTipo_producto_id(int tipo_producto_id) {
+        this.tipo_producto_id = tipo_producto_id;
     }
 
-    public TipoProductoBean getoTipoProducto() {
-        return oTipoProducto;
-    }
-
-    public void setoTipoProducto(TipoProductoBean oTipoProducto) {
-        this.oTipoProducto = oTipoProducto;
-    }
-    
-    
-    
     @Override
     public Integer getId() {
         return id;
