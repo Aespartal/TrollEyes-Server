@@ -161,8 +161,6 @@ public class TipoUsuarioService implements ServiceInterface {
             try {
                 oConnectionImplementation = ConnectionFactory.getConnection(ConnectionSettings.connectionPool);
                 oConnection = oConnectionImplementation.newConnection();
-                final GsonBuilder builder = new GsonBuilder();
-                builder.excludeFieldsWithoutExposeAnnotation();
                 TipoUsuarioBean oTipoUsuarioBean = oGson.fromJson(oRequest.getParameter("data"), TipoUsuarioBean.class);
                 TipoUsuarioDao oTipoUsuarioDao = new TipoUsuarioDao(oConnection);
                 if (oTipoUsuarioDao.insert(oTipoUsuarioBean) == 0) {
@@ -222,5 +220,10 @@ public class TipoUsuarioService implements ServiceInterface {
             oResponseBean = new ResponseBean(401, "Error: No session");
             return oGson.toJson(oResponseBean);
         }
+    }
+
+    @Override
+    public String fill() throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

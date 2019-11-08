@@ -5,43 +5,47 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import net.ausiasmarch.bean.BeanInterface;
-import net.ausiasmarch.bean.TipoProductoBean;
+import net.ausiasmarch.bean.PostBean;
 
-public class TipoProductoDao implements DaoInterface {
+public class PostDao implements DaoInterface {
 
     Connection oConnection = null;
 
-    public TipoProductoDao(Connection oConnection) {
+    public PostDao(Connection oConnection) {
         this.oConnection = oConnection;
     }
 
     @Override
-    public TipoProductoBean get(int id) throws SQLException {
+    public PostBean get(int id) throws SQLException {
         PreparedStatement oPreparedStatement;
         ResultSet oResultSet;
-        String strSQL = "SELECT * FROM tipo_producto WHERE id=?";
+        String strSQL = "SELECT * FROM post WHERE id=?";
         oPreparedStatement = oConnection.prepareStatement(strSQL);
         oPreparedStatement.setInt(1, id);
         oResultSet = oPreparedStatement.executeQuery();
-        TipoProductoBean oTipoProductoBean;
+        PostBean oPostBean;
         if (oResultSet.next()) {
-            oTipoProductoBean = new TipoProductoBean();
-            oTipoProductoBean.setId(oResultSet.getInt("id"));
-            oTipoProductoBean.setDescripcion(oResultSet.getString("descripcion"));
+            oPostBean = new PostBean();
+            oPostBean.setId(oResultSet.getInt("id"));
+            oPostBean.setTitulo(oResultSet.getString("titulo"));
+            oPostBean.setCuerpo(oResultSet.getString("cuerpo"));
+            oPostBean.setEtiquetas(oResultSet.getString("etiquetas"));
+            oPostBean.setFecha(oResultSet.getDate("fecha"));
         } else {
-            oTipoProductoBean = null;
+            oPostBean = null;
         }
-        return oTipoProductoBean;
+        return oPostBean;
     }
 
     @Override
     public int getCount() throws SQLException {
         PreparedStatement oPreparedStatement;
         ResultSet oResultSet;
-        String strSQL = "SELECT count(*) FROM tipo_producto";
+        String strSQL = "SELECT count(*) FROM post";
         oPreparedStatement = oConnection.prepareStatement(strSQL);
         oResultSet = oPreparedStatement.executeQuery();
         if (oResultSet.next()) {
@@ -52,25 +56,30 @@ public class TipoProductoDao implements DaoInterface {
     }
 
     @Override
-    public Integer update(BeanInterface oTipoUsuarioBeanParam) throws SQLException {
+    public Integer update(BeanInterface oPostBeanParam) throws SQLException {
         PreparedStatement oPreparedStatement = null;
-        String strSQL = "UPDATE tipo_producto SET descripcion = ? WHERE id = ?";
+        String strSQL = "UPDATE post SET titulo = ?, cuerpo = ?, etiquetas = ? WHERE id = ?";
         int iResult;
         oPreparedStatement = oConnection.prepareStatement(strSQL, Statement.RETURN_GENERATED_KEYS);
-        TipoProductoBean oTipoProductoBean = (TipoProductoBean) oTipoUsuarioBeanParam;
-        oPreparedStatement.setString(1, oTipoProductoBean.getDescripcion());
-        oPreparedStatement.setInt(6, oTipoProductoBean.getId());
+        PostBean oPostBean = (PostBean) oPostBeanParam;
+        oPreparedStatement.setString(1, oPostBean.getTitulo());
+        oPreparedStatement.setString(2, oPostBean.getCuerpo());
+        oPreparedStatement.setString(3, oPostBean.getEtiquetas());
+        oPreparedStatement.setInt(4, oPostBean.getId());
         iResult = oPreparedStatement.executeUpdate();
         return iResult;
     }
 
     @Override
-    public Integer insert(BeanInterface oUsuarioBeanParam) throws SQLException {
+    public Integer insert(BeanInterface oPostBeanParam) throws SQLException {
         PreparedStatement oPreparedStatement;
-        String strsql = "INSERT INTO tipo_producto (descripcion) VALUES(?)";
+        String strsql = "INSERT INTO post (titulo,cuerpo,etiquetas) VALUES(?,?,?)";
         oPreparedStatement = oConnection.prepareStatement(strsql);
-        TipoProductoBean oTipoUsuarioBean = (TipoProductoBean) oUsuarioBeanParam;
-        oPreparedStatement.setString(1, oTipoUsuarioBean.getDescripcion());
+        PostBean oPostBean = (PostBean) oPostBeanParam;
+        oPreparedStatement.setString(1, oPostBean.getTitulo());
+        oPreparedStatement.setString(2, oPostBean.getCuerpo());
+        oPreparedStatement.setString(3, oPostBean.getEtiquetas());
+        //oPreparedStatement.setDate(4, (Date) oPostBean.getFecha());
         int iResult = oPreparedStatement.executeUpdate();
         return iResult;
     }
@@ -80,7 +89,9 @@ public class TipoProductoDao implements DaoInterface {
         PreparedStatement oPreparedStament = null;
         String strSQL = "";
         int iResult;
-        strSQL = "DELETE FROM tipo_producto WHERE id=?";
+        strSQL = "DELETE ";
+        strSQL += " FROM post ";
+        strSQL += " WHERE id=?";
         oPreparedStament = oConnection.prepareStatement(strSQL, Statement.RETURN_GENERATED_KEYS);
         oPreparedStament.setInt(1, id);
         iResult = oPreparedStament.executeUpdate();
@@ -88,7 +99,7 @@ public class TipoProductoDao implements DaoInterface {
     }
 
     @Override
-    public ArrayList<TipoProductoBean> getPage(int page, int limit, List<String> orden) throws SQLException {
+    public ArrayList<PostBean> getPage(int page, int limit, List<String> orden) throws SQLException {
 
         PreparedStatement oPreparedStatement;
         ResultSet oResultSet;
@@ -101,11 +112,11 @@ public class TipoProductoDao implements DaoInterface {
         }
 
         if (orden == null) {
-        	oPreparedStatement = oConnection.prepareStatement("SELECT * FROM tipo_usuario LIMIT ? OFFSET ?");
+        	oPreparedStatement = oConnection.prepareStatement("SELECT * FROM post LIMIT ? OFFSET ?");
         	oPreparedStatement.setInt(1, limit);
             oPreparedStatement.setInt(2, offset);
         } else {
-        	String sqlQuery = "SELECT * FROM tipo_producto ";
+        	String sqlQuery = "SELECT * FROM post ";
         	sqlQuery += "ORDER BY ";
         	for (int i = 1; i <= orden.size(); i++) {
         		if (orden.get((i-1)).equalsIgnoreCase("asc")) {
@@ -121,9 +132,16 @@ public class TipoProductoDao implements DaoInterface {
         	for (int i = 1; i < orden.size(); i++) {
         		if (orden.get((i-1)).equalsIgnoreCase("id")) {
         			oPreparedStatement.setInt(i, 1);
-        		} else if (orden.get((i-1)).equalsIgnoreCase("descripcion")) {
+        		} else if (orden.get((i-1)).equalsIgnoreCase("titulo")) {
         			oPreparedStatement.setInt(i, 2);
+        		} else if (orden.get((i-1)).equalsIgnoreCase("cuerpo")) {
+        			oPreparedStatement.setInt(i, 3);
+        		} else if (orden.get((i-1)).equalsIgnoreCase("etiquetas")) {
+        			oPreparedStatement.setInt(i, 4);
+        		} else if (orden.get((i-1)).equalsIgnoreCase("fecha")) {
+        			oPreparedStatement.setInt(i, 5);
         		}
+        		
         	}
         	oPreparedStatement.setInt((orden.size()), limit);
             oPreparedStatement.setInt((orden.size()+1), offset);
@@ -131,13 +149,19 @@ public class TipoProductoDao implements DaoInterface {
         
         oResultSet = oPreparedStatement.executeQuery();
 
-        ArrayList<TipoProductoBean> oProductoBeanList = new ArrayList<>();
+        ArrayList<PostBean> oPostBeanList = new ArrayList<>();
         while (oResultSet.next()) {
-            TipoProductoBean oTipoUsuarioBean = new TipoProductoBean();
-            oTipoUsuarioBean.setId(oResultSet.getInt("id"));
-            oTipoUsuarioBean.setDescripcion(oResultSet.getString("descripcion"));
-            oProductoBeanList.add(oTipoUsuarioBean);
+            PostBean oPostBean = new PostBean();
+            oPostBean.setId(oResultSet.getInt("id"));
+            oPostBean.setTitulo(oResultSet.getString("titulo"));
+            oPostBean.setCuerpo(oResultSet.getString("cuerpo"));
+            oPostBean.setEtiquetas(oResultSet.getString("etiquetas"));
+            oPostBean.setFecha(oResultSet.getDate("fecha"));
+
+            oPostBeanList.add(oPostBean);
         }
-        return oProductoBeanList;
+
+        return oPostBeanList;
     }
+
 }

@@ -99,7 +99,7 @@ CREATE TABLE `usuario` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
--- √çndices para tablas volcadas
+-- √?ndices para tablas volcadas
 --
 
 --

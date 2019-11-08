@@ -223,4 +223,10 @@ public class TipoProductoService implements ServiceInterface {
             return oGson.toJson(oResponseBean);
         }
     }
+
+    @Override
+    public String fill() throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

@@ -2,6 +2,8 @@ package net.ausiasmarch.factory;
 
 import javax.servlet.http.HttpServletRequest;
 import net.ausiasmarch.service.CarritoService;
+import net.ausiasmarch.service.ProductoService;
+import net.ausiasmarch.service.TipoProductoService;
 import net.ausiasmarch.service.UsuarioService;
 
 public class ServiceCall {
@@ -23,6 +25,34 @@ public class ServiceCall {
                     break;
                 case "logout":
                     strResult = oUsuarioService.logout();
+                    break;
+                case "insert":
+                    strResult = oUsuarioService.logout();
+                    break;
+                case "fill":
+                    strResult = oUsuarioService.fill();
+                    break;    
+            }
+        }
+         if (ob.equalsIgnoreCase("tipoproducto")) {
+            TipoProductoService oTipoProductoService = new TipoProductoService(oRequest);
+            switch (op) {
+                case "fill":
+                    strResult = oTipoProductoService.fill();
+                    break;    
+                case "remove":
+                    strResult = oTipoProductoService.remove();
+                    break;     
+            }
+        }
+          if (ob.equalsIgnoreCase("producto")) {
+            ProductoService oProductoService = new ProductoService(oRequest);
+            switch (op) {
+                case "fill":
+                    strResult = oProductoService.fill();
+                    break;
+                case "remove":
+                    strResult = oProductoService.remove();
                     break;
             }
         }
