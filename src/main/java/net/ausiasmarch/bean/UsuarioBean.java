@@ -19,27 +19,19 @@ public class UsuarioBean implements BeanInterface {
     @Expose
     private String login;
     private String password;
+    @Expose
+    private int tipo_usuario_id;
 
-    private int idTipoUsuario;
-    private TipoUsuarioBean oTipoUsuario;
     
     public UsuarioBean() {
     }
 
-    public int getIdTipoUsuario() {
-        return idTipoUsuario;
+    public int getTipo_usuario_id() {
+        return tipo_usuario_id;
     }
 
-    public void setIdTipoUsuario(int idTipoUsuario) {
-        this.idTipoUsuario = idTipoUsuario;
-    }
-
-    public TipoUsuarioBean getoTipoUsuario() {
-        return oTipoUsuario;
-    }
-
-    public void setoTipoUsuario(TipoUsuarioBean oTipoUsuario) {
-        this.oTipoUsuario = oTipoUsuario;
+    public void setTipo_usuario_id(int tipo_usuario_id) {
+        this.tipo_usuario_id = tipo_usuario_id;
     }
     
     public UsuarioBean(String nombre, String email, String dni, String apellido1, String apellido2, String login, String password) {

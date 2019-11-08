@@ -1,7 +1,5 @@
 package net.ausiasmarch.setting;
 
-
-
 public class ConnectionSettings {
 
 	public static enum EnumConstans  {
@@ -25,5 +23,4 @@ public class ConnectionSettings {
 		return "jdbc:mysql://" + ConnectionSettings.databaseHost + ":" + ConnectionSettings.databasePort + "/"
 				+ ConnectionSettings.databaseName + "?autoReconnect=true&useSSL=false";
 	}
-
 }

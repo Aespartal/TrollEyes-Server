@@ -11,7 +11,18 @@ public class FacturaBean implements BeanInterface {
     private Date fecha;
     @Expose
     private int iva;
+    @Expose
+    private int usuario_id;
 
+
+    public int getUsuario_id() {
+        return usuario_id;
+    }
+
+    public void setUsuario_id(int usuario_id) {
+        this.usuario_id = usuario_id;
+    }
+    
     public FacturaBean(Integer id, Date fecha, int iva) {
         this.id = id;
         this.fecha = fecha;
@@ -19,7 +30,7 @@ public class FacturaBean implements BeanInterface {
     }
 
     public FacturaBean() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+      
     }
 
     @Override

@@ -76,7 +76,7 @@ public class UsuarioDao implements DaoInterface {
     @Override
     public Integer insert(BeanInterface oUsuarioBeanParam) throws SQLException {
         PreparedStatement oPreparedStatement;
-        String strsql = "INSERT INTO usuario (dni,email,nombre,apellido1,apellido2,login,password,FK_tipo_usuario) VALUES(?,?,?,?,?,?,?,?)";
+        String strsql = "INSERT INTO usuario (dni,email,nombre,apellido1,apellido2,login,password,tipo_usuario_id) VALUES(?,?,?,?,?,?,?,?)";
         oPreparedStatement = oConnection.prepareStatement(strsql);
         UsuarioBean oUsuarioBean = (UsuarioBean) oUsuarioBeanParam;
         oPreparedStatement.setString(1, oUsuarioBean.getDni());
@@ -86,7 +86,7 @@ public class UsuarioDao implements DaoInterface {
         oPreparedStatement.setString(5, oUsuarioBean.getApellido2());
         oPreparedStatement.setString(6, oUsuarioBean.getLogin());  
         oPreparedStatement.setString(7, oUsuarioBean.getPassword());
-        oPreparedStatement.setInt(8, oUsuarioBean.getIdTipoUsuario());
+        oPreparedStatement.setInt(8, oUsuarioBean.getTipo_usuario_id());
         int iResult = oPreparedStatement.executeUpdate();
         return iResult;
     }

@@ -1,4 +1,3 @@
-
 package net.ausiasmarch.factory;
 
 import net.ausiasmarch.connection.ConnectionInterface;
