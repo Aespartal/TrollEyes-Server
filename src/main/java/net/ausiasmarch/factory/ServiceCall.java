@@ -1,11 +1,10 @@
 package net.ausiasmarch.factory;
 
-import java.sql.SQLException;
 import javax.servlet.http.HttpServletRequest;
 import net.ausiasmarch.service.CarritoService;
-import net.ausiasmarch.service.PostService;
+import net.ausiasmarch.service.ProductoService;
+import net.ausiasmarch.service.TipoProductoService;
 import net.ausiasmarch.service.UsuarioService;
-import net.ausiasmarch.setting.ConfigurationSettings;
 
 public class ServiceCall {
 
@@ -27,6 +26,34 @@ public class ServiceCall {
                 case "logout":
                     strResult = oUsuarioService.logout();
                     break;
+                case "insert":
+                    strResult = oUsuarioService.logout();
+                    break;
+                case "fill":
+                    strResult = oUsuarioService.fill();
+                    break;    
+            }
+        }
+         if (ob.equalsIgnoreCase("tipoproducto")) {
+            TipoProductoService oTipoProductoService = new TipoProductoService(oRequest);
+            switch (op) {
+                case "fill":
+                    strResult = oTipoProductoService.fill();
+                    break;    
+                case "remove":
+                    strResult = oTipoProductoService.remove();
+                    break;     
+            }
+        }
+          if (ob.equalsIgnoreCase("producto")) {
+            ProductoService oProductoService = new ProductoService(oRequest);
+            switch (op) {
+                case "fill":
+                    strResult = oProductoService.fill();
+                    break;
+                case "remove":
+                    strResult = oProductoService.remove();
+                    break;
             }
         }
         if (ob.equalsIgnoreCase("carrito")) {
@@ -43,37 +70,6 @@ public class ServiceCall {
                     break;
                 case "empty":
                     strResult = oCarritoService.empty();
-                    break;
-            }
-        }
-        if (ob.equalsIgnoreCase("post")) {
-            PostService oPostService = new PostService(oRequest);
-            switch (op) {
-                case "get":
-                    strResult = oPostService.get();
-                    break;
-                case "getcount":
-                    strResult = oPostService.getCount();
-                    break;
-                case "getpage":
-                    strResult = oPostService.getPage();
-                    break;
-                case "update":
-                    strResult = oPostService.update();
-                    break;
-                case "remove":
-                    strResult = oPostService.remove();
-                    break;
-                case "getall":
-                    //strResult = oPostService.getAll();
-                    break;
-                case "insert":
-                    strResult = oPostService.insert();
-                    break;
-                case "fill":
-                    if (ConfigurationSettings.environment == ConfigurationSettings.EnvironmentConstans.Debug) {
-                        strResult = oPostService.fill();
-                    }
                     break;
             }
         }

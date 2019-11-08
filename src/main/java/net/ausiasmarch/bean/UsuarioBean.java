@@ -7,11 +7,11 @@ public class UsuarioBean implements BeanInterface {
     @Expose
     private Integer id;
     @Expose
-    private String dni;
-    @Expose
     private String nombre;
     @Expose
     private String email;
+    @Expose
+    private String dni;
     @Expose
     private String apellido1;
     @Expose
@@ -20,6 +20,48 @@ public class UsuarioBean implements BeanInterface {
     private String login;
     private String password;
 
+    private int idTipoUsuario;
+    private TipoUsuarioBean oTipoUsuario;
+    
+    public UsuarioBean() {
+    }
+
+    public int getIdTipoUsuario() {
+        return idTipoUsuario;
+    }
+
+    public void setIdTipoUsuario(int idTipoUsuario) {
+        this.idTipoUsuario = idTipoUsuario;
+    }
+
+    public TipoUsuarioBean getoTipoUsuario() {
+        return oTipoUsuario;
+    }
+
+    public void setoTipoUsuario(TipoUsuarioBean oTipoUsuario) {
+        this.oTipoUsuario = oTipoUsuario;
+    }
+    
+    public UsuarioBean(String nombre, String email, String dni, String apellido1, String apellido2, String login, String password) {
+        this.nombre = nombre;
+        this.email = email;
+        this.dni = dni;
+        this.apellido1 = apellido1;
+        this.apellido2 = apellido2;
+        this.login = login;
+        this.password = password;
+    }
+
+    
+    
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    
     @Override
     public Integer getId() {
         return id;
@@ -30,12 +72,12 @@ public class UsuarioBean implements BeanInterface {
         this.id = id;
     }
 
-    public String getEmail() {
-        return email;
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
     public String getDni() {
@@ -44,14 +86,6 @@ public class UsuarioBean implements BeanInterface {
 
     public void setDni(String dni) {
         this.dni = dni;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
     }
 
     public String getApellido1() {
@@ -85,5 +119,5 @@ public class UsuarioBean implements BeanInterface {
     public void setPassword(String password) {
         this.password = password;
     }
-
+    
 }

@@ -22,7 +22,7 @@ public class UsuarioDao implements DaoInterface {
     public UsuarioBean get(int id) throws SQLException {
         PreparedStatement oPreparedStatement;
         ResultSet oResultSet;
-        String strSQL = "SELECT * FROM usuarios WHERE id=?";
+        String strSQL = "SELECT * FROM usuario WHERE id=?";
         oPreparedStatement = oConnection.prepareStatement(strSQL);
         oPreparedStatement.setInt(1, id);
         oResultSet = oPreparedStatement.executeQuery();
@@ -34,7 +34,8 @@ public class UsuarioDao implements DaoInterface {
             oUsuarioBean.setNombre(oResultSet.getString("nombre"));
             oUsuarioBean.setApellido1(oResultSet.getString("apellido1"));
             oUsuarioBean.setApellido2(oResultSet.getString("apellido2"));
-            oUsuarioBean.setNombre(oResultSet.getString("login"));
+            oUsuarioBean.setLogin(oResultSet.getString("login"));
+            oUsuarioBean.setPassword(oResultSet.getString("password"));
         } else {
             oUsuarioBean = null;
         }
@@ -58,17 +59,16 @@ public class UsuarioDao implements DaoInterface {
     @Override
     public Integer update(BeanInterface oUsuarioBeanParam) throws SQLException {
         PreparedStatement oPreparedStatement = null;
-        String strSQL = "UPDATE usuario SET dni = ?, nombre = ?, apellido1 = ?, apellido2 = ?, login = ?, email = ? WHERE id = ?";
+        String strSQL = "UPDATE usuario SET dni = ?, nombre = ?, apellido1 = ?, apellido2=?, login=? WHERE id = ?";
         int iResult;
         oPreparedStatement = oConnection.prepareStatement(strSQL, Statement.RETURN_GENERATED_KEYS);
         UsuarioBean oUsuarioBean = (UsuarioBean) oUsuarioBeanParam;
         oPreparedStatement.setString(1, oUsuarioBean.getDni());
         oPreparedStatement.setString(2, oUsuarioBean.getNombre());
-        oPreparedStatement.setString(3, oUsuarioBean.getApellido1());
+        oPreparedStatement.setString(3, oUsuarioBean.getApellido1()); 
         oPreparedStatement.setString(4, oUsuarioBean.getApellido2());
-        oPreparedStatement.setString(5, oUsuarioBean.getLogin());
-        oPreparedStatement.setString(6, oUsuarioBean.getEmail());
-        oPreparedStatement.setInt(7, oUsuarioBean.getId());
+        oPreparedStatement.setString(5, oUsuarioBean.getLogin());  
+        oPreparedStatement.setInt(6, oUsuarioBean.getId());
         iResult = oPreparedStatement.executeUpdate();
         return iResult;
     }
@@ -76,14 +76,17 @@ public class UsuarioDao implements DaoInterface {
     @Override
     public Integer insert(BeanInterface oUsuarioBeanParam) throws SQLException {
         PreparedStatement oPreparedStatement;
-        String strsql = "INSERT INTO usuario (dni,apellido1,apellido2,login,email) VALUES(?,?,?,?,?)";
+        String strsql = "INSERT INTO usuario (dni,email,nombre,apellido1,apellido2,login,password,FK_tipo_usuario) VALUES(?,?,?,?,?,?,?,?)";
         oPreparedStatement = oConnection.prepareStatement(strsql);
         UsuarioBean oUsuarioBean = (UsuarioBean) oUsuarioBeanParam;
         oPreparedStatement.setString(1, oUsuarioBean.getDni());
-        oPreparedStatement.setString(2, oUsuarioBean.getApellido1());
-        oPreparedStatement.setString(3, oUsuarioBean.getApellido2());
-        oPreparedStatement.setString(4, oUsuarioBean.getLogin());
-        oPreparedStatement.setString(5, oUsuarioBean.getEmail());
+        oPreparedStatement.setString(2, oUsuarioBean.getEmail());
+        oPreparedStatement.setString(3, oUsuarioBean.getNombre());
+        oPreparedStatement.setString(4, oUsuarioBean.getApellido1());
+        oPreparedStatement.setString(5, oUsuarioBean.getApellido2());
+        oPreparedStatement.setString(6, oUsuarioBean.getLogin());  
+        oPreparedStatement.setString(7, oUsuarioBean.getPassword());
+        oPreparedStatement.setInt(8, oUsuarioBean.getIdTipoUsuario());
         int iResult = oPreparedStatement.executeUpdate();
         return iResult;
     }
@@ -136,19 +139,17 @@ public class UsuarioDao implements DaoInterface {
         			oPreparedStatement.setInt(i, 1);
         		} else if (orden.get((i-1)).equalsIgnoreCase("dni")) {
         			oPreparedStatement.setInt(i, 2);
-        		} else if (orden.get((i-1)).equalsIgnoreCase("nombre")) {
+        		} else if (orden.get((i-1)).equalsIgnoreCase("email")) {
         			oPreparedStatement.setInt(i, 3);
-        		} else if (orden.get((i-1)).equalsIgnoreCase("apellido1")) {
+        		} else if (orden.get((i-1)).equalsIgnoreCase("nombre")) {
         			oPreparedStatement.setInt(i, 4);
         		} else if (orden.get((i-1)).equalsIgnoreCase("apellido1")) {
         			oPreparedStatement.setInt(i, 5);
-        		} else if (orden.get((i-1)).equalsIgnoreCase("apellido2")) {
+        		}else if (orden.get((i-1)).equalsIgnoreCase("apellido2")) {
         			oPreparedStatement.setInt(i, 6);
-        		} else if (orden.get((i-1)).equalsIgnoreCase("login")) {
+        		}else if (orden.get((i-1)).equalsIgnoreCase("login")) {
         			oPreparedStatement.setInt(i, 7);
-        		} else if (orden.get((i-1)).equalsIgnoreCase("email")) {
-        			oPreparedStatement.setInt(i, 8);
-        		}
+        		}	
         	}
         	oPreparedStatement.setInt((orden.size()), limit);
             oPreparedStatement.setInt((orden.size()+1), offset);
@@ -161,11 +162,11 @@ public class UsuarioDao implements DaoInterface {
             UsuarioBean oUsuarioBean = new UsuarioBean();
             oUsuarioBean.setId(oResultSet.getInt("id"));
             oUsuarioBean.setDni(oResultSet.getString("dni"));
+            oUsuarioBean.setEmail(oResultSet.getString("email"));
             oUsuarioBean.setNombre(oResultSet.getString("nombre"));
             oUsuarioBean.setApellido1(oResultSet.getString("apellido1"));
             oUsuarioBean.setApellido2(oResultSet.getString("apellido2"));
             oUsuarioBean.setLogin(oResultSet.getString("login"));
-            oUsuarioBean.setEmail(oResultSet.getString("email"));
             oUsuarioBeanList.add(oUsuarioBean);
         }
         return oUsuarioBeanList;

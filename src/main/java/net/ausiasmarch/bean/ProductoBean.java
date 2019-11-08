@@ -2,10 +2,13 @@ package net.ausiasmarch.bean;
 
 import com.google.gson.annotations.Expose;
 
+
 public class ProductoBean implements BeanInterface {
 
     @Expose
     private Integer id;
+    @Expose
+    private String descripcion;
     @Expose
     private String codigo;
     @Expose
@@ -14,9 +17,42 @@ public class ProductoBean implements BeanInterface {
     private float precio;
     @Expose
     private String imagen;
-    @Expose
-    private String descripcion;
 
+    
+    private int idtipoProducto;
+    private TipoProductoBean oTipoProducto;
+
+    public ProductoBean() {
+    }
+    
+    public ProductoBean(String descripcion, String codigo, int existencias, float precio, String imagen) {
+        this.descripcion = descripcion;
+        this.codigo = codigo;
+        this.existencias = existencias;
+        this.precio = precio;
+        this.imagen = imagen;
+    }
+
+    
+    
+    public int getIdtipoProducto() {
+        return idtipoProducto;
+    }
+
+    public void setIdtipoProducto(int idtipoProducto) {
+        this.idtipoProducto = idtipoProducto;
+    }
+
+    public TipoProductoBean getoTipoProducto() {
+        return oTipoProducto;
+    }
+
+    public void setoTipoProducto(TipoProductoBean oTipoProducto) {
+        this.oTipoProducto = oTipoProducto;
+    }
+    
+    
+    
     @Override
     public Integer getId() {
         return id;
@@ -25,6 +61,14 @@ public class ProductoBean implements BeanInterface {
     @Override
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
     public String getCodigo() {
@@ -59,12 +103,7 @@ public class ProductoBean implements BeanInterface {
         this.imagen = imagen;
     }
 
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
+    
+    
 
 }

@@ -26,5 +26,7 @@ public class TipoUsuarioBean implements BeanInterface {
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
+    
+    
 
 }

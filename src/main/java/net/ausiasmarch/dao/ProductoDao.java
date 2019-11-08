@@ -31,10 +31,11 @@ public class ProductoDao implements DaoInterface {
             oProductoBean = new ProductoBean();
             oProductoBean.setId(oResultSet.getInt("id"));
             oProductoBean.setCodigo(oResultSet.getString("codigo"));
+            oProductoBean.setDescripcion(oResultSet.getString("descripcion"));     
             oProductoBean.setExistencias(oResultSet.getInt("existencias"));
             oProductoBean.setPrecio(oResultSet.getFloat("precio"));
             oProductoBean.setImagen(oResultSet.getString("imagen"));
-            oProductoBean.setDescripcion(oResultSet.getString("descripcion"));
+            
         } else {
             oProductoBean = null;
         }
@@ -58,15 +59,15 @@ public class ProductoDao implements DaoInterface {
     @Override
     public Integer update(BeanInterface oProductoBeanParam) throws SQLException {
         PreparedStatement oPreparedStatement = null;
-        String strSQL = "UPDATE producto SET codigo = ?, existencias = ?, precio = ?, imagen = ?, descipcion = ? WHERE id = ?";
+        String strSQL = "UPDATE producto SET codigo = ?, existencias = ?, descripcion = ?, precio=?, imagen=? WHERE id = ?";
         int iResult;
         oPreparedStatement = oConnection.prepareStatement(strSQL, Statement.RETURN_GENERATED_KEYS);
         ProductoBean oProductoBean = (ProductoBean) oProductoBeanParam;
         oPreparedStatement.setString(1, oProductoBean.getCodigo());
         oPreparedStatement.setInt(2, oProductoBean.getExistencias());
-        oPreparedStatement.setFloat(3, oProductoBean.getPrecio());
-        oPreparedStatement.setString(4, oProductoBean.getImagen());
-        oPreparedStatement.setString(5, oProductoBean.getDescripcion());
+        oPreparedStatement.setString(3, oProductoBean.getDescripcion());
+        oPreparedStatement.setFloat(4, oProductoBean.getPrecio());
+        oPreparedStatement.setString(5, oProductoBean.getImagen());
         oPreparedStatement.setInt(6, oProductoBean.getId());
         iResult = oPreparedStatement.executeUpdate();
         return iResult;
@@ -75,14 +76,15 @@ public class ProductoDao implements DaoInterface {
     @Override
     public Integer insert(BeanInterface oProductoBeanParam) throws SQLException {
         PreparedStatement oPreparedStatement;
-        String strsql = "INSERT INTO producto (codigo,existencias,precio,imagen,descripcion) VALUES(?,?,?,?,?)";
+        String strsql = "INSERT INTO producto (codigo,existencias,descripcion,precio,imagen,FK_tipo_producto) VALUES(?,?,?,?,?,?)";
         oPreparedStatement = oConnection.prepareStatement(strsql);
         ProductoBean oProductoBean = (ProductoBean) oProductoBeanParam;
         oPreparedStatement.setString(1, oProductoBean.getCodigo());
         oPreparedStatement.setInt(2, oProductoBean.getExistencias());
-        oPreparedStatement.setFloat(3, oProductoBean.getPrecio());
-        oPreparedStatement.setString(4, oProductoBean.getImagen());
-        oPreparedStatement.setString(5, oProductoBean.getDescripcion());
+        oPreparedStatement.setString(3, oProductoBean.getDescripcion());
+        oPreparedStatement.setFloat(4, oProductoBean.getPrecio());
+        oPreparedStatement.setString(5, oProductoBean.getImagen());
+        oPreparedStatement.setInt(6, oProductoBean.getIdtipoProducto());
         int iResult = oPreparedStatement.executeUpdate();
         return iResult;
     }
@@ -92,7 +94,9 @@ public class ProductoDao implements DaoInterface {
         PreparedStatement oPreparedStament = null;
         String strSQL = "";
         int iResult;
-        strSQL = "DELETE FROM producto WHERE id=?";
+        strSQL = "DELETE ";
+        strSQL += " FROM producto ";
+        strSQL += " WHERE id=?";
         oPreparedStament = oConnection.prepareStatement(strSQL, Statement.RETURN_GENERATED_KEYS);
         oPreparedStament.setInt(1, id);
         iResult = oPreparedStament.executeUpdate();
@@ -137,13 +141,12 @@ public class ProductoDao implements DaoInterface {
         			oPreparedStatement.setInt(i, 2);
         		} else if (orden.get((i-1)).equalsIgnoreCase("existencias")) {
         			oPreparedStatement.setInt(i, 3);
-        		} else if (orden.get((i-1)).equalsIgnoreCase("precio")) {
-        			oPreparedStatement.setInt(i, 4);
-        		} else if (orden.get((i-1)).equalsIgnoreCase("imagen")) {
-        			oPreparedStatement.setInt(i, 5);
         		} else if (orden.get((i-1)).equalsIgnoreCase("descripcion")) {
-        			oPreparedStatement.setInt(i, 6);
+        			oPreparedStatement.setInt(i, 4);
+        		} else if (orden.get((i-1)).equalsIgnoreCase("precio")) {
+        			oPreparedStatement.setInt(i, 5);
         		}
+        		
         	}
         	oPreparedStatement.setInt((orden.size()), limit);
             oPreparedStatement.setInt((orden.size()+1), offset);
@@ -156,12 +159,14 @@ public class ProductoDao implements DaoInterface {
             ProductoBean oProductoBean = new ProductoBean();
             oProductoBean.setId(oResultSet.getInt("id"));
             oProductoBean.setCodigo(oResultSet.getString("codigo"));
-            oProductoBean.setExistencias(oResultSet.getInt("existencias"));
+            oProductoBean.setExistencias(oResultSet.getInt("existencia"));
+            oProductoBean.setDescripcion(oResultSet.getString("descripcion"));
             oProductoBean.setPrecio(oResultSet.getFloat("precio"));
-            oProductoBean.setImagen(oResultSet.getString("imagen"));
-            oProductoBean.setDescripcion(oResultSet.getString("descipcion"));
+
             oProductoBeanList.add(oProductoBean);
         }
+
         return oProductoBeanList;
     }
+
 }

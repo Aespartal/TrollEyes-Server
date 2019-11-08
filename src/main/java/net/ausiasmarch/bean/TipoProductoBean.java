@@ -26,5 +26,7 @@ public class TipoProductoBean implements BeanInterface {
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
+    
+    
 
 }

@@ -12,6 +12,16 @@ public class FacturaBean implements BeanInterface {
     @Expose
     private int iva;
 
+    public FacturaBean(Integer id, Date fecha, int iva) {
+        this.id = id;
+        this.fecha = fecha;
+        this.iva = iva;
+    }
+
+    public FacturaBean() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     @Override
     public Integer getId() {
         return id;
@@ -37,5 +47,7 @@ public class FacturaBean implements BeanInterface {
     public void setIva(int iva) {
         this.iva = iva;
     }
+
+
 
 }
