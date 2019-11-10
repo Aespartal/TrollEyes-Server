@@ -5,7 +5,12 @@ import com.google.gson.GsonBuilder;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import net.ausiasmarch.bean.FacturaBean;
@@ -222,5 +227,42 @@ public class FacturaService implements ServiceInterface {
             oResponseBean = new ResponseBean(401, "Error: No session");
             return oGson.toJson(oResponseBean);
         }
+    }
+    
+        public String fill() throws Exception {
+        ConnectionInterface oConnectionImplementation = ConnectionFactory
+                .getConnection(ConnectionSettings.connectionPool);
+        Connection oConnection = oConnectionImplementation.newConnection();
+        ResponseBean oResponseBean;
+        Gson oGson = GsonFactory.getGson();
+
+        FacturaDao oFacturaDao = new FacturaDao(oConnection);
+        FacturaBean oFacturaBean = new FacturaBean();
+        Integer number = Integer.parseInt(oRequest.getParameter("number"));
+        Date date1 = new GregorianCalendar(2014, Calendar.JANUARY, 1).getTime();
+        Date date2 = new GregorianCalendar(2019, Calendar.DECEMBER, 31).getTime();
+        int iva = 21;
+        for (int i = 0; i < number; i++) {
+            int tipoFacturaUsuario = usuarioIdFacturaRandom();
+            Date randomDate = new Date(ThreadLocalRandom.current()
+                            .nextLong(date1.getTime(), date2.getTime()));
+            oFacturaBean.setIva(iva);
+            oFacturaBean.setFecha(randomDate);
+            oFacturaBean.setUsuario_id(tipoFacturaUsuario);
+            oFacturaDao.insert(oFacturaBean);
+        }
+        oResponseBean = new ResponseBean(200, "Se ha añadido correctamente.");
+        if (oConnection != null) {
+            oConnection.close();
+        }
+        if (oConnectionImplementation != null) {
+            oConnectionImplementation.disposeConnection();
+        }
+
+        return oGson.toJson(oResponseBean);
+    }
+    
+    private int usuarioIdFacturaRandom() {
+        return (int) (Math.random() * (1 - 25));
     }
 }

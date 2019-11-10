@@ -59,6 +59,4 @@ public class FacturaBean implements BeanInterface {
         this.iva = iva;
     }
 
-
-
 }

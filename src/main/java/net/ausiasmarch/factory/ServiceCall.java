@@ -62,10 +62,8 @@ public class ServiceCall {
          if (ob.equalsIgnoreCase("factura")) {
             FacturaService oFacturaService = new FacturaService(oRequest);
             switch (op) {
-                /*
                  case "fill":
-                    strResult = oCompraService.fill();
-                    break;*/
+                    strResult = oFacturaService.fill();
                 case "remove":
                     strResult = oFacturaService.remove();
                     break;

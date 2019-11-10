@@ -20,6 +20,5 @@ public class CarritoBean {
 	public String toString() {
 		return "[producto=" + producto + ", cantidad=" + cantidad + "]";
 	}
-	
-	
+
 }

@@ -223,4 +223,43 @@ public class CompraService implements ServiceInterface {
             return oGson.toJson(oResponseBean);
         }
     }
+    
+    public String fill() throws Exception {
+        ConnectionInterface oConnectionImplementation = ConnectionFactory
+                .getConnection(ConnectionSettings.connectionPool);
+        Connection oConnection = oConnectionImplementation.newConnection();
+        ResponseBean oResponseBean;
+        Gson oGson = GsonFactory.getGson();
+
+        CompraDao oFacturaDao = new CompraDao(oConnection);
+        CompraBean oFacturaBean = new CompraBean();
+        Integer number = Integer.parseInt(oRequest.getParameter("number"));
+        for (int i = 0; i < number; i++) {
+            oFacturaBean.setCantidad(cantidadRandom());
+            oFacturaBean.setFactura_id(facturaIdRandom());
+            oFacturaBean.setProducto_id(productoIdRandom());
+            oFacturaDao.insert(oFacturaBean);
+        }
+        oResponseBean = new ResponseBean(200, "Se ha añadido correctamente.");
+        if (oConnection != null) {
+            oConnection.close();
+        }
+        if (oConnectionImplementation != null) {
+            oConnectionImplementation.disposeConnection();
+        }
+
+        return oGson.toJson(oResponseBean);
+    }
+    
+    private int cantidadRandom() {
+        return (int) (Math.random() * (1 - 200));
+    }
+    
+    private int facturaIdRandom() {
+        return (int) (Math.random() * (1 - 25));
+    }
+    
+    private int productoIdRandom() {
+        return (int) (Math.random() * (1 - 12 + 1) + 12);
+    }
 }

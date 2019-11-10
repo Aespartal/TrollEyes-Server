@@ -43,8 +43,6 @@ public class UsuarioBean implements BeanInterface {
         this.login = login;
         this.password = password;
     }
-
-    
     
     public String getEmail() {
         return email;

@@ -15,6 +15,16 @@ public class CompraBean implements BeanInterface {
     public CompraBean() {
     
     }
+    
+    @Override
+    public Integer getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public int getProducto_id() {
         return producto_id;
@@ -35,14 +45,6 @@ public class CompraBean implements BeanInterface {
     public CompraBean(int id, int cantidad) {
         this.id = id;
         this.cantidad = cantidad;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public int getCantidad() {

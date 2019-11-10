@@ -8,7 +8,6 @@ import net.ausiasmarch.connection.implementation.HikariConnectionImplementation;
 import net.ausiasmarch.connection.implementation.ViburConnectionImplementation;
 import net.ausiasmarch.setting.ConnectionSettings;
 
-
 public class ConnectionFactory {
 
     public static ConnectionInterface getConnection(ConnectionSettings.EnumConstans enumConnection) {
@@ -34,6 +33,5 @@ public class ConnectionFactory {
                 break;
         }
         return oConnectionInterface;
-
     }
 }

@@ -108,7 +108,7 @@ public class UsuarioService {
         Integer number = Integer.parseInt(oRequest.getParameter("number"));
         for (int i = 0; i < number; i++) {
             String nombre = nombreRandom();
-            String apellido1 = apellido2Random();
+            String apellido1 = apellido1Random();
             String apellido2 = apellido2Random();
             oUsuarioBean.setDni(dniRandom());
             oUsuarioBean.setNombre(nombre);
@@ -139,7 +139,7 @@ public class UsuarioService {
         return nombreRandom = nombre[(int) (Math.random() * nombre.length) + 0];
     }
 
-    private String apelido1Random() {
+    private String apellido1Random() {
         String[] apellido1 = {"Perez", "Rodriguez", "Vidal",
             "La Piedra", "Menganito ", "Crack", "Gomez",
             "Guerrero", "Cardenas", "Cardiel"};

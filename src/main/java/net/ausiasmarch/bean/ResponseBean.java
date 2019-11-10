@@ -2,7 +2,6 @@ package net.ausiasmarch.bean;
 
 import com.google.gson.annotations.Expose;
 
-
 public class ResponseBean {
     @Expose
     private int status;
@@ -33,6 +32,4 @@ public class ResponseBean {
         this.message = message;
     }
 
-    
-    
 }

@@ -17,7 +17,6 @@ public class CompraDao implements DaoInterface {
     public CompraDao(Connection oConnection) {
         this.oConnection = oConnection;
     }
-
     
     @Override
     public CompraBean get(int id) throws SQLException {
@@ -73,7 +72,6 @@ public class CompraDao implements DaoInterface {
         oPreparedStatement.setInt(1, oItemBean.getCantidad());
         oPreparedStatement.setInt(2, oItemBean.getProducto_id());
         oPreparedStatement.setInt(3, oItemBean.getFactura_id());
-        
         int iResult = oPreparedStatement.executeUpdate();
         return iResult;
     }
@@ -145,7 +143,6 @@ public class CompraDao implements DaoInterface {
             oCompraBean.setCantidad(oResultSet.getInt("cantidad"));
             oCompraBean.setFactura_id(oResultSet.getInt("factura_id"));
             oCompraBean.setProducto_id(oResultSet.getInt("producto_id"));
-
             oCompraBeanList.add(oCompraBean);
         }
         return oCompraBeanList;

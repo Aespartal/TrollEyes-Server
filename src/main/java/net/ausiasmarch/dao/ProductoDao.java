@@ -35,7 +35,6 @@ public class ProductoDao implements DaoInterface {
             oProductoBean.setExistencias(oResultSet.getInt("existencias"));
             oProductoBean.setPrecio(oResultSet.getFloat("precio"));
             oProductoBean.setImagen(oResultSet.getString("imagen"));
-            
         } else {
             oProductoBean = null;
         }
@@ -162,11 +161,8 @@ public class ProductoDao implements DaoInterface {
             oProductoBean.setExistencias(oResultSet.getInt("existencia"));
             oProductoBean.setDescripcion(oResultSet.getString("descripcion"));
             oProductoBean.setPrecio(oResultSet.getFloat("precio"));
-
             oProductoBeanList.add(oProductoBean);
         }
-
         return oProductoBeanList;
     }
-
 }

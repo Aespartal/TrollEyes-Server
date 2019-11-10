@@ -143,7 +143,6 @@ public class FacturaDao implements DaoInterface {
             oFacturaBean.setId(oResultSet.getInt("id"));
             oFacturaBean.setId(oResultSet.getInt("iva"));
             oFacturaBean.setFecha(oResultSet.getDate("fecha"));
-
             oFacturaBeanList.add(oFacturaBean);
         }
         return oFacturaBeanList;

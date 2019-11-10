@@ -2,7 +2,6 @@ package net.ausiasmarch.bean;
 
 import com.google.gson.annotations.Expose;
 
-
 public class ProductoBean implements BeanInterface {
 
     @Expose
@@ -20,7 +19,6 @@ public class ProductoBean implements BeanInterface {
     @Expose
     private int tipo_producto_id;
 
-
     public ProductoBean() {
     }
     
@@ -32,7 +30,6 @@ public class ProductoBean implements BeanInterface {
         this.imagen = imagen;
     }
 
-    
     
     public int getTipo_producto_id() {
         return tipo_producto_id;
@@ -91,8 +88,5 @@ public class ProductoBean implements BeanInterface {
     public void setImagen(String imagen) {
         this.imagen = imagen;
     }
-
-    
-    
 
 }
