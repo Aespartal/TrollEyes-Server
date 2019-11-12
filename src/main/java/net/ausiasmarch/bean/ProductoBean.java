@@ -80,7 +80,6 @@ public class ProductoBean implements BeanInterface {
         this.tipo_producto_id = tipo_producto_id;
     }
 
-    @Override
     public ProductoBean fill(ResultSet oResultSet) throws SQLException {
         this.setId(oResultSet.getInt("id"));
         this.setCodigo(oResultSet.getString("codigo"));
