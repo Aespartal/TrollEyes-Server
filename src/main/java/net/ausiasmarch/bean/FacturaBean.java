@@ -1,9 +1,11 @@
 package net.ausiasmarch.bean;
 
 import com.google.gson.annotations.Expose;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.List;
 
 public class FacturaBean implements BeanInterface {
 
@@ -51,10 +53,44 @@ public class FacturaBean implements BeanInterface {
 	}
 
     @Override
-    public ProductoBean fill(ResultSet oResultSet) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public FacturaBean fill(ResultSet oResultSet) throws SQLException {
+            this.setId(oResultSet.getInt("id"));
+            this.setFecha(oResultSet.getDate("fecha"));
+            this.setIva(oResultSet.getInt("iva"));
+            return this;
     }
 
-    
+    @Override
+    public PreparedStatement orderSQL(List<String> orden, PreparedStatement oPreparedStatement, int i) throws SQLException {
+                        if (orden.get((i-1)).equalsIgnoreCase("id")) {
+        			oPreparedStatement.setInt(i, 1);
+        		} else if (orden.get((i-1)).equalsIgnoreCase("fecha")) {
+        			oPreparedStatement.setInt(i, 2);
+        		} else if (orden.get((i-1)).equalsIgnoreCase("iva")) {
+        			oPreparedStatement.setInt(i, 3);
+        		} else if (orden.get((i-1)).equalsIgnoreCase("usuario_id")) {
+        			oPreparedStatement.setInt(i, 4);
+        		}
+                        return oPreparedStatement;
+    }
 
+    @Override
+    public String getField4Insert() throws SQLException {
+        return "(fecha,iva,usuario_id)";
+    }
+    
+    @Override
+    public BeanInterface setField4Insert() throws SQLException {
+        return ;
+    }
+    
+    @Override
+    public String getField4Update() throws SQLException {
+        return "INSERT INTO compra (cantidad,producto_id,factura_id) VALUES(?,?,?)";
+    }
+    
+    @Override
+    public BeanInterface setField4Update() throws SQLException {
+        return ;
+    }
 }

@@ -1,9 +1,10 @@
 package net.ausiasmarch.bean;
 
 import com.google.gson.annotations.Expose;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
+import java.util.List;
 
 public class TipoProductoBean implements BeanInterface {
 
@@ -31,14 +32,39 @@ public class TipoProductoBean implements BeanInterface {
 	}
 
     @Override
-    public ProductoBean fill(ResultSet oResultSet) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public TipoProductoBean fill(ResultSet oResultSet) throws SQLException {
+            this.setId(oResultSet.getInt("id"));
+            this.setDescripcion(oResultSet.getString("descripcion"));
+            return this;
     }
 
+    @Override
+    public PreparedStatement orderSQL(List<String> orden, PreparedStatement oPreparedStatement, int i) throws SQLException {
+                        if (orden.get((i-1)).equalsIgnoreCase("id")) {
+        			oPreparedStatement.setInt(i, 1);
+        		} else if (orden.get((i-1)).equalsIgnoreCase("descripcion")) {
+        			oPreparedStatement.setInt(i, 2);
+        		}
+                        return oPreparedStatement;
+    }
 
-
-
-
-
-
+    @Override
+    public String getField4Insert() throws SQLException {
+        return "INSERT INTO tipo_producto (descripcion) VALUES(?)";
+    }
+    
+    @Override
+    public BeanInterface setField4Insert() throws SQLException {
+        return ;
+    }
+    
+    @Override
+    public String getField4Update() throws SQLException {
+        return "INSERT INTO compra (cantidad,producto_id,factura_id) VALUES(?,?,?)";
+    }
+    
+    @Override
+    public BeanInterface setField4Update() throws SQLException {
+        return ;
+    }
 }
