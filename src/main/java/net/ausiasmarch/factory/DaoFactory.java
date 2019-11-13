@@ -1,9 +1,13 @@
-
 package net.ausiasmarch.factory;
 
 import java.sql.Connection;
+import net.ausiasmarch.dao.CompraDao;
 import net.ausiasmarch.dao.DaoInterface;
+import net.ausiasmarch.dao.FacturaDao;
 import net.ausiasmarch.dao.ProductoDao;
+import net.ausiasmarch.dao.TipoProductoDao;
+import net.ausiasmarch.dao.TipoUsuarioDao;
+import net.ausiasmarch.dao.UsuarioDao;
 
 
 public class DaoFactory {
@@ -12,6 +16,21 @@ public class DaoFactory {
         switch (ob) {
             case "producto":
                 oDao = new ProductoDao(oConnection);
+                break;
+                case "factura":
+                oDao = new FacturaDao(oConnection);
+                break;
+                case "compra":
+                oDao = new CompraDao(oConnection);
+                break;
+                case "tipo_producto":
+                oDao = new TipoProductoDao(oConnection);
+                break;
+                case "tipo_usuario":
+                oDao = new TipoUsuarioDao(oConnection);
+                break;
+                case "usuario":
+                oDao = new UsuarioDao(oConnection);
                 break;
         }
         return oDao ;

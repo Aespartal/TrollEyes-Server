@@ -9,7 +9,6 @@ import net.ausiasmarch.bean.ResponseBean;
 import net.ausiasmarch.bean.UsuarioBean;
 import net.ausiasmarch.connection.ConnectionInterface;
 import net.ausiasmarch.dao.DaoInterface;
-import net.ausiasmarch.dao.UsuarioDao;
 import net.ausiasmarch.factory.ConnectionFactory;
 import net.ausiasmarch.factory.DaoFactory;
 import net.ausiasmarch.factory.GsonFactory;
@@ -26,7 +25,7 @@ public class UsuarioService extends GenericService {
         "Trencapins", "Palla", "Cargols", "Metge", "Murallot", "Porrons", "Cigrons", "Llobarro", "Faves", "Cebes", "Freda"};
 
     public UsuarioService(HttpServletRequest oRequest) {
-        this.oRequest = oRequest;
+        super(oRequest);
     }
 
     public String login() {

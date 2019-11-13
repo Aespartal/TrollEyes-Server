@@ -57,40 +57,46 @@ public class CompraBean implements BeanInterface {
         this.setCantidad(oResultSet.getInt("cantidad"));
         return this;
     }
-    
+
     @Override
     public PreparedStatement orderSQL(List<String> orden, PreparedStatement oPreparedStatement, int i) throws SQLException {
-                        if (orden.get((i-1)).equalsIgnoreCase("id")) {
-        			oPreparedStatement.setInt(i, 1);
-        		} else if (orden.get((i-1)).equalsIgnoreCase("cantidad")) {
-        			oPreparedStatement.setInt(i, 2);
-        		} else if (orden.get((i-1)).equalsIgnoreCase("producto_id")) {
-        			oPreparedStatement.setInt(i, 3);
-        		} else if (orden.get((i-1)).equalsIgnoreCase("factura_id")) {
-        			oPreparedStatement.setInt(i, 4);
-        		}
-                        return oPreparedStatement;
+        if (orden.get((i - 1)).equalsIgnoreCase("id")) {
+            oPreparedStatement.setInt(i, 1);
+        } else if (orden.get((i - 1)).equalsIgnoreCase("cantidad")) {
+            oPreparedStatement.setInt(i, 2);
+        } else if (orden.get((i - 1)).equalsIgnoreCase("producto_id")) {
+            oPreparedStatement.setInt(i, 3);
+        } else if (orden.get((i - 1)).equalsIgnoreCase("factura_id")) {
+            oPreparedStatement.setInt(i, 4);
+        }
+        return oPreparedStatement;
     }
-    
+
+    @Override
     public String getField4Insert() throws SQLException {
         return "INSERT INTO compra (cantidad,producto_id,factura_id) VALUES(?,?,?)";
     }
-    
-    public BeanInterface setField4Insert() throws SQLException {
-        this.setString(1, oProductoBean.getCodigo());
-        this.setInt(2, oProductoBean.getExistencias());
-        this.setDouble(3, oProductoBean.getPrecio());
-        this.setString(4, oProductoBean.getImagen());
-        this.setString(5, oProductoBean.getDescripcion());
-        this.setInt(6, oProductoBean.getTipo_producto_id());
-        return this;
+
+    @Override
+    public int setField4Insert(PreparedStatement oPreparedStatement) throws SQLException {
+        oPreparedStatement.setInt(1, this.getCantidad());
+        oPreparedStatement.setInt(2, this.producto_id);
+        oPreparedStatement.setInt(3, this.factura_id);
+        int iResult = oPreparedStatement.executeUpdate();
+        return iResult;
     }
-    
+
+    @Override
     public String getField4Update() throws SQLException {
-        return "INSERT INTO compra (cantidad,producto_id,factura_id) VALUES(?,?,?)";
+        return "UPDATE compra SET (cantidad,producto_id,factura_id) VALUES(?,?,?) WHERE id=?";
     }
-    
-    public TipoUsuarioBean setField4Update() throws SQLException {
-        return ;
+
+    @Override
+    public int setField4Update(PreparedStatement oPreparedStatement) throws SQLException {
+        oPreparedStatement.setInt(1, this.getCantidad());
+        oPreparedStatement.setInt(2, this.producto_id);
+        oPreparedStatement.setInt(3, this.factura_id);
+        int iResult = oPreparedStatement.executeUpdate();
+        return iResult;
     }
 }

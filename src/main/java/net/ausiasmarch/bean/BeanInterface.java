@@ -17,10 +17,10 @@ public interface BeanInterface {
     
     public String getField4Insert() throws SQLException;
     
-    public BeanInterface setField4Insert() throws SQLException;
+   public int setField4Insert(PreparedStatement oPreparedStatement) throws SQLException;
     
     public String getField4Update() throws SQLException;
     
-    public BeanInterface setField4Update() throws SQLException;
+     public int setField4Update(PreparedStatement oPreparedStatement) throws SQLException;
 
 }

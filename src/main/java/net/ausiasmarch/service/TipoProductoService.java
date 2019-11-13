@@ -4,18 +4,18 @@ import javax.servlet.http.HttpServletRequest;
 
 public class TipoProductoService extends GenericService {
 
-	HttpServletRequest oRequest = null;
+    HttpServletRequest oRequest = null;
+
+    public TipoProductoService(HttpServletRequest oRequest) {
+        super(oRequest);
+    }
+
 //	String[] frasesInicio = { "El fin de la estructura ", "La agrupacion logica ", "El objetivo conjunto ",
 //			"Una dinámica apropiada " };
 //	String[] frasesMitad = { "dirige los objetivos ", "garantiza el deseo ", "mejora la capacidad ",
 //			"recupera el concepto " };
 //	String[] frasesFinal = { "de la reestructuracion requerida. ", "en la aplicación. ",
 //			"por sus innumerables beneficios. ", "contra la inficiencia. " };
-
-	public TipoProductoService(HttpServletRequest oRequest) {
-		this.oRequest = oRequest;
-	}
-
 //	public String fill() throws SQLException {
 //		ConnectionInterface oConnectionImplementation = ConnectionFactory
 //				.getConnection(ConnectionSettings.connectionPool);
@@ -43,7 +43,6 @@ public class TipoProductoService extends GenericService {
 //		}
 //		return oGson.toJson(oResponseBean);
 //	}
-
 //	private String generaTexto(int longitud) {
 //		String fraseRandom = "";
 //		for (int i = 0; i < longitud; i++) {

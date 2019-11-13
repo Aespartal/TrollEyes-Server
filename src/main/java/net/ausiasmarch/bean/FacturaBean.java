@@ -28,69 +28,77 @@ public class FacturaBean implements BeanInterface {
         this.id = id;
     }
 
-	public Date getFecha() {
-		return fecha;
-	}
+    public Date getFecha() {
+        return fecha;
+    }
 
-	public void setFecha(Date fecha) {
-		this.fecha = fecha;
-	}
+    public void setFecha(Date fecha) {
+        this.fecha = fecha;
+    }
 
-	public Integer getIva() {
-		return iva;
-	}
+    public Integer getIva() {
+        return iva;
+    }
 
-	public void setIva(Integer iva) {
-		this.iva = iva;
-	}
+    public void setIva(Integer iva) {
+        this.iva = iva;
+    }
 
-	public Integer getUsuario_id() {
-		return usuario_id;
-	}
+    public Integer getUsuario_id() {
+        return usuario_id;
+    }
 
-	public void setUsuario_id(Integer usuario_id) {
-		this.usuario_id = usuario_id;
-	}
+    public void setUsuario_id(Integer usuario_id) {
+        this.usuario_id = usuario_id;
+    }
 
     @Override
     public FacturaBean fill(ResultSet oResultSet) throws SQLException {
-            this.setId(oResultSet.getInt("id"));
-            this.setFecha(oResultSet.getDate("fecha"));
-            this.setIva(oResultSet.getInt("iva"));
-            return this;
+        this.setId(oResultSet.getInt("id"));
+        this.setFecha(oResultSet.getDate("fecha"));
+        this.setIva(oResultSet.getInt("iva"));
+        return this;
     }
 
     @Override
     public PreparedStatement orderSQL(List<String> orden, PreparedStatement oPreparedStatement, int i) throws SQLException {
-                        if (orden.get((i-1)).equalsIgnoreCase("id")) {
-        			oPreparedStatement.setInt(i, 1);
-        		} else if (orden.get((i-1)).equalsIgnoreCase("fecha")) {
-        			oPreparedStatement.setInt(i, 2);
-        		} else if (orden.get((i-1)).equalsIgnoreCase("iva")) {
-        			oPreparedStatement.setInt(i, 3);
-        		} else if (orden.get((i-1)).equalsIgnoreCase("usuario_id")) {
-        			oPreparedStatement.setInt(i, 4);
-        		}
-                        return oPreparedStatement;
+        if (orden.get((i - 1)).equalsIgnoreCase("id")) {
+            oPreparedStatement.setInt(i, 1);
+        } else if (orden.get((i - 1)).equalsIgnoreCase("fecha")) {
+            oPreparedStatement.setInt(i, 2);
+        } else if (orden.get((i - 1)).equalsIgnoreCase("iva")) {
+            oPreparedStatement.setInt(i, 3);
+        } else if (orden.get((i - 1)).equalsIgnoreCase("usuario_id")) {
+            oPreparedStatement.setInt(i, 4);
+        }
+        return oPreparedStatement;
     }
 
     @Override
     public String getField4Insert() throws SQLException {
-        return "(fecha,iva,usuario_id)";
+        return "INSERT INTO factura (fecha,iva,usuario_id) VALUES(?,?,?)";
     }
-    
+
     @Override
-    public BeanInterface setField4Insert() throws SQLException {
-        return ;
+    public int setField4Insert(PreparedStatement oPreparedStatement) throws SQLException {
+        oPreparedStatement.setDate(1, new java.sql.Date(this.getFecha().getTime()));
+        oPreparedStatement.setInt(2, this.getIva());
+        oPreparedStatement.setInt(3, this.getUsuario_id());
+        int iResult = oPreparedStatement.executeUpdate();
+        return iResult;
     }
-    
+
     @Override
     public String getField4Update() throws SQLException {
-        return "INSERT INTO compra (cantidad,producto_id,factura_id) VALUES(?,?,?)";
+        return "UPDATE factura SET (cantidad,producto_id,factura_id) VALUES(?,?,?) WHERE id=?";
     }
-    
+
     @Override
-    public BeanInterface setField4Update() throws SQLException {
-        return ;
+    public int setField4Update(PreparedStatement oPreparedStatement) throws SQLException {
+        oPreparedStatement.setDate(1, new java.sql.Date(this.getFecha().getTime()));
+        oPreparedStatement.setInt(2, this.getIva());
+        oPreparedStatement.setInt(3, this.getUsuario_id());
+        int iResult = oPreparedStatement.executeUpdate();
+        return iResult;
     }
 }

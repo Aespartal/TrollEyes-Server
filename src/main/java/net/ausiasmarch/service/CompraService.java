@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import net.ausiasmarch.bean.CompraBean;
 import net.ausiasmarch.bean.ResponseBean;
 import net.ausiasmarch.connection.ConnectionInterface;
-import net.ausiasmarch.dao.CompraDao;
 import net.ausiasmarch.dao.DaoInterface;
 import net.ausiasmarch.factory.ConnectionFactory;
 import net.ausiasmarch.factory.DaoFactory;

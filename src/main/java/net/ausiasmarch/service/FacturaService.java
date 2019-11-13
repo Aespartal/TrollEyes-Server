@@ -12,7 +12,6 @@ import net.ausiasmarch.bean.FacturaBean;
 import net.ausiasmarch.bean.ResponseBean;
 import net.ausiasmarch.connection.ConnectionInterface;
 import net.ausiasmarch.dao.DaoInterface;
-import net.ausiasmarch.dao.FacturaDao;
 import net.ausiasmarch.factory.ConnectionFactory;
 import net.ausiasmarch.factory.DaoFactory;
 import net.ausiasmarch.factory.GsonFactory;

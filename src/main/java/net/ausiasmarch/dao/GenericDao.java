@@ -45,7 +45,7 @@ public class GenericDao implements DaoInterface {
     @Override
     public List<BeanInterface> getAll() throws SQLException {
         Statement stmt = oConnection.createStatement();
-        ResultSet oResultSet = stmt.executeQuery("SELECT * FROM "+ ob +" LIMIT 100");
+        ResultSet oResultSet = stmt.executeQuery("SELECT * FROM " + ob + " LIMIT 100");
         BeanInterface oBean;
         List<BeanInterface> listaBean = new ArrayList();
         while (oResultSet.next()) {
@@ -53,7 +53,8 @@ public class GenericDao implements DaoInterface {
             oBean = oBean.fill(oResultSet);
             listaBean.add(oBean);
         }
-        return listaBean;    }
+        return listaBean;
+    }
 
     @Override
     public int getCount() throws SQLException {
@@ -71,7 +72,7 @@ public class GenericDao implements DaoInterface {
 
     @Override
     public ArrayList getPage(int page, int limit, List<String> orden) throws SQLException {
-PreparedStatement oPreparedStatement;
+        PreparedStatement oPreparedStatement;
         ResultSet oResultSet;
         int offset;
 
@@ -82,30 +83,30 @@ PreparedStatement oPreparedStatement;
         }
 
         if (orden == null) {
-        	oPreparedStatement = oConnection.prepareStatement("SELECT * FROM " + ob + " LIMIT ? OFFSET ?");
-        	oPreparedStatement.setInt(1, limit);
+            oPreparedStatement = oConnection.prepareStatement("SELECT * FROM " + ob + " LIMIT ? OFFSET ?");
+            oPreparedStatement.setInt(1, limit);
             oPreparedStatement.setInt(2, offset);
         } else {
-        	String sqlQuery = "SELECT * FROM " + ob + " ORDER BY ";
-        	for (int i = 1; i <= orden.size(); i++) {
-        		if (orden.get((i-1)).equalsIgnoreCase("asc")) {
-        			sqlQuery += "ASC ";
-        		} else if (orden.get((i-1)).equalsIgnoreCase("desc")) {
-        			sqlQuery += "DESC ";
-        		} else {
-        			sqlQuery += "? ";
-        		}
-        	}
-        	sqlQuery += "LIMIT ? OFFSET ?";
-        	oPreparedStatement = oConnection.prepareStatement(sqlQuery);
-                BeanInterface oBean = null;
-        	for (int i = 1; i < orden.size(); i++) {
-                        oPreparedStatement = oBean.orderSQL(orden, oPreparedStatement, i);
-        	}
-        	oPreparedStatement.setInt((orden.size()), limit);
-            oPreparedStatement.setInt((orden.size()+1), offset);
+            String sqlQuery = "SELECT * FROM " + ob + " ORDER BY ";
+            for (int i = 1; i <= orden.size(); i++) {
+                if (orden.get((i - 1)).equalsIgnoreCase("asc")) {
+                    sqlQuery += "ASC ";
+                } else if (orden.get((i - 1)).equalsIgnoreCase("desc")) {
+                    sqlQuery += "DESC ";
+                } else {
+                    sqlQuery += "? ";
+                }
+            }
+            sqlQuery += "LIMIT ? OFFSET ?";
+            oPreparedStatement = oConnection.prepareStatement(sqlQuery);
+            BeanInterface oBean = null;
+            for (int i = 1; i < orden.size(); i++) {
+                oPreparedStatement = oBean.orderSQL(orden, oPreparedStatement, i);
+            }
+            oPreparedStatement.setInt((orden.size()), limit);
+            oPreparedStatement.setInt((orden.size() + 1), offset);
         }
-        
+
         oResultSet = oPreparedStatement.executeQuery();
 
         ArrayList<BeanInterface> oBeanList = new ArrayList<>();
@@ -120,20 +121,14 @@ PreparedStatement oPreparedStatement;
     }
 
     @Override
-    public Integer insert(BeanInterface oBeanParam) throws SQLException {
+    public Integer insert(BeanInterface oBean) throws SQLException {
         PreparedStatement oPreparedStatement;
-        String strsql = "INSERT INTO " + ob + " " + param + " " + valores;
+        oBean = BeanFactory.getBean(ob);
+        String strsql = oBean.getField4Insert();
         oPreparedStatement = oConnection.prepareStatement(strsql);
-        ProductoBean oProductoBean = (ProductoBean) oProductBeanParam;
-        oPreparedStatement.setString(1, oProductoBean.getCodigo());
-        oPreparedStatement.setInt(2, oProductoBean.getExistencias());
-        oPreparedStatement.setDouble(3, oProductoBean.getPrecio());
-        oPreparedStatement.setString(4, oProductoBean.getImagen());
-        oPreparedStatement.setString(5, oProductoBean.getDescripcion());
-        oPreparedStatement.setInt(6, oProductoBean.getTipo_producto_id());
-
-        int iResult = oPreparedStatement.executeUpdate();
-        return iResult;    }
+        int iResult = oBean.setField4Insert(oPreparedStatement);
+        return iResult;
+    }
 
     @Override
     public Integer remove(int id) throws SQLException {
@@ -149,16 +144,11 @@ PreparedStatement oPreparedStatement;
 
     @Override
     public Integer update(BeanInterface oBean) throws SQLException {
-        PreparedStatement oPreparedStatement = null;
-        String strSQL = "UPDATE compra SET cantidad = ?, producto_id=?, factura_id=? WHERE id = ?";
-        int iResult;
-        oPreparedStatement = oConnection.prepareStatement(strSQL, Statement.RETURN_GENERATED_KEYS);
-        CompraBean oCompraBean = (CompraBean) oCompraBeanParam;
-        oPreparedStatement.setInt(1, oCompraBean.getCantidad()); 
-        oPreparedStatement.setInt(2, oCompraBean.getProducto_id());
-        oPreparedStatement.setInt(3, oCompraBean.getFactura_id());
-        oPreparedStatement.setInt(4, oCompraBean.getId());
-        iResult = oPreparedStatement.executeUpdate();
+        PreparedStatement oPreparedStatement;
+        oBean = BeanFactory.getBean(ob);
+        String strsql = oBean.getField4Update();
+        oPreparedStatement = oConnection.prepareStatement(strsql, Statement.RETURN_GENERATED_KEYS);
+        int iResult = oBean.setField4Update(oPreparedStatement);
         return iResult;
     }
 

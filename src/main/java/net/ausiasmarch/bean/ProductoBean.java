@@ -91,42 +91,56 @@ public class ProductoBean implements BeanInterface {
         this.setDescripcion(oResultSet.getString("descripcion"));
         return this;
     }
-    
+
     @Override
     public PreparedStatement orderSQL(List<String> orden, PreparedStatement oPreparedStatement, int i) throws SQLException {
-                        if (orden.get((i-1)).equalsIgnoreCase("id")) {
-        			oPreparedStatement.setInt(i, 1);
-        		} else if (orden.get((i-1)).equalsIgnoreCase("codigo")) {
-        			oPreparedStatement.setInt(i, 2);
-        		} else if (orden.get((i-1)).equalsIgnoreCase("existencias")) {
-        			oPreparedStatement.setInt(i, 3);
-        		} else if (orden.get((i-1)).equalsIgnoreCase("precio")) {
-        			oPreparedStatement.setInt(i, 4);
-        		} else if (orden.get((i-1)).equalsIgnoreCase("imagen")) {
-        			oPreparedStatement.setInt(i, 5);
-        		} else if (orden.get((i-1)).equalsIgnoreCase("descripcion")) {
-        			oPreparedStatement.setInt(i, 6);
-        		}
-                        return oPreparedStatement;
+        if (orden.get((i - 1)).equalsIgnoreCase("id")) {
+            oPreparedStatement.setInt(i, 1);
+        } else if (orden.get((i - 1)).equalsIgnoreCase("codigo")) {
+            oPreparedStatement.setInt(i, 2);
+        } else if (orden.get((i - 1)).equalsIgnoreCase("existencias")) {
+            oPreparedStatement.setInt(i, 3);
+        } else if (orden.get((i - 1)).equalsIgnoreCase("precio")) {
+            oPreparedStatement.setInt(i, 4);
+        } else if (orden.get((i - 1)).equalsIgnoreCase("imagen")) {
+            oPreparedStatement.setInt(i, 5);
+        } else if (orden.get((i - 1)).equalsIgnoreCase("descripcion")) {
+            oPreparedStatement.setInt(i, 6);
+        }
+        return oPreparedStatement;
     }
-    
+
     @Override
     public String getField4Insert() throws SQLException {
         return "INSERT INTO producto (codigo,existencias,precio,imagen,descripcion,tipo_producto_id) VALUES(?,?,?,?,?,?)";
     }
-    
+
     @Override
-    public BeanInterface setField4Insert() throws SQLException {
-        return ;
+    public int setField4Insert(PreparedStatement oPreparedStatement) throws SQLException {
+        oPreparedStatement.setString(1, this.getCodigo());
+        oPreparedStatement.setInt(2, this.getExistencias());
+        oPreparedStatement.setDouble(3, this.getPrecio());
+        oPreparedStatement.setString(4, this.getImagen());
+        oPreparedStatement.setString(5, this.getDescripcion());
+        oPreparedStatement.setInt(6, this.getTipo_producto_id());
+        int iResult = oPreparedStatement.executeUpdate();
+        return iResult;
     }
-    
+
     @Override
     public String getField4Update() throws SQLException {
-        return "INSERT INTO compra (cantidad,producto_id,factura_id) VALUES(?,?,?)";
+        return "UPDATE producto SET (cantidad,producto_id,factura_id) VALUES(?,?,?) WHERE id=?";
     }
-    
+
     @Override
-    public BeanInterface setField4Update() throws SQLException {
-        return ;
+    public int setField4Update(PreparedStatement oPreparedStatement) throws SQLException {
+        oPreparedStatement.setString(1, this.getCodigo());
+        oPreparedStatement.setInt(2, this.getExistencias());
+        oPreparedStatement.setDouble(3, this.getPrecio());
+        oPreparedStatement.setString(4, this.getImagen());
+        oPreparedStatement.setString(5, this.getDescripcion());
+        oPreparedStatement.setInt(6, this.getTipo_producto_id());
+        int iResult = oPreparedStatement.executeUpdate();
+        return iResult;
     }
 }
