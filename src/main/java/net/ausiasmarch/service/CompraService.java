@@ -8,7 +8,9 @@ import net.ausiasmarch.bean.CompraBean;
 import net.ausiasmarch.bean.ResponseBean;
 import net.ausiasmarch.connection.ConnectionInterface;
 import net.ausiasmarch.dao.CompraDao;
+import net.ausiasmarch.dao.DaoInterface;
 import net.ausiasmarch.factory.ConnectionFactory;
+import net.ausiasmarch.factory.DaoFactory;
 import net.ausiasmarch.factory.GsonFactory;
 import net.ausiasmarch.setting.ConnectionSettings;
 
@@ -30,7 +32,7 @@ public class CompraService extends GenericService {
         ConnectionInterface oConnectionImplementation = ConnectionFactory
                 .getConnection(ConnectionSettings.connectionPool);
         Connection oConnection = oConnectionImplementation.newConnection();
-        CompraDao oCompraDao = new CompraDao(oConnection);
+        DaoInterface oDao = DaoFactory.getDao(ob, oConnection);
         Gson oGson = GsonFactory.getGson();
 //		Date date1 = new GregorianCalendar(2014, Calendar.JANUARY, 1).getTime();
 //		Date date2 = new GregorianCalendar(2019, Calendar.DECEMBER, 31).getTime();
@@ -45,7 +47,7 @@ public class CompraService extends GenericService {
             oCompraBean.setCantidad(numAleatorio);
             oCompraBean.setProducto_id(alProducto_id);
             oCompraBean.setFactura_id(alFactura_id);
-            oCompraDao.insert(oCompraBean);
+            oDao.insert(oCompraBean);
         }
         ResponseBean oResponseBean = new ResponseBean(200, "Insertados los registros con exito");
         if (oConnection != null) {

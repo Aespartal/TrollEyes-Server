@@ -8,8 +8,10 @@ import javax.servlet.http.HttpSession;
 import net.ausiasmarch.bean.ResponseBean;
 import net.ausiasmarch.bean.UsuarioBean;
 import net.ausiasmarch.connection.ConnectionInterface;
+import net.ausiasmarch.dao.DaoInterface;
 import net.ausiasmarch.dao.UsuarioDao;
 import net.ausiasmarch.factory.ConnectionFactory;
+import net.ausiasmarch.factory.DaoFactory;
 import net.ausiasmarch.factory.GsonFactory;
 import net.ausiasmarch.setting.ConnectionSettings;
 
@@ -65,7 +67,7 @@ public class UsuarioService extends GenericService {
         ConnectionInterface oConnectionImplementation = ConnectionFactory
                 .getConnection(ConnectionSettings.connectionPool);
         Connection oConnection = oConnectionImplementation.newConnection();
-        UsuarioDao oPostDao = new UsuarioDao(oConnection);
+        DaoInterface oDao = DaoFactory.getDao(ob, oConnection);
         Gson oGson = GsonFactory.getGson();
         int numPost = Integer.parseInt(oRequest.getParameter("number"));
         for (int i = 0; i < numPost; i++) {
@@ -85,7 +87,7 @@ public class UsuarioService extends GenericService {
             oUsuarioBean.setLogin(username);
             oUsuarioBean.setPassword("da8ab09ab4889c6208116a675cad0b13e335943bd7fc418782d054b32fdfba04");
             oUsuarioBean.setTipo_usuario_id(2);
-            oPostDao.insert(oUsuarioBean);
+            oDao.insert(oUsuarioBean);
         }
         ResponseBean oResponseBean = new ResponseBean(200, "Insertados los registros con exito");
         if (oConnection != null) {

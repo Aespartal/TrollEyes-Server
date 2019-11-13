@@ -5,11 +5,15 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import javax.servlet.http.HttpServletRequest;
+import net.ausiasmarch.bean.BeanInterface;
 import net.ausiasmarch.bean.ProductoBean;
 import net.ausiasmarch.bean.ResponseBean;
 import net.ausiasmarch.connection.ConnectionInterface;
+import net.ausiasmarch.dao.DaoInterface;
 import net.ausiasmarch.dao.ProductoDao;
+import net.ausiasmarch.factory.BeanFactory;
 import net.ausiasmarch.factory.ConnectionFactory;
+import net.ausiasmarch.factory.DaoFactory;
 import net.ausiasmarch.factory.GsonFactory;
 import net.ausiasmarch.setting.ConnectionSettings;
 
@@ -31,13 +35,13 @@ public class ProductoService extends GenericService {
 		ConnectionInterface oConnectionImplementation = ConnectionFactory
 				.getConnection(ConnectionSettings.connectionPool);
 		Connection oConnection = oConnectionImplementation.newConnection();
-		ProductoDao oProductoDao = new ProductoDao(oConnection);
+		DaoInterface oDao = DaoFactory.getDao(ob, oConnection);
 		Gson oGson = GsonFactory.getGson();
 //		Date date1 = new GregorianCalendar(2014, Calendar.JANUARY, 1).getTime();
 //		Date date2 = new GregorianCalendar(2019, Calendar.DECEMBER, 31).getTime();
 		int numProd = Integer.parseInt(oRequest.getParameter("number"));
 		for (int i = 0; i < numProd; i++) {
-			ProductoBean oProductoBean = new ProductoBean();
+			BeanInterface oBean = BeanFactory.getBean(ob);
 //			Date randomDate = new Date(ThreadLocalRandom.current().nextLong(date1.getTime(), date2.getTime()));
 			 int numAleatorio=(int)Math.floor(Math.random()*(100000-999999)+999999);
 			 int numAleatorio1=(int)Math.floor(Math.random()*(0-999)+999);
@@ -47,13 +51,13 @@ public class ProductoService extends GenericService {
 			int alTipoProducto_id = (int) Math.floor(Math.random()*12)+1;
 			
 			
-			oProductoBean.setCodigo(numAleatorio+"");
-			oProductoBean.setExistencias(numAleatorio1);
-			oProductoBean.setPrecio(precioAleatorio);
-			oProductoBean.setImagen("link a una imagen");
-			oProductoBean.setDescripcion(generaTexto(1));
-			oProductoBean.setTipo_producto_id(alTipoProducto_id);
-			oProductoDao.insert(oProductoBean);
+			oBean.setCodigo(numAleatorio+"");
+			oBean.setExistencias(numAleatorio1);
+			oBean.setPrecio(precioAleatorio);
+			oBean.setImagen("link a una imagen");
+			oBean.setDescripcion(generaTexto(1));
+			oBean.setTipo_producto_id(alTipoProducto_id);
+			oDao.insert(oBean);
 		}
 		ResponseBean oResponseBean = new ResponseBean(200, "Insertados los registros con exito");
 		if (oConnection != null) {
