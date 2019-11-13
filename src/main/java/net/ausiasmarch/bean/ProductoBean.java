@@ -109,7 +109,7 @@ public class ProductoBean implements BeanInterface {
         		}
                         return oPreparedStatement;
     }
-
+    
     @Override
     public String getField4Insert() throws SQLException {
         return "INSERT INTO producto (codigo,existencias,precio,imagen,descripcion,tipo_producto_id) VALUES(?,?,?,?,?,?)";
