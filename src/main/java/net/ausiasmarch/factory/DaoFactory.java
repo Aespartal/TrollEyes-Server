@@ -1,36 +1,30 @@
 package net.ausiasmarch.factory;
 
 import java.sql.Connection;
-import net.ausiasmarch.dao.CompraDao;
 import net.ausiasmarch.dao.DaoInterface;
-import net.ausiasmarch.dao.FacturaDao;
-import net.ausiasmarch.dao.ProductoDao;
-import net.ausiasmarch.dao.TipoProductoDao;
-import net.ausiasmarch.dao.TipoUsuarioDao;
-import net.ausiasmarch.dao.UsuarioDao;
-
+import net.ausiasmarch.dao.GenericDao;
 
 public class DaoFactory {
       public static DaoInterface getDao(String ob,Connection oConnection) {
         DaoInterface oDao = null;
         switch (ob) {
             case "producto":
-                oDao = new ProductoDao(oConnection);
+                oDao = new GenericDao(ob, oConnection);
                 break;
                 case "factura":
-                oDao = new FacturaDao(oConnection);
+                oDao = new GenericDao(ob, oConnection);
                 break;
                 case "compra":
-                oDao = new CompraDao(oConnection);
+                oDao = new GenericDao(ob, oConnection);
                 break;
                 case "tipo_producto":
-                oDao = new TipoProductoDao(oConnection);
+                oDao = new GenericDao(ob, oConnection);
                 break;
                 case "tipo_usuario":
-                oDao = new TipoUsuarioDao(oConnection);
+                oDao = new GenericDao(ob, oConnection);
                 break;
                 case "usuario":
-                oDao = new UsuarioDao(oConnection);
+                oDao = new GenericDao(ob, oConnection);
                 break;
         }
         return oDao ;

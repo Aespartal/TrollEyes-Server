@@ -4,8 +4,8 @@ import java.sql.Connection;
 
 public class FacturaDao extends GenericDao {
 
-    public FacturaDao(Connection oConnection) {
-        super(oConnection);
+    public FacturaDao(String ob, Connection oConnection) {
+        super(ob, oConnection);
     }
 
 }

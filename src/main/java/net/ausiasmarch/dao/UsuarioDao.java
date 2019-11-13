@@ -4,7 +4,8 @@ import java.sql.Connection;
 
 public class UsuarioDao extends GenericDao {
 
-    public UsuarioDao(Connection oConnection) {
-        super(oConnection);
+    public UsuarioDao(String ob, Connection oConnection) {
+        super(ob, oConnection);
     }
+
 }

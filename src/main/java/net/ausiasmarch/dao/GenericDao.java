@@ -15,13 +15,9 @@ public class GenericDao implements DaoInterface {
     Connection oConnection = null;
     String ob = null;
 
-    public GenericDao(Connection oConnection, String ob) {
+    public GenericDao(String ob,Connection oConnection) {
         this.oConnection = oConnection;
         this.ob = ob;
-    }
-
-    public GenericDao(Connection oConnection) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override

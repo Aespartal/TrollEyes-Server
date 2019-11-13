@@ -4,8 +4,8 @@ import java.sql.Connection;
 
 public class ProductoDao extends GenericDao {
 
-    public ProductoDao(Connection oConnection) {
-        super(oConnection);
+    public ProductoDao(String ob, Connection oConnection) {
+        super(ob, oConnection);
     }
 
 }
