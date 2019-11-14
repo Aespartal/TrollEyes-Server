@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 public class TipoUsuarioService extends GenericService implements ServiceInterface {
 
-	public TipoUsuarioService(HttpServletRequest oRequest) {
-		super(oRequest);
-	}
+    public TipoUsuarioService(HttpServletRequest oRequest) {
+        super(oRequest);
+    }
 }

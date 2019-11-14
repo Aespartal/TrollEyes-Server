@@ -21,6 +21,7 @@ public class FacturaService extends GenericService implements ServiceInterface {
     public FacturaService(HttpServletRequest oRequest) {
         super(oRequest);
     }
+
     public String fill() throws SQLException {
         ConnectionInterface oConnectionImplementation = ConnectionFactory
                 .getConnection(ConnectionSettings.connectionPool);

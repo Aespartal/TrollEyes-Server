@@ -80,14 +80,14 @@ public class CompraBean implements BeanInterface {
         this.setCantidad(oResultSet.getInt("cantidad"));
         this.setFactura_id(oResultSet.getInt("factura_id"));
         this.setProducto_id(oResultSet.getInt("producto_id"));
-        
+
         if (spread > 0) {
             spread--;
             ProductoDao oProductoDao = new ProductoDao(oConnection);
             ProductoBean oProductoBean = new ProductoBean();
             oProductoBean = (ProductoBean) oProductoDao.get(this.producto_id);
             this.producto_obj = oProductoBean;
-            
+
             FacturaDao oFacturaDao = new FacturaDao(oConnection);
             FacturaBean oFacturaBean = new FacturaBean();
             oFacturaBean = (FacturaBean) oFacturaDao.get(this.factura_id);
