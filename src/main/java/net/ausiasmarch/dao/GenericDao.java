@@ -40,19 +40,6 @@ public class GenericDao implements DaoInterface {
     }
 
     @Override
-    public List<BeanInterface> getAll() throws SQLException {
-        Statement stmt = oConnection.createStatement();
-        ResultSet oResultSet = stmt.executeQuery("SELECT * FROM producto LIMIT 100");
-        List<BeanInterface> listaBean = new ArrayList<BeanInterface>();
-        while (oResultSet.next()) {
-            BeanInterface oBean = BeanFactory.getBean(ob);
-            oBean = oBean.fill(oResultSet, oConnection, ConfigurationSettings.spread);
-            listaBean.add(oBean);
-        }
-        return listaBean;
-    }
-
-    @Override
     public int getCount() throws SQLException {
         PreparedStatement oPreparedStatement;
         ResultSet oResultSet;

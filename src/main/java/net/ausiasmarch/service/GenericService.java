@@ -157,37 +157,6 @@ public class GenericService implements ServiceInterface {
     }
 
     @Override
-    public String getAll() throws Exception {
-        ConnectionInterface oConnectionImplementation = null;
-        Connection oConnection = null;
-        try {
-            oConnectionImplementation = ConnectionFactory.getConnection(ConnectionSettings.connectionPool);
-            oConnection = oConnectionImplementation.newConnection();
-            DaoInterface oDao = DaoFactory.getDao(ob, oConnection);
-            Gson oGson = GsonFactory.getGson();
-            String message = "";
-            List<BeanInterface> listaBean = oDao.getAll();
-            if (listaBean == null) {
-                message = "\"La lista está vacia\"";
-            } else {
-                message = oGson.toJson(listaBean);
-            }
-            return "{\"status\":200,\"message\":" + message + "}";
-        } catch (Exception ex) {
-            String msg = this.getClass().getName() + " ob: " + ob + "; getAll method ";
-            throw new Exception(msg, ex);
-        } finally {
-            if (oConnection != null) {
-                oConnection.close();
-            }
-            if (oConnectionImplementation != null) {
-                oConnectionImplementation.disposeConnection();
-            }
-        }
-
-    }
-
-    @Override
     public String insert() throws Exception {
         HttpSession oSession = oRequest.getSession();
         ResponseBean oResponseBean = null;

@@ -41,9 +41,6 @@ public class ServiceCall {
                 case "getcount":
                     strResult = oUsuarioService.getCount();
                     break;
-                case "getall":
-                    strResult = oUsuarioService.getAll();
-                    break;
                 case "insert":
                     strResult = oUsuarioService.insert();
                     break;
@@ -90,9 +87,6 @@ public class ServiceCall {
                 case "getcount":
                     strResult = oCompraService.getCount();
                     break;
-                case "getall":
-                    strResult = oCompraService.getAll();
-                    break;
                 case "insert":
                     strResult = oCompraService.insert();
                     break;
@@ -119,9 +113,6 @@ public class ServiceCall {
                     break;
                 case "getcount":
                     strResult = oProductoService.getCount();
-                    break;
-                case "getall":
-                    strResult = oProductoService.getAll();
                     break;
                 case "insert":
                     strResult = oProductoService.insert();
@@ -150,9 +141,6 @@ public class ServiceCall {
                 case "getcount":
                     strResult = oTipoProductoService.getCount();
                     break;
-                case "getall":
-                    strResult = oTipoProductoService.getAll();
-                    break;
                 case "insert":
                     strResult = oTipoProductoService.insert();
                     break;
@@ -171,9 +159,6 @@ public class ServiceCall {
             switch (op) {
                 case "get":
                     strResult = oTipoUsuarioService.get();
-                    break;
-                case "getall":
-                    strResult = oTipoUsuarioService.getAll();
                     break;
                 case "getcount":
                     strResult = oTipoUsuarioService.getCount();
@@ -197,9 +182,6 @@ public class ServiceCall {
             switch (op) {
                 case "get":
                     strResult = oFacturaService.get();
-                    break;
-                case "getall":
-                    strResult = oFacturaService.getAll();
                     break;
                 case "getcount":
                     strResult = oFacturaService.getCount();

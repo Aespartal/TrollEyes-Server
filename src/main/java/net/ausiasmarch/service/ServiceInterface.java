@@ -4,8 +4,6 @@ public interface ServiceInterface {
 
     String get() throws Exception;
 
-    String getAll() throws Exception;
-
     String getCount() throws Exception;
 
     String getPage() throws Exception;
