@@ -1,3 +1,4 @@
+
 package net.ausiasmarch.controller;
 
 import com.google.gson.Gson;
@@ -19,7 +20,9 @@ import net.ausiasmarch.setting.ConnectionSettings;
 
 public class Json extends HttpServlet {
 
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+	private static final long serialVersionUID = 1L;
+
+	protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
             Class.forName("com.mysql.jdbc.Driver");
@@ -33,7 +36,7 @@ public class Json extends HttpServlet {
             try (PrintWriter out = response.getWriter()) {
                 out.println("<!DOCTYPE html>");
                 out.println("<html><head><title>TrollEyes</title></head><body>");
-                out.println("<h1>Bienvenidos al servidor WEB TrollEYES</h1>");
+                out.println("<h1>Bienvenidos al servidor WEB TrollEyes</h1>");
                 ConnectionInterface oConnectionImplementation = null;
                 Connection oConnection = null;
                 try {
@@ -75,7 +78,7 @@ public class Json extends HttpServlet {
                         out.print(ex);
                         ex.printStackTrace();
                     } else {
-                        ResponseBean oResponseBean = new ResponseBean(500, "TrollEYES ERROR: Please contact your administrator");
+                        ResponseBean oResponseBean = new ResponseBean(500, "Trolleyes ERROR: Please contact your administrator");
                         Gson oGson = new Gson();
                         out.print(oGson.toJson(oResponseBean));
                     }

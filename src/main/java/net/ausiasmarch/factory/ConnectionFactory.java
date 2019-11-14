@@ -1,3 +1,4 @@
+
 package net.ausiasmarch.factory;
 
 import net.ausiasmarch.connection.ConnectionInterface;
@@ -7,6 +8,7 @@ import net.ausiasmarch.connection.implementation.DBCPConnectionImplementation;
 import net.ausiasmarch.connection.implementation.HikariConnectionImplementation;
 import net.ausiasmarch.connection.implementation.ViburConnectionImplementation;
 import net.ausiasmarch.setting.ConnectionSettings;
+
 
 public class ConnectionFactory {
 
@@ -33,5 +35,6 @@ public class ConnectionFactory {
                 break;
         }
         return oConnectionInterface;
+
     }
 }

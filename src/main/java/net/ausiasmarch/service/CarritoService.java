@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import net.ausiasmarch.bean.CompraBean;
+import net.ausiasmarch.bean.ItemBean;
 import net.ausiasmarch.bean.ResponseBean;
 import net.ausiasmarch.factory.GsonFactory;
 
@@ -27,19 +27,20 @@ public class CarritoService {
         Gson oGson = GsonFactory.getGson();
         try {
             HttpSession oSession = oRequest.getSession();
-            ArrayList<CompraBean> alCarrito = (ArrayList<CompraBean>) oSession.getAttribute("carrito");
+            @SuppressWarnings("unchecked")
+			ArrayList<ItemBean> alCarrito = (ArrayList<ItemBean>) oSession.getAttribute("carrito");
             if (alCarrito == null) {
-                alCarrito = new ArrayList<CompraBean>();
+                alCarrito = new ArrayList<ItemBean>();
             }
             int id = Integer.parseInt(oRequest.getParameter("id"));
             int cantidad = Integer.parseInt(oRequest.getParameter("cantidad"));
             int resultadoFind = this.find(alCarrito, id);
             if (resultadoFind >= 0) {
-                CompraBean oCompraBean = alCarrito.get(resultadoFind);
-                oCompraBean.setCantidad(oCompraBean.getCantidad() + cantidad);
-                alCarrito.set(resultadoFind, oCompraBean);
+                ItemBean oItemBean = alCarrito.get(resultadoFind);
+                oItemBean.setCantidad(oItemBean.getCantidad() + cantidad);
+                alCarrito.set(resultadoFind, oItemBean);
             } else {
-                alCarrito.add(new CompraBean(id, cantidad));
+                alCarrito.add(new ItemBean(id, cantidad));
             }
             oSession.setAttribute("carrito", alCarrito);
             return oGson.toJson(new ResponseBean(200, "OK"));
@@ -52,7 +53,8 @@ public class CarritoService {
         Gson oGson = GsonFactory.getGson();
         try {
             HttpSession oSession = oRequest.getSession();
-            ArrayList<CompraBean> alCarrito = (ArrayList<CompraBean>) oSession.getAttribute("carrito");
+            @SuppressWarnings("unchecked")
+			ArrayList<ItemBean> alCarrito = (ArrayList<ItemBean>) oSession.getAttribute("carrito");
             if (alCarrito == null) {
                 return oGson.toJson(new ResponseBean(200, "OK"));
             }
@@ -60,15 +62,15 @@ public class CarritoService {
             int cantidad = Integer.parseInt(oRequest.getParameter("cantidad"));
             int resultadoFind = this.find(alCarrito, id);
             if (resultadoFind >= 0) {
-                CompraBean oCompraBean = alCarrito.get(resultadoFind);
-                oCompraBean.setCantidad(oCompraBean.getCantidad() - cantidad);
-                if (oCompraBean.getCantidad() > 0) {
-                    alCarrito.set(resultadoFind, oCompraBean);
+                ItemBean oItemBean = alCarrito.get(resultadoFind);
+                oItemBean.setCantidad(oItemBean.getCantidad() - cantidad);
+                if (oItemBean.getCantidad() > 0) {
+                    alCarrito.set(resultadoFind, oItemBean);
                 } else {
                     alCarrito.remove(resultadoFind);
                 }
             } else {
-                alCarrito.add(new CompraBean(id, cantidad));
+                alCarrito.add(new ItemBean(id, cantidad));
             }
             oSession.setAttribute("carrito", alCarrito);
             return oGson.toJson(new ResponseBean(200, "OK"));
@@ -81,7 +83,8 @@ public class CarritoService {
         Gson oGson = GsonFactory.getGson();
         try {
             HttpSession oSession = oRequest.getSession();
-            ArrayList<CompraBean> alCarrito = (ArrayList<CompraBean>) oSession.getAttribute("carrito");
+            @SuppressWarnings("unchecked")
+			ArrayList<ItemBean> alCarrito = (ArrayList<ItemBean>) oSession.getAttribute("carrito");
             return "{\"status\":200,\"message\":" + oGson.toJson(alCarrito) + "}";
         } catch (Exception ex) {
             return oGson.toJson(new ResponseBean(500, ex.getMessage()));
@@ -99,13 +102,14 @@ public class CarritoService {
         }
     }
 
-    private int find(ArrayList<CompraBean> alCarrito, int id) throws Exception {
+    private int find(ArrayList<ItemBean> alCarrito, int id) throws Exception {
         for (int i = 0; i < alCarrito.size(); i++) {
-            CompraBean oCompraBean = alCarrito.get(i);
-            if (oCompraBean.getId() == id) {
+            ItemBean oItemBean = alCarrito.get(i);
+            if (oItemBean.getId() == id) {
                 return i;
             }
         }
         return -1;
     }
+
 }
