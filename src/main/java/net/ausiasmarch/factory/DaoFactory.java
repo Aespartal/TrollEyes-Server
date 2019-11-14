@@ -22,10 +22,10 @@ public class DaoFactory {
             case "factura":
                 oDao = new FacturaDao(oConnection);
                 break;
-            case "tipoproducto":
+            case "tipo_producto":
                 oDao = new TipoProductoDao(oConnection);
                 break;
-            case "tipousuario":
+            case "tipo_usuario":
                 oDao = new TipoUsuarioDao(oConnection);
                 break;
             case "usuario":
