@@ -148,8 +148,8 @@ public class UsuarioBean implements BeanInterface {
         oPreparedStatement.setString(4, this.getApellido2());
         oPreparedStatement.setString(5, this.getEmail());
         oPreparedStatement.setString(6, this.getLogin());
-        oPreparedStatement.setString(5, this.getPassword());
-        oPreparedStatement.setInt(6, this.getTipo_usuario_id());
+        oPreparedStatement.setString(7, this.getPassword());
+        oPreparedStatement.setInt(8, this.getTipo_usuario_id());
         int iResult = oPreparedStatement.executeUpdate();
         return iResult;
     }
@@ -167,8 +167,8 @@ public class UsuarioBean implements BeanInterface {
         oPreparedStatement.setString(4, this.getApellido2());
         oPreparedStatement.setString(5, this.getEmail());
         oPreparedStatement.setString(6, this.getLogin());
-        oPreparedStatement.setString(5, this.getPassword());
-        oPreparedStatement.setInt(6, this.getTipo_usuario_id());
+        oPreparedStatement.setString(7, this.getPassword());
+        oPreparedStatement.setInt(8, this.getTipo_usuario_id());
         int iResult = oPreparedStatement.executeUpdate();
         return iResult;
     }

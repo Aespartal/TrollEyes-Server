@@ -80,8 +80,8 @@ public class CompraBean implements BeanInterface {
     @Override
     public int setField4Insert(PreparedStatement oPreparedStatement) throws SQLException {
         oPreparedStatement.setInt(1, this.getCantidad());
-        oPreparedStatement.setInt(2, this.producto_id);
-        oPreparedStatement.setInt(3, this.factura_id);
+        oPreparedStatement.setInt(2, this.getProducto_id());
+        oPreparedStatement.setInt(3, this.getFactura_id());
         int iResult = oPreparedStatement.executeUpdate();
         return iResult;
     }
@@ -94,8 +94,8 @@ public class CompraBean implements BeanInterface {
     @Override
     public int setField4Update(PreparedStatement oPreparedStatement) throws SQLException {
         oPreparedStatement.setInt(1, this.getCantidad());
-        oPreparedStatement.setInt(2, this.producto_id);
-        oPreparedStatement.setInt(3, this.factura_id);
+        oPreparedStatement.setInt(2, this.getProducto_id());
+        oPreparedStatement.setInt(3, this.getFactura_id());
         int iResult = oPreparedStatement.executeUpdate();
         return iResult;
     }
