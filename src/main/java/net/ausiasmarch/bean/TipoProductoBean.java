@@ -1,6 +1,7 @@
 package net.ausiasmarch.bean;
 
 import com.google.gson.annotations.Expose;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -32,43 +33,49 @@ public class TipoProductoBean implements BeanInterface {
     }
 
     @Override
-    public TipoProductoBean fill(ResultSet oResultSet) throws SQLException {
+    public TipoProductoBean fill(ResultSet oResultSet, Connection oConnection, int spread) throws SQLException {
         this.setId(oResultSet.getInt("id"));
         this.setDescripcion(oResultSet.getString("descripcion"));
         return this;
     }
 
     @Override
-    public PreparedStatement orderSQL(List<String> orden, PreparedStatement oPreparedStatement, int i) throws SQLException {
-        if (orden.get((i - 1)).equalsIgnoreCase("id")) {
-            oPreparedStatement.setInt(i, 1);
-        } else if (orden.get((i - 1)).equalsIgnoreCase("descripcion")) {
-            oPreparedStatement.setInt(i, 2);
+    public PreparedStatement orderSQL(List<String> orden, PreparedStatement oPreparedStatement) throws SQLException {
+        for (int i = 1; i < orden.size(); i++) {
+            if (orden.get((i - 1)).equalsIgnoreCase("id")) {
+                oPreparedStatement.setInt(i, 1);
+            } else if (orden.get((i - 1)).equalsIgnoreCase("descripcion")) {
+                oPreparedStatement.setInt(i, 2);
+            }
         }
         return oPreparedStatement;
     }
 
     @Override
-    public String getField4Insert() throws SQLException {
-        return "INSERT INTO tipo_producto (descripcion) VALUES(?)";
+    public String getFieldInsert() {
+        return " (descripcion) VALUES(?)";
     }
 
     @Override
-    public int setField4Insert(PreparedStatement oPreparedStatement) throws SQLException {
-        oPreparedStatement.setString(1, this.getDescripcion());
-        int iResult = oPreparedStatement.executeUpdate();
-        return iResult;
+    public PreparedStatement setFieldInsert(BeanInterface oBeanParam, PreparedStatement oPreparedStatement)
+            throws SQLException {
+        TipoProductoBean oTipoProductoBean = (TipoProductoBean) oBeanParam;
+        oPreparedStatement.setString(1, oTipoProductoBean.getDescripcion());
+        return oPreparedStatement;
     }
 
     @Override
-    public String getField4Update() throws SQLException {
-        return "UPDATE tipo_usuario SET (cantidad,producto_id,factura_id) VALUES(?,?,?) WHERE id=?";
+    public String getFieldUpdate() {
+        return " (descripcion) VALUES(?)";
     }
 
     @Override
-    public int setField4Update(PreparedStatement oPreparedStatement) throws SQLException {
-        oPreparedStatement.setString(1, this.getDescripcion());
-        int iResult = oPreparedStatement.executeUpdate();
-        return iResult;
+    public PreparedStatement setFieldUpdate(BeanInterface oBeanParam, PreparedStatement oPreparedStatement)
+            throws SQLException {
+        TipoProductoBean oTipoProductoBean = (TipoProductoBean) oBeanParam;
+        oPreparedStatement.setString(1, oTipoProductoBean.getDescripcion());
+        oPreparedStatement.setInt(2, oTipoProductoBean.getId());
+        return oPreparedStatement;
     }
+
 }

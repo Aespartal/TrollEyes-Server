@@ -1,10 +1,12 @@
 package net.ausiasmarch.bean;
 
 import com.google.gson.annotations.Expose;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import net.ausiasmarch.dao.TipoProductoDao;
 
 public class ProductoBean implements BeanInterface {
 
@@ -20,8 +22,10 @@ public class ProductoBean implements BeanInterface {
     private String imagen;
     @Expose
     private String descripcion;
-    @Expose
+    @Expose(serialize = false)
     private Integer tipo_producto_id;
+    @Expose(deserialize = false)
+    private TipoProductoBean tipo_producto_obj;
 
     @Override
     public Integer getId() {
@@ -81,66 +85,89 @@ public class ProductoBean implements BeanInterface {
         this.tipo_producto_id = tipo_producto_id;
     }
 
+    public TipoProductoBean getTipo_producto_obj() {
+        return tipo_producto_obj;
+    }
+
+    public void setTipo_producto_obj(TipoProductoBean tipo_producto_obj) {
+        this.tipo_producto_obj = tipo_producto_obj;
+    }
+
     @Override
-    public ProductoBean fill(ResultSet oResultSet) throws SQLException {
+    public ProductoBean fill(ResultSet oResultSet, Connection oConnection, int spread) throws SQLException {
         this.setId(oResultSet.getInt("id"));
         this.setCodigo(oResultSet.getString("codigo"));
         this.setExistencias(oResultSet.getInt("existencias"));
         this.setPrecio(oResultSet.getDouble("precio"));
         this.setImagen(oResultSet.getString("imagen"));
         this.setDescripcion(oResultSet.getString("descripcion"));
+        this.setTipo_producto_id(oResultSet.getInt("tipo_producto_id"));
+
+        if (spread > 0) {
+            spread--;
+            TipoProductoDao oTipoProductoDao = new TipoProductoDao(oConnection);
+            TipoProductoBean oTipoProductoBean = new TipoProductoBean();
+            oTipoProductoBean = (TipoProductoBean) oTipoProductoDao.get(this.tipo_producto_id);
+            this.tipo_producto_obj = oTipoProductoBean;
+        }
         return this;
     }
 
     @Override
-    public PreparedStatement orderSQL(List<String> orden, PreparedStatement oPreparedStatement, int i) throws SQLException {
-        if (orden.get((i - 1)).equalsIgnoreCase("id")) {
-            oPreparedStatement.setInt(i, 1);
-        } else if (orden.get((i - 1)).equalsIgnoreCase("codigo")) {
-            oPreparedStatement.setInt(i, 2);
-        } else if (orden.get((i - 1)).equalsIgnoreCase("existencias")) {
-            oPreparedStatement.setInt(i, 3);
-        } else if (orden.get((i - 1)).equalsIgnoreCase("precio")) {
-            oPreparedStatement.setInt(i, 4);
-        } else if (orden.get((i - 1)).equalsIgnoreCase("imagen")) {
-            oPreparedStatement.setInt(i, 5);
-        } else if (orden.get((i - 1)).equalsIgnoreCase("descripcion")) {
-            oPreparedStatement.setInt(i, 6);
+    public PreparedStatement orderSQL(List<String> orden, PreparedStatement oPreparedStatement)
+            throws SQLException {
+        for (int i = 1; i < orden.size(); i++) {
+            if (orden.get((i - 1)).equalsIgnoreCase("id")) {
+                oPreparedStatement.setInt(i, 1);
+            } else if (orden.get((i - 1)).equalsIgnoreCase("codigo")) {
+                oPreparedStatement.setInt(i, 2);
+            } else if (orden.get((i - 1)).equalsIgnoreCase("existencias")) {
+                oPreparedStatement.setInt(i, 3);
+            } else if (orden.get((i - 1)).equalsIgnoreCase("precio")) {
+                oPreparedStatement.setInt(i, 4);
+            } else if (orden.get((i - 1)).equalsIgnoreCase("imagen")) {
+                oPreparedStatement.setInt(i, 5);
+            } else if (orden.get((i - 1)).equalsIgnoreCase("descripcion")) {
+                oPreparedStatement.setInt(i, 6);
+            } else if (orden.get((i - 1)).equalsIgnoreCase("tipo_producto_id")) {
+                oPreparedStatement.setInt(i, 7);
+            }
         }
         return oPreparedStatement;
     }
 
     @Override
-    public String getField4Insert() throws SQLException {
-        return "INSERT INTO producto (codigo,existencias,precio,imagen,descripcion,tipo_producto_id) VALUES(?,?,?,?,?,?)";
+    public String getFieldInsert() {
+        return " (codigo,existencias,precio,imagen,descripcion,tipo_producto_id) VALUES(?,?,?,?,?,?)";
     }
 
     @Override
-    public int setField4Insert(PreparedStatement oPreparedStatement) throws SQLException {
-        oPreparedStatement.setString(1, this.getCodigo());
-        oPreparedStatement.setInt(2, this.getExistencias());
-        oPreparedStatement.setDouble(3, this.getPrecio());
-        oPreparedStatement.setString(4, this.getImagen());
-        oPreparedStatement.setString(5, this.getDescripcion());
-        oPreparedStatement.setInt(6, this.getTipo_producto_id());
-        int iResult = oPreparedStatement.executeUpdate();
-        return iResult;
+    public PreparedStatement setFieldInsert(BeanInterface oBeanParam, PreparedStatement oPreparedStatement) throws SQLException {
+        ProductoBean oProductoBean = (ProductoBean) oBeanParam;
+        oPreparedStatement.setString(1, oProductoBean.getCodigo());
+        oPreparedStatement.setInt(2, oProductoBean.getExistencias());
+        oPreparedStatement.setDouble(3, oProductoBean.getPrecio());
+        oPreparedStatement.setString(4, oProductoBean.getImagen());
+        oPreparedStatement.setString(5, oProductoBean.getDescripcion());
+        oPreparedStatement.setInt(6, oProductoBean.getTipo_producto_id());
+        return oPreparedStatement;
     }
 
     @Override
-    public String getField4Update() throws SQLException {
-        return "UPDATE producto SET (cantidad,producto_id,factura_id) VALUES(?,?,?) WHERE id=?";
+    public String getFieldUpdate() {
+        return " (codigo,existencias,precio,imagen,descripcion,tipo_producto_id) VALUES(?,?,?,?,?,?)";
     }
 
     @Override
-    public int setField4Update(PreparedStatement oPreparedStatement) throws SQLException {
-        oPreparedStatement.setString(1, this.getCodigo());
-        oPreparedStatement.setInt(2, this.getExistencias());
-        oPreparedStatement.setDouble(3, this.getPrecio());
-        oPreparedStatement.setString(4, this.getImagen());
-        oPreparedStatement.setString(5, this.getDescripcion());
-        oPreparedStatement.setInt(6, this.getTipo_producto_id());
-        int iResult = oPreparedStatement.executeUpdate();
-        return iResult;
+    public PreparedStatement setFieldUpdate(BeanInterface oBeanParam, PreparedStatement oPreparedStatement) throws SQLException {
+        ProductoBean oProductoBean = (ProductoBean) oBeanParam;
+        oPreparedStatement.setString(1, oProductoBean.getCodigo());
+        oPreparedStatement.setInt(2, oProductoBean.getExistencias());
+        oPreparedStatement.setDouble(3, oProductoBean.getPrecio());
+        oPreparedStatement.setString(4, oProductoBean.getImagen());
+        oPreparedStatement.setString(5, oProductoBean.getDescripcion());
+        oPreparedStatement.setInt(6, oProductoBean.getTipo_producto_id());
+        return oPreparedStatement;
     }
+
 }

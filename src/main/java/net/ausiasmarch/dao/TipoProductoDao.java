@@ -2,10 +2,9 @@ package net.ausiasmarch.dao;
 
 import java.sql.Connection;
 
-public class TipoProductoDao extends GenericDao {
+public class TipoProductoDao extends GenericDao implements DaoInterface {
 
-    public TipoProductoDao(String ob, Connection oConnection) {
-        super(ob, oConnection);
+    public TipoProductoDao(Connection oConnection) {
+        super(oConnection, "tipo_producto");
     }
-
 }

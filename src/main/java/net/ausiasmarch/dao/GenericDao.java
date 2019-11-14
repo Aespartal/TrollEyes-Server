@@ -9,13 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 import net.ausiasmarch.bean.BeanInterface;
 import net.ausiasmarch.factory.BeanFactory;
+import net.ausiasmarch.setting.ConfigurationSettings;
 
 public class GenericDao implements DaoInterface {
 
     Connection oConnection = null;
     String ob = null;
 
-    public GenericDao(String ob,Connection oConnection) {
+    public GenericDao(Connection oConnection, String ob) {
         this.oConnection = oConnection;
         this.ob = ob;
     }
@@ -31,7 +32,7 @@ public class GenericDao implements DaoInterface {
         BeanInterface oBean;
         if (oResultSet.next()) {
             oBean = BeanFactory.getBean(ob);
-            oBean = oBean.fill(oResultSet);
+            oBean = oBean.fill(oResultSet, oConnection, ConfigurationSettings.spread);
         } else {
             oBean = null;
         }
@@ -41,12 +42,11 @@ public class GenericDao implements DaoInterface {
     @Override
     public List<BeanInterface> getAll() throws SQLException {
         Statement stmt = oConnection.createStatement();
-        ResultSet oResultSet = stmt.executeQuery("SELECT * FROM " + ob + " LIMIT 100");
-        BeanInterface oBean;
-        List<BeanInterface> listaBean = new ArrayList();
+        ResultSet oResultSet = stmt.executeQuery("SELECT * FROM producto LIMIT 100");
+        List<BeanInterface> listaBean = new ArrayList<BeanInterface>();
         while (oResultSet.next()) {
-            oBean = BeanFactory.getBean(ob);
-            oBean = oBean.fill(oResultSet);
+            BeanInterface oBean = BeanFactory.getBean(ob);
+            oBean = oBean.fill(oResultSet, oConnection, ConfigurationSettings.spread);
             listaBean.add(oBean);
         }
         return listaBean;
@@ -67,7 +67,7 @@ public class GenericDao implements DaoInterface {
     }
 
     @Override
-    public ArrayList getPage(int page, int limit, List<String> orden) throws SQLException {
+    public ArrayList<BeanInterface> getPage(int page, int rpp, List<String> orden) throws SQLException {
         PreparedStatement oPreparedStatement;
         ResultSet oResultSet;
         int offset;
@@ -75,15 +75,16 @@ public class GenericDao implements DaoInterface {
         if (page == 1) {
             offset = 0;
         } else {
-            offset = (limit * page) - limit;
+            offset = (rpp * page) - rpp;
         }
 
         if (orden == null) {
             oPreparedStatement = oConnection.prepareStatement("SELECT * FROM " + ob + " LIMIT ? OFFSET ?");
-            oPreparedStatement.setInt(1, limit);
+            oPreparedStatement.setInt(1, rpp);
             oPreparedStatement.setInt(2, offset);
         } else {
-            String sqlQuery = "SELECT * FROM " + ob + " ORDER BY ";
+            String sqlQuery = "SELECT * FROM producto ";
+            sqlQuery += "ORDER BY ";
             for (int i = 1; i <= orden.size(); i++) {
                 if (orden.get((i - 1)).equalsIgnoreCase("asc")) {
                     sqlQuery += "ASC ";
@@ -95,43 +96,40 @@ public class GenericDao implements DaoInterface {
             }
             sqlQuery += "LIMIT ? OFFSET ?";
             oPreparedStatement = oConnection.prepareStatement(sqlQuery);
-            BeanInterface oBean = null;
-            for (int i = 1; i < orden.size(); i++) {
-                oPreparedStatement = oBean.orderSQL(orden, oPreparedStatement, i);
-            }
-            oPreparedStatement.setInt((orden.size()), limit);
+            BeanInterface oBean = BeanFactory.getBean(ob);
+            oPreparedStatement = oBean.orderSQL(orden, oPreparedStatement);
+            oPreparedStatement.setInt((orden.size()), rpp);
             oPreparedStatement.setInt((orden.size() + 1), offset);
         }
 
         oResultSet = oPreparedStatement.executeQuery();
 
-        ArrayList<BeanInterface> oBeanList = new ArrayList<>();
-        BeanInterface oBean;
+        ArrayList<BeanInterface> listaBean = new ArrayList<>();
         while (oResultSet.next()) {
-            oBean = BeanFactory.getBean(ob);
-            oBean = oBean.fill(oResultSet);
-            oBeanList.add(oBean);
+            BeanInterface oBean = BeanFactory.getBean(ob);
+            oBean = oBean.fill(oResultSet, oConnection, ConfigurationSettings.spread);
+            listaBean.add(oBean);
         }
 
-        return oBeanList;
+        return listaBean;
     }
 
     @Override
-    public Integer insert(BeanInterface oBean) throws SQLException {
+    public Integer insert(BeanInterface oBeanParam) throws SQLException {
+        BeanInterface oBean = BeanFactory.getBean(ob);
         PreparedStatement oPreparedStatement;
-        oBean = BeanFactory.getBean(ob);
-        String strsql = oBean.getField4Insert();
+        String strsql = "INSERT INTO " + ob + oBean.getFieldInsert();
         oPreparedStatement = oConnection.prepareStatement(strsql);
-        int iResult = oBean.setField4Insert(oPreparedStatement);
+        oPreparedStatement = oBean.setFieldInsert(oBeanParam, oPreparedStatement);
+        int iResult = oPreparedStatement.executeUpdate();
         return iResult;
     }
 
     @Override
     public Integer remove(int id) throws SQLException {
-        PreparedStatement oPreparedStament;
+        PreparedStatement oPreparedStament = null;
         int iResult;
-        String strSQL;
-        strSQL = "DELETE FROM " + ob + " WHERE id=?";
+        String strSQL = "DELETE FROM " + ob + " WHERE id=?";
         oPreparedStament = oConnection.prepareStatement(strSQL, Statement.RETURN_GENERATED_KEYS);
         oPreparedStament.setInt(1, id);
         iResult = oPreparedStament.executeUpdate();
@@ -139,12 +137,14 @@ public class GenericDao implements DaoInterface {
     }
 
     @Override
-    public Integer update(BeanInterface oBean) throws SQLException {
-        PreparedStatement oPreparedStatement;
-        oBean = BeanFactory.getBean(ob);
-        String strsql = oBean.getField4Update();
-        oPreparedStatement = oConnection.prepareStatement(strsql, Statement.RETURN_GENERATED_KEYS);
-        int iResult = oBean.setField4Update(oPreparedStatement);
+    public Integer update(BeanInterface oBeanParam) throws SQLException {
+        BeanInterface oBean = BeanFactory.getBean(ob);
+        PreparedStatement oPreparedStatement = null;
+        String strSQL = "UPDATE " + ob + " SET " + oBean.getFieldUpdate() + " WHERE id = ?";
+        int iResult;
+        oPreparedStatement = oConnection.prepareStatement(strSQL, Statement.RETURN_GENERATED_KEYS);
+        oPreparedStatement = oBean.setFieldUpdate(oBeanParam, oPreparedStatement);
+        iResult = oPreparedStatement.executeUpdate();
         return iResult;
     }
 

@@ -1,10 +1,12 @@
 package net.ausiasmarch.bean;
 
 import com.google.gson.annotations.Expose;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import net.ausiasmarch.dao.TipoUsuarioDao;
 
 public class UsuarioBean implements BeanInterface {
 
@@ -23,8 +25,10 @@ public class UsuarioBean implements BeanInterface {
     @Expose
     private String login;
     private String password;
-    @Expose
+    @Expose(serialize = false)
     private Integer tipo_usuario_id;
+    @Expose(deserialize = false)
+    private TipoUsuarioBean tipo_usuario_obj;
 
     @Override
     public Integer getId() {
@@ -100,8 +104,16 @@ public class UsuarioBean implements BeanInterface {
         this.tipo_usuario_id = tipo_usuario_id;
     }
 
+    public TipoUsuarioBean getTipo_usuario_obj() {
+        return tipo_usuario_obj;
+    }
+
+    public void setTipo_usuario_obj(TipoUsuarioBean tipo_usuario_obj) {
+        this.tipo_usuario_obj = tipo_usuario_obj;
+    }
+
     @Override
-    public UsuarioBean fill(ResultSet oResultSet) throws SQLException {
+    public UsuarioBean fill(ResultSet oResultSet, Connection oConnection, int spread) throws SQLException {
         this.setId(oResultSet.getInt("id"));
         this.setDni(oResultSet.getString("dni"));
         this.setNombre(oResultSet.getString("nombre"));
@@ -110,66 +122,78 @@ public class UsuarioBean implements BeanInterface {
         this.setEmail(oResultSet.getString("email"));
         this.setLogin(oResultSet.getString("login"));
         this.setPassword(oResultSet.getString("password"));
+
+        if (spread > 0) {
+            spread--;
+            TipoUsuarioDao oTipoUsuarioDao = new TipoUsuarioDao(oConnection);
+            TipoUsuarioBean oTipoUsuarioBean = new TipoUsuarioBean();
+            oTipoUsuarioBean = (TipoUsuarioBean) oTipoUsuarioDao.get(this.tipo_usuario_id);
+            this.tipo_usuario_obj = oTipoUsuarioBean;
+        }
         return this;
     }
 
     @Override
-    public PreparedStatement orderSQL(List<String> orden, PreparedStatement oPreparedStatement, int i) throws SQLException {
-        if (orden.get((i - 1)).equalsIgnoreCase("id")) {
-            oPreparedStatement.setInt(i, 1);
-        } else if (orden.get((i - 1)).equalsIgnoreCase("dni")) {
-            oPreparedStatement.setInt(i, 2);
-        } else if (orden.get((i - 1)).equalsIgnoreCase("nombre")) {
-            oPreparedStatement.setInt(i, 3);
-        } else if (orden.get((i - 1)).equalsIgnoreCase("apellido1")) {
-            oPreparedStatement.setInt(i, 4);
-        } else if (orden.get((i - 1)).equalsIgnoreCase("apellido2")) {
-            oPreparedStatement.setInt(i, 5);
-        } else if (orden.get((i - 1)).equalsIgnoreCase("email")) {
-            oPreparedStatement.setInt(i, 6);
-        } else if (orden.get((i - 1)).equalsIgnoreCase("login")) {
-            oPreparedStatement.setInt(i, 7);
-        } else if (orden.get((i - 1)).equalsIgnoreCase("password")) {
-            oPreparedStatement.setInt(i, 8);
+    public PreparedStatement orderSQL(List<String> orden, PreparedStatement oPreparedStatement) throws SQLException {
+        for (int i = 1; i < orden.size(); i++) {
+            if (orden.get((i - 1)).equalsIgnoreCase("id")) {
+                oPreparedStatement.setInt(i, 1);
+            } else if (orden.get((i - 1)).equalsIgnoreCase("dni")) {
+                oPreparedStatement.setInt(i, 2);
+            } else if (orden.get((i - 1)).equalsIgnoreCase("nombre")) {
+                oPreparedStatement.setInt(i, 3);
+            } else if (orden.get((i - 1)).equalsIgnoreCase("apellido1")) {
+                oPreparedStatement.setInt(i, 4);
+            } else if (orden.get((i - 1)).equalsIgnoreCase("apellido2")) {
+                oPreparedStatement.setInt(i, 5);
+            } else if (orden.get((i - 1)).equalsIgnoreCase("email")) {
+                oPreparedStatement.setInt(i, 6);
+            } else if (orden.get((i - 1)).equalsIgnoreCase("login")) {
+                oPreparedStatement.setInt(i, 7);
+            }
         }
         return oPreparedStatement;
     }
 
     @Override
-    public String getField4Insert() throws SQLException {
-        return "INSERT INTO usuario (dni,nombre,apellido1,apellido2,email,login,password,tipo_usuario_id) VALUES(?,?,?,?,?,?,?,?)";
+    public String getFieldInsert() {
+        return " (dni,nombre,apellido1,apellido2,email,login,password,tipo_usuario_id) VALUES(?,?,?,?,?,?,?,?)";
     }
 
     @Override
-    public int setField4Insert(PreparedStatement oPreparedStatement) throws SQLException {
-        oPreparedStatement.setString(1, this.getDni());
-        oPreparedStatement.setString(2, this.getNombre());
-        oPreparedStatement.setString(3, this.getApellido1());
-        oPreparedStatement.setString(4, this.getApellido2());
-        oPreparedStatement.setString(5, this.getEmail());
-        oPreparedStatement.setString(6, this.getLogin());
-        oPreparedStatement.setString(7, this.getPassword());
-        oPreparedStatement.setInt(8, this.getTipo_usuario_id());
-        int iResult = oPreparedStatement.executeUpdate();
-        return iResult;
+    public PreparedStatement setFieldInsert(BeanInterface oBeanParam, PreparedStatement oPreparedStatement)
+            throws SQLException {
+        UsuarioBean oUsuarioBean = (UsuarioBean) oBeanParam;
+        oPreparedStatement.setString(1, oUsuarioBean.getDni());
+        oPreparedStatement.setString(2, oUsuarioBean.getNombre());
+        oPreparedStatement.setString(3, oUsuarioBean.getApellido1());
+        oPreparedStatement.setString(4, oUsuarioBean.getApellido2());
+        oPreparedStatement.setString(5, oUsuarioBean.getEmail());
+        oPreparedStatement.setString(6, oUsuarioBean.getLogin());
+        oPreparedStatement.setString(7, oUsuarioBean.getPassword());
+        oPreparedStatement.setInt(8, oUsuarioBean.getTipo_usuario_id());
+        return oPreparedStatement;
     }
 
     @Override
-    public String getField4Update() throws SQLException {
-        return "UPDATE usuario SET (dni,nombre,apellido1,apellido2,email,login,password,tipo_usuario_id) VALUES(?,?,?,?,?,?,?,?) WHERE id = ?";
+    public String getFieldUpdate() {
+        return " (dni,nombre,apellido1,apellido2,email,login,password,tipo_usuario_id) VALUES(?,?,?,?,?,?,?,?)";
     }
 
     @Override
-    public int setField4Update(PreparedStatement oPreparedStatement) throws SQLException {
-        oPreparedStatement.setString(1, this.getDni());
-        oPreparedStatement.setString(2, this.getNombre());
-        oPreparedStatement.setString(3, this.getApellido1());
-        oPreparedStatement.setString(4, this.getApellido2());
-        oPreparedStatement.setString(5, this.getEmail());
-        oPreparedStatement.setString(6, this.getLogin());
-        oPreparedStatement.setString(7, this.getPassword());
-        oPreparedStatement.setInt(8, this.getTipo_usuario_id());
-        int iResult = oPreparedStatement.executeUpdate();
-        return iResult;
+    public PreparedStatement setFieldUpdate(BeanInterface oBeanParam, PreparedStatement oPreparedStatement)
+            throws SQLException {
+        UsuarioBean oUsuarioBean = (UsuarioBean) oBeanParam;
+        oPreparedStatement.setString(1, oUsuarioBean.getDni());
+        oPreparedStatement.setString(2, oUsuarioBean.getNombre());
+        oPreparedStatement.setString(3, oUsuarioBean.getApellido1());
+        oPreparedStatement.setString(4, oUsuarioBean.getApellido2());
+        oPreparedStatement.setString(5, oUsuarioBean.getEmail());
+        oPreparedStatement.setString(6, oUsuarioBean.getLogin());
+        oPreparedStatement.setString(7, oUsuarioBean.getPassword());
+        oPreparedStatement.setInt(8, oUsuarioBean.getTipo_usuario_id());
+        oPreparedStatement.setInt(9, oUsuarioBean.getId());
+        return oPreparedStatement;
     }
+
 }

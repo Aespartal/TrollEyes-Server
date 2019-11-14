@@ -11,9 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import net.ausiasmarch.bean.FacturaBean;
 import net.ausiasmarch.bean.ResponseBean;
 import net.ausiasmarch.connection.ConnectionInterface;
-import net.ausiasmarch.dao.DaoInterface;
+import net.ausiasmarch.dao.FacturaDao;
 import net.ausiasmarch.factory.ConnectionFactory;
-import net.ausiasmarch.factory.DaoFactory;
 import net.ausiasmarch.factory.GsonFactory;
 import net.ausiasmarch.setting.ConnectionSettings;
 
@@ -22,12 +21,11 @@ public class FacturaService extends GenericService {
     public FacturaService(HttpServletRequest oRequest) {
         super(oRequest);
     }
-
     public String fill() throws SQLException {
         ConnectionInterface oConnectionImplementation = ConnectionFactory
                 .getConnection(ConnectionSettings.connectionPool);
         Connection oConnection = oConnectionImplementation.newConnection();
-        DaoInterface oDao = DaoFactory.getDao(ob, oConnection);
+        FacturaDao oFacturaDao = new FacturaDao(oConnection);
         Gson oGson = GsonFactory.getGson();
         Date date1 = new GregorianCalendar(2014, Calendar.JANUARY, 1).getTime();
         Date date2 = new GregorianCalendar(2019, Calendar.DECEMBER, 31).getTime();
@@ -38,7 +36,7 @@ public class FacturaService extends GenericService {
             oFacturaBean.setIva(21);
             oFacturaBean.setFecha(randomDate);
             oFacturaBean.setUsuario_id((int) (Math.random() * 25) + 2);
-            oDao.insert(oFacturaBean);
+            oFacturaDao.insert(oFacturaBean);
         }
         ResponseBean oResponseBean = new ResponseBean(200, "Insertados los registros con exito");
         if (oConnection != null) {

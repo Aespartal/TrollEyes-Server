@@ -1,11 +1,13 @@
 package net.ausiasmarch.bean;
 
 import com.google.gson.annotations.Expose;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
+import net.ausiasmarch.dao.UsuarioDao;
 
 public class FacturaBean implements BeanInterface {
 
@@ -15,8 +17,10 @@ public class FacturaBean implements BeanInterface {
     private Date fecha;
     @Expose
     private Integer iva;
-    @Expose
+    @Expose(serialize = false)
     private Integer usuario_id;
+    @Expose(deserialize = false)
+    private UsuarioBean usuario_obj;
 
     @Override
     public Integer getId() {
@@ -52,53 +56,73 @@ public class FacturaBean implements BeanInterface {
         this.usuario_id = usuario_id;
     }
 
+    public UsuarioBean getUsuario_obj() {
+        return usuario_obj;
+    }
+
+    public void setUsuario_obj(UsuarioBean usuario_obj) {
+        this.usuario_obj = usuario_obj;
+    }
+
     @Override
-    public FacturaBean fill(ResultSet oResultSet) throws SQLException {
+    public FacturaBean fill(ResultSet oResultSet, Connection oConnection, int spread) throws SQLException {
         this.setId(oResultSet.getInt("id"));
         this.setFecha(oResultSet.getDate("fecha"));
         this.setIva(oResultSet.getInt("iva"));
+
+        if (spread > 0) {
+            spread--;
+            UsuarioDao oUsuarioDao = new UsuarioDao(oConnection);
+            UsuarioBean oUsuarioBean = new UsuarioBean();
+            oUsuarioBean = (UsuarioBean) oUsuarioDao.get(this.usuario_id);
+            this.usuario_obj = oUsuarioBean;
+        }
         return this;
     }
 
     @Override
-    public PreparedStatement orderSQL(List<String> orden, PreparedStatement oPreparedStatement, int i) throws SQLException {
-        if (orden.get((i - 1)).equalsIgnoreCase("id")) {
-            oPreparedStatement.setInt(i, 1);
-        } else if (orden.get((i - 1)).equalsIgnoreCase("fecha")) {
-            oPreparedStatement.setInt(i, 2);
-        } else if (orden.get((i - 1)).equalsIgnoreCase("iva")) {
-            oPreparedStatement.setInt(i, 3);
-        } else if (orden.get((i - 1)).equalsIgnoreCase("usuario_id")) {
-            oPreparedStatement.setInt(i, 4);
+    public PreparedStatement orderSQL(List<String> orden, PreparedStatement oPreparedStatement) throws SQLException {
+        for (int i = 1; i < orden.size(); i++) {
+            if (orden.get((i - 1)).equalsIgnoreCase("id")) {
+                oPreparedStatement.setInt(i, 1);
+            } else if (orden.get((i - 1)).equalsIgnoreCase("fecha")) {
+                oPreparedStatement.setInt(i, 2);
+            } else if (orden.get((i - 1)).equalsIgnoreCase("iva")) {
+                oPreparedStatement.setInt(i, 3);
+            }
         }
         return oPreparedStatement;
     }
 
     @Override
-    public String getField4Insert() throws SQLException {
-        return "INSERT INTO factura (fecha,iva,usuario_id) VALUES(?,?,?)";
+    public String getFieldInsert() {
+        return " (fecha,iva,usuario_id) VALUES(?,?,?)";
     }
 
     @Override
-    public int setField4Insert(PreparedStatement oPreparedStatement) throws SQLException {
-        oPreparedStatement.setDate(1, new java.sql.Date(this.getFecha().getTime()));
-        oPreparedStatement.setInt(2, this.getIva());
-        oPreparedStatement.setInt(3, this.getUsuario_id());
-        int iResult = oPreparedStatement.executeUpdate();
-        return iResult;
+    public PreparedStatement setFieldInsert(BeanInterface oBeanParam, PreparedStatement oPreparedStatement)
+            throws SQLException {
+        FacturaBean oFacturaBean = (FacturaBean) oBeanParam;
+        oPreparedStatement.setDate(1, new java.sql.Date(oFacturaBean.getFecha().getTime()));
+        oPreparedStatement.setInt(2, oFacturaBean.getIva());
+        oPreparedStatement.setInt(3, oFacturaBean.getUsuario_id());
+        return oPreparedStatement;
     }
 
     @Override
-    public String getField4Update() throws SQLException {
-        return "UPDATE factura SET (cantidad,producto_id,factura_id) VALUES(?,?,?) WHERE id=?";
+    public String getFieldUpdate() {
+        return " (fecha,iva,usuario_id) VALUES(?,?,?)";
     }
 
     @Override
-    public int setField4Update(PreparedStatement oPreparedStatement) throws SQLException {
-        oPreparedStatement.setDate(1, new java.sql.Date(this.getFecha().getTime()));
-        oPreparedStatement.setInt(2, this.getIva());
-        oPreparedStatement.setInt(3, this.getUsuario_id());
-        int iResult = oPreparedStatement.executeUpdate();
-        return iResult;
+    public PreparedStatement setFieldUpdate(BeanInterface oBeanParam, PreparedStatement oPreparedStatement)
+            throws SQLException {
+        FacturaBean oFacturaBean = (FacturaBean) oBeanParam;
+        oPreparedStatement.setDate(1, (java.sql.Date) oFacturaBean.getFecha());
+        oPreparedStatement.setInt(2, oFacturaBean.getIva());
+        oPreparedStatement.setInt(3, oFacturaBean.getUsuario_id());
+        oPreparedStatement.setInt(4, oFacturaBean.getId());
+        return oPreparedStatement;
     }
+
 }
