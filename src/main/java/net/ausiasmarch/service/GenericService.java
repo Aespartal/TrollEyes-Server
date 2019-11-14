@@ -200,7 +200,7 @@ public class GenericService implements ServiceInterface {
         HttpSession oSession = oRequest.getSession();
         ResponseBean oResponseBean = null;
         Gson oGson = GsonFactory.getGson();
-        if ((Integer) oSession.getAttribute("usuario") != null) {
+        if (oSession.getAttribute("usuario") != null) {
             ConnectionInterface oConnectionImplementation = null;
             Connection oConnection = null;
             try {
