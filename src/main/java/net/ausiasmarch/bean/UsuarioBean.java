@@ -30,6 +30,14 @@ public class UsuarioBean implements BeanInterface {
     @Expose(deserialize = false)
     private TipoUsuarioBean tipo_usuario_obj;
 
+    public UsuarioBean() {
+    }
+
+    public UsuarioBean(String login, String password) {
+        this.login = login;
+        this.password = password;
+    }
+
     @Override
     public Integer getId() {
         return id;

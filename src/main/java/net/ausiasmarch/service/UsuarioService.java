@@ -3,6 +3,8 @@ package net.ausiasmarch.service;
 import com.google.gson.Gson;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import net.ausiasmarch.bean.ResponseBean;
@@ -26,17 +28,45 @@ public class UsuarioService extends GenericService implements ServiceInterface {
         super(oRequest);
     }
 
-    public String login() {
+    public String login() throws Exception {
         HttpSession oSession = oRequest.getSession();
         ResponseBean oResponseBean = null;
-        if (oRequest.getParameter("username").equals("rafa") && oRequest.getParameter("password").equalsIgnoreCase("bitnami")) {
-            oSession.setAttribute("usuario", oRequest.getParameter("username"));
-            oResponseBean = new ResponseBean(200, "Welcome");
-        } else {
-            oResponseBean = new ResponseBean(500, "Wrong password");
-        }
+        ConnectionInterface oConnectionImplementation = null;
+        Connection oConnection = null;
         Gson oGson = GsonFactory.getGson();
-        return oGson.toJson(oResponseBean);
+        try {
+            oConnectionImplementation = ConnectionFactory.getConnection(ConnectionSettings.connectionPool);
+            oConnection = oConnectionImplementation.newConnection();
+            UsuarioDao oUsuarioDao = new UsuarioDao(oConnection);
+            UsuarioBean oUsuarioBean;
+            String login = oRequest.getParameter("username");
+            String password = oRequest.getParameter("password");
+            oUsuarioBean = oUsuarioDao.get(login, password);
+            
+            if(oUsuarioBean!=null){
+                if (oRequest.getParameter("username").equals(oUsuarioBean.getLogin()) && oRequest.getParameter("password").equalsIgnoreCase(oUsuarioBean.getPassword())) {
+                oSession.setAttribute("usuario", oRequest.getParameter("username"));
+                oResponseBean = new ResponseBean(200, "Welcome");
+                } else {
+                    oResponseBean = new ResponseBean(500, "Wrong password");
+                } 
+            } else {
+                oResponseBean = new ResponseBean(500, "Wrong password");
+            }
+
+            return oGson.toJson(oResponseBean);
+        } catch (Exception ex) {
+            String msg = this.getClass().getName() + " ob: " + ob + "; login method ";
+            throw new Exception(msg, ex);
+        } finally {
+            if (oConnection != null) {
+                oConnection.close();
+            }
+            if (oConnectionImplementation != null) {
+                oConnectionImplementation.disposeConnection();
+            }
+        }
+
     }
 
     public String check() {
