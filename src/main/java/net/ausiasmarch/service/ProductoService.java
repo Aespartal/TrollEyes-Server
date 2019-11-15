@@ -17,6 +17,7 @@ public class ProductoService extends GenericService implements ServiceInterface 
 
     String[] frasesInicio = {"Maquina de ", "Interruptor para ", "Libro de ", "Bebida de  "};
     String[] frasesFinal = {"emparejar. ", "montar tubos. ", "manzana. ", "dientes. "};
+    String[] imagesRandom = {"https://www.revistacambio.com.mx/wp-content/uploads/2019/10/istock-640143244-1-300x200.jpg", "http://www.entretantomagazine.com/wp-content/uploads/2018/02/salad-2756467_1920-300x200.jpg", "https://www.aimdigital.com.ar/wp-content/uploads/2018/07/alimentos-cifra-300x200.jpg", "https://blog.cofciudadreal.com/wp-content/uploads/2017/12/duck-2957809__340-300x200.jpg"};
 
     public ProductoService(HttpServletRequest oRequest) {
         super(oRequest);
@@ -40,7 +41,7 @@ public class ProductoService extends GenericService implements ServiceInterface 
             oProductoBean.setCodigo(numAleatorio + "");
             oProductoBean.setExistencias(numAleatorio1);
             oProductoBean.setPrecio(precioAleatorio);
-            oProductoBean.setImagen("link a una imagen");
+            oProductoBean.setImagen(generaImages(1));
             oProductoBean.setDescripcion(generaTexto(1));
             oProductoBean.setTipo_producto_id(alTipoProducto_id);
             oProductoDao.insert(oProductoBean);
@@ -62,5 +63,13 @@ public class ProductoService extends GenericService implements ServiceInterface 
             fraseRandom += frasesFinal[(int) (Math.random() * frasesFinal.length) + 0];
         }
         return fraseRandom;
+    }
+    
+    private String generaImages(int longitud) {
+        String imageRandom = "";
+        for (int i = 0; i < longitud; i++) {
+            imageRandom += imagesRandom[(int) (Math.random() * imagesRandom.length) + 0];
+        }
+        return imageRandom;
     }
 }
