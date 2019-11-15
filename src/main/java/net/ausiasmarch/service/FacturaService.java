@@ -16,11 +16,12 @@ import net.ausiasmarch.factory.ConnectionFactory;
 import net.ausiasmarch.factory.GsonFactory;
 import net.ausiasmarch.setting.ConnectionSettings;
 
-public class FacturaService extends GenericService {
+public class FacturaService extends GenericService implements ServiceInterface {
 
     public FacturaService(HttpServletRequest oRequest) {
         super(oRequest);
     }
+
     public String fill() throws SQLException {
         ConnectionInterface oConnectionImplementation = ConnectionFactory
                 .getConnection(ConnectionSettings.connectionPool);

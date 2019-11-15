@@ -69,6 +69,7 @@ public class FacturaBean implements BeanInterface {
         this.setId(oResultSet.getInt("id"));
         this.setFecha(oResultSet.getDate("fecha"));
         this.setIva(oResultSet.getInt("iva"));
+        this.setUsuario_id(oResultSet.getInt("usuario_id"));
 
         if (spread > 0) {
             spread--;

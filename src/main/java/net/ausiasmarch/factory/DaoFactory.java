@@ -32,6 +32,6 @@ public class DaoFactory {
                 oDao = new UsuarioDao(oConnection);
                 break;
         }
-        return oDao ;
+        return oDao;
     }
 }

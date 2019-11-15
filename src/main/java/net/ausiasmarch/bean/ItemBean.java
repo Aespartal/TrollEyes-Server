@@ -1,4 +1,3 @@
-
 package net.ausiasmarch.bean;
 
 import com.google.gson.annotations.Expose;

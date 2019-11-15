@@ -229,7 +229,6 @@ public class GenericService implements ServiceInterface {
             oResponseBean = new ResponseBean(401, "Error: No session");
             return oGson.toJson(oResponseBean);
         }
-
     }
 
 }

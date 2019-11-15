@@ -28,7 +28,7 @@ public class ServiceCall {
                     break;
                 case "logout":
                     strResult = oUsuarioService.logout();
-                    break;        
+                    break;
                 case "get":
                     strResult = oUsuarioService.get();
                     break;
@@ -53,7 +53,7 @@ public class ServiceCall {
             }
         }
         if (ob.equalsIgnoreCase("carrito")) {
-        	CarritoService oCarritoService = new CarritoService(oRequest);
+            CarritoService oCarritoService = new CarritoService(oRequest);
             switch (op) {
                 case "add":
                     strResult = oCarritoService.add();
@@ -73,7 +73,7 @@ public class ServiceCall {
             }
         }
         if (ob.equalsIgnoreCase("compra")) {
-        	CompraService oCompraService = new CompraService(oRequest);
+            CompraService oCompraService = new CompraService(oRequest);
             switch (op) {
                 case "get":
                     strResult = oCompraService.get();
@@ -96,11 +96,11 @@ public class ServiceCall {
                 case "fill":
                     strResult = oCompraService.fill();
                     break;
-                   
+
             }
-        }  
+        }
         if (ob.equalsIgnoreCase("producto")) {
-        	ProductoService oProductoService = new ProductoService(oRequest);
+            ProductoService oProductoService = new ProductoService(oRequest);
             switch (op) {
                 case "get":
                     strResult = oProductoService.get();
@@ -123,11 +123,11 @@ public class ServiceCall {
                 case "fill":
                     strResult = oProductoService.fill();
                     break;
-                   
+
             }
-        }  
+        }
         if (ob.equalsIgnoreCase("tipo_producto")) {
-        	TipoProductoService oTipoProductoService = new TipoProductoService(oRequest);
+            TipoProductoService oTipoProductoService = new TipoProductoService(oRequest);
             switch (op) {
                 case "get":
                     strResult = oTipoProductoService.get();
@@ -150,12 +150,10 @@ public class ServiceCall {
                 case "fill":
                     strResult = oTipoProductoService.fill();
                     break;
-              
-                   
             }
-        }  
+        }
         if (ob.equalsIgnoreCase("tipo_usuario")) {
-        	TipoUsuarioService oTipoUsuarioService = new TipoUsuarioService(oRequest);
+            TipoUsuarioService oTipoUsuarioService = new TipoUsuarioService(oRequest);
             switch (op) {
                 case "get":
                     strResult = oTipoUsuarioService.get();
@@ -178,7 +176,7 @@ public class ServiceCall {
             }
         }
         if (ob.equalsIgnoreCase("factura")) {
-        	FacturaService oFacturaService = new FacturaService(oRequest);
+            FacturaService oFacturaService = new FacturaService(oRequest);
             switch (op) {
                 case "get":
                     strResult = oFacturaService.get();
@@ -203,8 +201,6 @@ public class ServiceCall {
                     break;
             }
         }
-        
-        
         return strResult;
     }
 }

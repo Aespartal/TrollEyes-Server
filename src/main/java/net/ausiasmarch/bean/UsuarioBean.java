@@ -30,6 +30,14 @@ public class UsuarioBean implements BeanInterface {
     @Expose(deserialize = false)
     private TipoUsuarioBean tipo_usuario_obj;
 
+    public UsuarioBean() {
+    }
+
+    public UsuarioBean(String login, String password) {
+        this.login = login;
+        this.password = password;
+    }
+
     @Override
     public Integer getId() {
         return id;
@@ -122,6 +130,7 @@ public class UsuarioBean implements BeanInterface {
         this.setEmail(oResultSet.getString("email"));
         this.setLogin(oResultSet.getString("login"));
         this.setPassword(oResultSet.getString("password"));
+        this.setTipo_usuario_id(oResultSet.getInt("tipo_usuario_id"));
 
         if (spread > 0) {
             spread--;

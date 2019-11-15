@@ -12,7 +12,7 @@ import net.ausiasmarch.factory.ConnectionFactory;
 import net.ausiasmarch.factory.GsonFactory;
 import net.ausiasmarch.setting.ConnectionSettings;
 
-public class CompraService extends GenericService {
+public class CompraService extends GenericService implements ServiceInterface {
 
     String[] frasesInicio = {"El fin de la estructura ", "La agrupacion logica ", "El objetivo conjunto ",
         "Una dinámica apropiada "};
@@ -27,9 +27,9 @@ public class CompraService extends GenericService {
         Connection oConnection = oConnectionImplementation.newConnection();
         CompraDao oCompraDao = new CompraDao(oConnection);
         Gson oGson = GsonFactory.getGson();
-		int numCompra = Integer.parseInt(oRequest.getParameter("number"));
-		for (int i = 0; i < numCompra; i++) {
-			CompraBean oCompraBean = new CompraBean();
+        int numCompra = Integer.parseInt(oRequest.getParameter("number"));
+        for (int i = 0; i < numCompra; i++) {
+            CompraBean oCompraBean = new CompraBean();
 //			Date randomDate = new Date(ThreadLocalRandom.current().nextLong(date1.getTime(), date2.getTime()));
             int numAleatorio = (int) Math.floor(Math.random() * (1 - 50) + 50);
             int alProducto_id = (int) Math.floor(Math.random() * 25) + 1;

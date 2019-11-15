@@ -2,7 +2,6 @@ package net.ausiasmarch.service;
 
 import com.google.gson.Gson;
 import java.sql.Connection;
-import java.sql.SQLException;
 import javax.servlet.http.HttpServletRequest;
 import net.ausiasmarch.bean.ResponseBean;
 import net.ausiasmarch.bean.TipoProductoBean;
@@ -12,7 +11,7 @@ import net.ausiasmarch.factory.ConnectionFactory;
 import net.ausiasmarch.factory.GsonFactory;
 import net.ausiasmarch.setting.ConnectionSettings;
 
-public class TipoProductoService extends GenericService {
+public class TipoProductoService extends GenericService implements ServiceInterface {
 
     String[] frasesInicio = {"Alimentación ", "Juguetes ", "Electronica ", "Higiene "};
     String[] frasesFinal = {"del hogar. ", "de la empresa. ", "para centros educativos. ", "sanitaria. "};
