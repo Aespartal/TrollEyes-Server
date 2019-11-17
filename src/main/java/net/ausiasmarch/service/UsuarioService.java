@@ -42,14 +42,14 @@ public class UsuarioService extends GenericService implements ServiceInterface {
             String login = oRequest.getParameter("username");
             String password = oRequest.getParameter("password");
             oUsuarioBean = oUsuarioDao.get(login, password);
-            
-            if(oUsuarioBean!=null){
+
+            if (oUsuarioBean != null) {
                 if (oRequest.getParameter("username").equals(oUsuarioBean.getLogin()) && oRequest.getParameter("password").equalsIgnoreCase(oUsuarioBean.getPassword())) {
-                oSession.setAttribute("usuario", oRequest.getParameter("username"));
-                oResponseBean = new ResponseBean(200, "Welcome");
+                    oSession.setAttribute("usuario", oRequest.getParameter("username"));
+                    oResponseBean = new ResponseBean(200, "Welcome");
                 } else {
                     oResponseBean = new ResponseBean(500, "Wrong password");
-                } 
+                }
             } else {
                 oResponseBean = new ResponseBean(500, "Wrong password");
             }
@@ -69,16 +69,45 @@ public class UsuarioService extends GenericService implements ServiceInterface {
 
     }
 
-    public String check() {
-        HttpSession oSession = oRequest.getSession();
+    public String check() throws Exception {
         ResponseBean oResponseBean = null;
+        HttpSession oSession = oRequest.getSession();
+
         if (oSession.getAttribute("usuario") != null) {
             oResponseBean = new ResponseBean(200, (String) oSession.getAttribute("usuario"));
         } else {
             oResponseBean = new ResponseBean(500, "No active session");
         }
+
         Gson oGson = GsonFactory.getGson();
         return oGson.toJson(oResponseBean);
+    }
+
+    public String getSessionUserLevel() throws Exception {
+        HttpSession oSession = oRequest.getSession();
+        ConnectionInterface oConnectionImplementation = null;
+        Connection oConnection = null;
+        Gson oGson = GsonFactory.getGson();
+        String strJson = null;
+
+        try {
+            oConnectionImplementation = ConnectionFactory.getConnection(ConnectionSettings.connectionPool);
+            oConnection = oConnectionImplementation.newConnection();
+            String usuario = (String) oSession.getAttribute("usuario");
+            UsuarioDao oUsuarioDao = new UsuarioDao(oConnection);
+            UsuarioBean oUsuarioBean;          
+            if (usuario == null) {
+                strJson = "\"Unauthorized\"";
+            } else {
+                oUsuarioBean = oUsuarioDao.get(usuario);
+                strJson = oGson.toJson(oUsuarioBean.getTipo_usuario_obj().getId());
+            }
+
+        } catch (Exception ex) {
+            String msg = this.getClass().getName() + " ob: " + ob + "; sessionlevel method ";
+            throw new Exception(msg, ex);
+        }
+            return "{\"status\":200,\"message\":" + strJson + "}";
     }
 
     public String logout() {
@@ -90,7 +119,7 @@ public class UsuarioService extends GenericService implements ServiceInterface {
         return oGson.toJson(oResponseBean);
     }
 
-    public String fill() throws SQLException {
+    public String fill() throws Exception {
         ConnectionInterface oConnectionImplementation = ConnectionFactory
                 .getConnection(ConnectionSettings.connectionPool);
         Connection oConnection = oConnectionImplementation.newConnection();

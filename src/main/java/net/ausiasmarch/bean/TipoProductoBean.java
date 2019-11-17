@@ -56,6 +56,11 @@ public class TipoProductoBean implements BeanInterface {
         return " (descripcion) VALUES(?)";
     }
 
+     @Override
+    public String getFieldConcat(){
+        return "CONCAT(`descripcion`)";
+    }
+    
     @Override
     public PreparedStatement setFieldInsert(BeanInterface oBeanParam, PreparedStatement oPreparedStatement)
             throws SQLException {

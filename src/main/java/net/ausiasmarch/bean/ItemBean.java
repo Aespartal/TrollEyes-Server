@@ -7,7 +7,18 @@ public class ItemBean {
     private int id;
     @Expose
     private int cantidad;
+    @Expose(deserialize = false)
+    private ProductoBean producto_obj;
 
+    
+    public ProductoBean getProducto_obj() {
+        return producto_obj;
+    }
+
+    public void setProducto_obj(ProductoBean producto_obj) {
+        this.producto_obj = producto_obj;
+    }
+    
     public ItemBean(int id, int cantidad) {
         this.id = id;
         this.cantidad = cantidad;
