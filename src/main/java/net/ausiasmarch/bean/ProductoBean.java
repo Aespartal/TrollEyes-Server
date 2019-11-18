@@ -94,7 +94,7 @@ public class ProductoBean implements BeanInterface {
     }
 
     @Override
-    public ProductoBean fill(ResultSet oResultSet, Connection oConnection, int spread) throws SQLException {
+    public ProductoBean fill(ResultSet oResultSet, Connection oConnection, int spread) throws Exception {
         this.setId(oResultSet.getInt("id"));
         this.setCodigo(oResultSet.getString("codigo"));
         this.setExistencias(oResultSet.getInt("existencias"));
@@ -140,9 +140,14 @@ public class ProductoBean implements BeanInterface {
     public String getFieldInsert() {
         return " (codigo,existencias,precio,imagen,descripcion,tipo_producto_id) VALUES(?,?,?,?,?,?)";
     }
+    
+    @Override
+    public String getFieldConcat(){
+        return "CONCAT(`codigo`,`existencias`,`precio`,`imagen`,`descripcion`,`tipo_producto_id`)";
+    }
 
     @Override
-    public PreparedStatement setFieldInsert(BeanInterface oBeanParam, PreparedStatement oPreparedStatement) throws SQLException {
+    public PreparedStatement setFieldInsert(BeanInterface oBeanParam, PreparedStatement oPreparedStatement) throws Exception {
         ProductoBean oProductoBean = (ProductoBean) oBeanParam;
         oPreparedStatement.setString(1, oProductoBean.getCodigo());
         oPreparedStatement.setInt(2, oProductoBean.getExistencias());
@@ -159,7 +164,7 @@ public class ProductoBean implements BeanInterface {
     }
 
     @Override
-    public PreparedStatement setFieldUpdate(BeanInterface oBeanParam, PreparedStatement oPreparedStatement) throws SQLException {
+    public PreparedStatement setFieldUpdate(BeanInterface oBeanParam, PreparedStatement oPreparedStatement) throws Exception {
         ProductoBean oProductoBean = (ProductoBean) oBeanParam;
         oPreparedStatement.setString(1, oProductoBean.getCodigo());
         oPreparedStatement.setInt(2, oProductoBean.getExistencias());

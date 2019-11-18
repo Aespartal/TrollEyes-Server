@@ -57,6 +57,11 @@ public class TipoUsuarioBean implements BeanInterface {
     }
 
     @Override
+    public String getFieldConcat(){
+        return "CONCAT(`descripcion`)";
+    }
+    
+    @Override
     public PreparedStatement setFieldInsert(BeanInterface oBeanParam, PreparedStatement oPreparedStatement)
             throws SQLException {
         TipoUsuarioBean oTipoUsuarioBean = (TipoUsuarioBean) oBeanParam;

@@ -65,7 +65,7 @@ public class FacturaBean implements BeanInterface {
     }
 
     @Override
-    public FacturaBean fill(ResultSet oResultSet, Connection oConnection, int spread) throws SQLException {
+    public FacturaBean fill(ResultSet oResultSet, Connection oConnection, int spread) throws Exception {
         this.setId(oResultSet.getInt("id"));
         this.setFecha(oResultSet.getDate("fecha"));
         this.setIva(oResultSet.getInt("iva"));
@@ -82,7 +82,7 @@ public class FacturaBean implements BeanInterface {
     }
 
     @Override
-    public PreparedStatement orderSQL(List<String> orden, PreparedStatement oPreparedStatement) throws SQLException {
+    public PreparedStatement orderSQL(List<String> orden, PreparedStatement oPreparedStatement) throws Exception {
         for (int i = 1; i < orden.size(); i++) {
             if (orden.get((i - 1)).equalsIgnoreCase("id")) {
                 oPreparedStatement.setInt(i, 1);
@@ -90,6 +90,8 @@ public class FacturaBean implements BeanInterface {
                 oPreparedStatement.setInt(i, 2);
             } else if (orden.get((i - 1)).equalsIgnoreCase("iva")) {
                 oPreparedStatement.setInt(i, 3);
+            } else if (orden.get((i - 1)).equalsIgnoreCase("objeto_obj")) {
+                oPreparedStatement.setInt(i, 4);
             }
         }
         return oPreparedStatement;
@@ -98,6 +100,11 @@ public class FacturaBean implements BeanInterface {
     @Override
     public String getFieldInsert() {
         return " (fecha,iva,usuario_id) VALUES(?,?,?)";
+    }
+    
+     @Override
+    public String getFieldConcat(){
+        return "CONCAT(`fecha`,`iva`,`usuario_id`)";
     }
 
     @Override

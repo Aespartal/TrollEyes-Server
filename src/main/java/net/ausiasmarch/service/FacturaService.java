@@ -22,7 +22,7 @@ public class FacturaService extends GenericService implements ServiceInterface {
         super(oRequest);
     }
 
-    public String fill() throws SQLException {
+    public String fill() throws Exception {
         ConnectionInterface oConnectionImplementation = ConnectionFactory
                 .getConnection(ConnectionSettings.connectionPool);
         Connection oConnection = oConnectionImplementation.newConnection();

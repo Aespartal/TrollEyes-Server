@@ -7,16 +7,16 @@ import net.ausiasmarch.bean.BeanInterface;
 
 public interface DaoInterface {
 
-    BeanInterface get(int id) throws SQLException;
+    BeanInterface get(int id) throws Exception;
 
-    int getCount() throws SQLException;
+    int getCount() throws Exception;
 
-    ArrayList getPage(int page, int rpp, List<String> orden) throws SQLException;
+    ArrayList getPage(int page, int rpp, List<String> orden, String word) throws Exception;
 
-    Integer insert(BeanInterface oBean) throws SQLException;
+    Integer insert(BeanInterface oBean) throws Exception;
 
-    Integer remove(int id) throws SQLException;
+    Integer remove(int id) throws Exception;
 
-    Integer update(BeanInterface oBean) throws SQLException;
+    Integer update(BeanInterface oBean) throws Exception;
 
 }

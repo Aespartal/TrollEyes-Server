@@ -64,12 +64,13 @@ public class GenericService implements ServiceInterface {
             oConnection = oConnectionImplementation.newConnection();
             int iRpp = Integer.parseInt(oRequest.getParameter("rpp"));
             int iPage = Integer.parseInt(oRequest.getParameter("page"));
+            String word = oRequest.getParameter("filter");
             List<String> orden = null;
             if (oRequest.getParameter("order") != null) {
                 orden = Arrays.asList(oRequest.getParameter("order").split("\\s*,\\s*"));
             }
             DaoInterface oDao = DaoFactory.getDao(ob, oConnection);
-            ArrayList alBean = oDao.getPage(iPage, iRpp, orden);
+            ArrayList alBean = oDao.getPage(iPage, iRpp, orden,word);
             Gson oGson = GsonFactory.getGson();
             String strJson = null;
             strJson = oGson.toJson(alBean);

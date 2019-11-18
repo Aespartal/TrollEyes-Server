@@ -121,7 +121,7 @@ public class UsuarioBean implements BeanInterface {
     }
 
     @Override
-    public UsuarioBean fill(ResultSet oResultSet, Connection oConnection, int spread) throws SQLException {
+    public UsuarioBean fill(ResultSet oResultSet, Connection oConnection, int spread) throws Exception {
         this.setId(oResultSet.getInt("id"));
         this.setDni(oResultSet.getString("dni"));
         this.setNombre(oResultSet.getString("nombre"));
@@ -143,7 +143,7 @@ public class UsuarioBean implements BeanInterface {
     }
 
     @Override
-    public PreparedStatement orderSQL(List<String> orden, PreparedStatement oPreparedStatement) throws SQLException {
+    public PreparedStatement orderSQL(List<String> orden, PreparedStatement oPreparedStatement) throws Exception {
         for (int i = 1; i < orden.size(); i++) {
             if (orden.get((i - 1)).equalsIgnoreCase("id")) {
                 oPreparedStatement.setInt(i, 1);
@@ -159,6 +159,8 @@ public class UsuarioBean implements BeanInterface {
                 oPreparedStatement.setInt(i, 6);
             } else if (orden.get((i - 1)).equalsIgnoreCase("login")) {
                 oPreparedStatement.setInt(i, 7);
+            } else if (orden.get((i - 1)).equalsIgnoreCase("tipo_usuario_obj")) {
+                oPreparedStatement.setInt(i, 8);
             }
         }
         return oPreparedStatement;
@@ -167,6 +169,11 @@ public class UsuarioBean implements BeanInterface {
     @Override
     public String getFieldInsert() {
         return " (dni,nombre,apellido1,apellido2,email,login,password,tipo_usuario_id) VALUES(?,?,?,?,?,?,?,?)";
+    }
+    
+    @Override
+    public String getFieldConcat(){
+        return "CONCAT(`id`,`dni`,`nombre`,`apellido1`,`apellido2`,`email`,`login`)";
     }
 
     @Override

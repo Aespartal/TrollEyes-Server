@@ -12,16 +12,18 @@ public interface BeanInterface {
 
     void setId(Integer id);
 
-    public BeanInterface fill(ResultSet oResultSet, Connection oConnection, int spread) throws SQLException;
+    public BeanInterface fill(ResultSet oResultSet, Connection oConnection, int spread) throws Exception;
 
-    public PreparedStatement orderSQL(List<String> orden, PreparedStatement oPreparedStatement) throws SQLException;
+    public PreparedStatement orderSQL(List<String> orden, PreparedStatement oPreparedStatement) throws Exception;
 
     public String getFieldInsert();
 
-    public PreparedStatement setFieldInsert(BeanInterface oBeanParam, PreparedStatement oPreparedStatement) throws SQLException;
+    public String getFieldConcat();
+    
+    public PreparedStatement setFieldInsert(BeanInterface oBeanParam, PreparedStatement oPreparedStatement) throws Exception;
 
     public String getFieldUpdate();
 
-    public PreparedStatement setFieldUpdate(BeanInterface oBeanParam, PreparedStatement oPreparedStatement) throws SQLException;
+    public PreparedStatement setFieldUpdate(BeanInterface oBeanParam, PreparedStatement oPreparedStatement) throws Exception;
 
 }
