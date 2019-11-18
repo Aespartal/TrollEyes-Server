@@ -1,12 +1,18 @@
 package net.ausiasmarch.service;
 
 import com.google.gson.Gson;
+import java.sql.Connection;
 import java.util.ArrayList;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import net.ausiasmarch.bean.ItemBean;
+import net.ausiasmarch.bean.ProductoBean;
 import net.ausiasmarch.bean.ResponseBean;
+import net.ausiasmarch.connection.ConnectionInterface;
+import net.ausiasmarch.dao.ProductoDao;
+import net.ausiasmarch.factory.ConnectionFactory;
 import net.ausiasmarch.factory.GsonFactory;
+import net.ausiasmarch.setting.ConnectionSettings;
 
 public class CarritoService {
 
@@ -20,49 +26,78 @@ public class CarritoService {
 
     public CarritoService(HttpServletRequest oRequest) {
         this.oRequest = oRequest;
+   
     }
 
     public String add() throws Exception {
+        @SuppressWarnings("unchecked")
+        ItemBean oItemBean = null;
+        int id = Integer.parseInt(oRequest.getParameter("id"));
+        int cantidad = Integer.parseInt(oRequest.getParameter("cantidad"));
+        ConnectionInterface oConnectionImplementation = null;
+        Connection oConnection = null;
+        ProductoDao oProductoDao = null; 
         Gson oGson = GsonFactory.getGson();
-        
         try {
+            oConnectionImplementation = ConnectionFactory.getConnection(ConnectionSettings.connectionPool);
+            oConnection = oConnectionImplementation.newConnection();
+            ProductoBean oProductoBean = new ProductoBean(id);
+            oProductoDao = new ProductoDao(oConnection);
+            oProductoBean = (ProductoBean) oProductoDao.get(id);
+            oItemBean = new ItemBean(cantidad, oProductoBean);
             HttpSession oSession = oRequest.getSession();
-            @SuppressWarnings("unchecked")
             ArrayList<ItemBean> alCarrito = (ArrayList<ItemBean>) oSession.getAttribute("carrito");
             if (alCarrito == null) {
                 alCarrito = new ArrayList<ItemBean>();
             }
-            int id = Integer.parseInt(oRequest.getParameter("id"));
-            int cantidad = Integer.parseInt(oRequest.getParameter("cantidad"));
-            int resultadoFind = this.find(alCarrito, id);
-            if (resultadoFind >= 0) {
-                ItemBean oItemBean = alCarrito.get(resultadoFind);
-                oItemBean.setCantidad(oItemBean.getCantidad() + cantidad);
-                alCarrito.set(resultadoFind, oItemBean);
-            } else {
-                alCarrito.add(new ItemBean(id, cantidad));
-            }
-            oSession.setAttribute("carrito", alCarrito);
+            oItemBean = find(alCarrito, oItemBean.getProducto_obj().getId());    
+           //Comprueba si encuentra el producto, si no lo encuentra lo añade a la lista, si lo encuentra lo suma.
+            if (oItemBean == null) {
+                    oItemBean = new ItemBean(cantidad, oProductoBean);
+                    alCarrito.add(oItemBean);
+                } else {
+                    Integer oldCantidad = oItemBean.getCantidad();
+                    oItemBean.setCantidad(oldCantidad + cantidad);
+                }
+
+            oRequest.getSession().setAttribute("carrito", alCarrito);
             return oGson.toJson(new ResponseBean(200, "OK"));
-        } catch (Exception ex) {
-            return oGson.toJson(new ResponseBean(500, ex.getMessage()));
+         } catch (Exception ex) {
+                String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName();
+                throw new Exception(msg, ex);
+         } finally {
+                if (oConnection != null) {
+                    oConnection.close();
+                }
+                 if (oConnectionImplementation != null) {
+                    oConnectionImplementation.disposeConnection();
+                }
         }
     }
 
     public String remove() throws Exception {
+        ItemBean oItemBean = null;
+        int id = Integer.parseInt(oRequest.getParameter("id"));
+        int cantidad = Integer.parseInt(oRequest.getParameter("cantidad"));
+        ConnectionInterface oConnectionImplementation = null;
+        Connection oConnection = null;
+        ProductoDao oProductoDao = null; 
         Gson oGson = GsonFactory.getGson();
         try {
-            HttpSession oSession = oRequest.getSession();
-            @SuppressWarnings("unchecked")
+            oConnectionImplementation = ConnectionFactory.getConnection(ConnectionSettings.connectionPool);
+            oConnection = oConnectionImplementation.newConnection();
+            ProductoBean oProductoBean = new ProductoBean(id);
+            oProductoDao = new ProductoDao(oConnection);
+            oProductoBean = (ProductoBean) oProductoDao.get(id);
+            oItemBean = new ItemBean(cantidad, oProductoBean);
+             HttpSession oSession = oRequest.getSession();
             ArrayList<ItemBean> alCarrito = (ArrayList<ItemBean>) oSession.getAttribute("carrito");
             if (alCarrito == null) {
                 return oGson.toJson(new ResponseBean(200, "OK"));
             }
-            int id = Integer.parseInt(oRequest.getParameter("id"));
-            int cantidad = Integer.parseInt(oRequest.getParameter("cantidad"));
-            int resultadoFind = this.find(alCarrito, id);
+            int resultadoFind = this.findRemove(alCarrito, id);
             if (resultadoFind >= 0) {
-                ItemBean oItemBean = alCarrito.get(resultadoFind);
+                oItemBean = alCarrito.get(resultadoFind);
                 oItemBean.setCantidad(oItemBean.getCantidad() - cantidad);
                 if (oItemBean.getCantidad() > 0) {
                     alCarrito.set(resultadoFind, oItemBean);
@@ -74,8 +109,16 @@ public class CarritoService {
             }
             oSession.setAttribute("carrito", alCarrito);
             return oGson.toJson(new ResponseBean(200, "OK"));
-        } catch (Exception ex) {
-            return oGson.toJson(new ResponseBean(500, ex.getMessage()));
+         } catch (Exception ex) {
+                String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName();
+                throw new Exception(msg, ex);
+         } finally {
+                if (oConnection != null) {
+                    oConnection.close();
+                }
+                 if (oConnectionImplementation != null) {
+                    oConnectionImplementation.disposeConnection();
+                }
         }
     }
 
@@ -101,15 +144,27 @@ public class CarritoService {
             return oGson.toJson(new ResponseBean(500, ex.getMessage()));
         }
     }
-
-    private int find(ArrayList<ItemBean> alCarrito, int id) throws Exception {
+  
+     private ItemBean find(ArrayList<ItemBean> alCarrito, int id) {
+         
         for (int i = 0; i < alCarrito.size(); i++) {
             ItemBean oItemBean = alCarrito.get(i);
-            if (oItemBean.getId() == id) {
+            if (id == (oItemBean.getProducto_obj().getId())) {
+                return oItemBean;
+            }
+        }
+        return null;
+    }
+     
+     private int findRemove(ArrayList<ItemBean> alCarrito, int id) {
+        for (int i = 0; i < alCarrito.size(); i++) {
+            ItemBean oItemBean = alCarrito.get(i);
+            if (oItemBean.getProducto_obj().getId() == id) {
                 return i;
             }
         }
         return -1;
     }
+    
 
 }

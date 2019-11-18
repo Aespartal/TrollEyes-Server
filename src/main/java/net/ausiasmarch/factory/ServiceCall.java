@@ -26,9 +26,6 @@ public class ServiceCall {
                 case "check":
                     strResult = oUsuarioService.check();
                     break;
-                 case "sessionlevel":
-                    strResult = oUsuarioService.getSessionUserLevel();
-                    break;
                 case "logout":
                     strResult = oUsuarioService.logout();
                     break;

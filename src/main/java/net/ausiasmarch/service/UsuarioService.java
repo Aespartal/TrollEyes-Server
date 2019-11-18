@@ -70,26 +70,11 @@ public class UsuarioService extends GenericService implements ServiceInterface {
     }
 
     public String check() throws Exception {
+        HttpSession oSession = oRequest.getSession();
         ResponseBean oResponseBean = null;
-        HttpSession oSession = oRequest.getSession();
-
-        if (oSession.getAttribute("usuario") != null) {
-            oResponseBean = new ResponseBean(200, (String) oSession.getAttribute("usuario"));
-        } else {
-            oResponseBean = new ResponseBean(500, "No active session");
-        }
-
-        Gson oGson = GsonFactory.getGson();
-        return oGson.toJson(oResponseBean);
-    }
-
-    public String getSessionUserLevel() throws Exception {
-        HttpSession oSession = oRequest.getSession();
         ConnectionInterface oConnectionImplementation = null;
         Connection oConnection = null;
         Gson oGson = GsonFactory.getGson();
-        String strJson = null;
-
         try {
             oConnectionImplementation = ConnectionFactory.getConnection(ConnectionSettings.connectionPool);
             oConnection = oConnectionImplementation.newConnection();
@@ -97,17 +82,17 @@ public class UsuarioService extends GenericService implements ServiceInterface {
             UsuarioDao oUsuarioDao = new UsuarioDao(oConnection);
             UsuarioBean oUsuarioBean;          
             if (usuario == null) {
-                strJson = "\"Unauthorized\"";
+                oResponseBean = new ResponseBean(500, "No autorizado");
             } else {
                 oUsuarioBean = oUsuarioDao.get(usuario);
-                strJson = oGson.toJson(oUsuarioBean.getTipo_usuario_obj().getId());
+                return "{\"status\":200,\"message\":" + oGson.toJson(oUsuarioBean) + "}";
             }
 
         } catch (Exception ex) {
-            String msg = this.getClass().getName() + " ob: " + ob + "; sessionlevel method ";
+            String msg = this.getClass().getName() + " ob: " + ob + "; check method ";
             throw new Exception(msg, ex);
         }
-            return "{\"status\":200,\"message\":" + strJson + "}";
+            return oGson.toJson(oResponseBean);
     }
 
     public String logout() {
