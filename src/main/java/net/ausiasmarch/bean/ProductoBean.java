@@ -167,6 +167,7 @@ public class ProductoBean implements BeanInterface {
         oPreparedStatement.setString(4, oProductoBean.getImagen());
         oPreparedStatement.setString(5, oProductoBean.getDescripcion());
         oPreparedStatement.setInt(6, oProductoBean.getTipo_producto_id());
+        oPreparedStatement.setInt(7, oProductoBean.getId());
         return oPreparedStatement;
     }
 
