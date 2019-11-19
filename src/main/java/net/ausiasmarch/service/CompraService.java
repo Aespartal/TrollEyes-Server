@@ -22,30 +22,40 @@ public class CompraService extends GenericService implements ServiceInterface {
     }
 
     public String fill() throws Exception {
-        ConnectionInterface oConnectionImplementation = ConnectionFactory
+         ConnectionInterface oConnectionImplementation = null;
+         Connection oConnection = null;
+         ResponseBean oResponseBean = null;
+         Gson oGson = GsonFactory.getGson();
+          try {
+        oConnectionImplementation = ConnectionFactory
                 .getConnection(ConnectionSettings.connectionPool);
-        Connection oConnection = oConnectionImplementation.newConnection();
+        oConnection = oConnectionImplementation.newConnection();  
         CompraDao oCompraDao = new CompraDao(oConnection);
-        Gson oGson = GsonFactory.getGson();
+        
         int numCompra = Integer.parseInt(oRequest.getParameter("number"));
         for (int i = 0; i < numCompra; i++) {
             CompraBean oCompraBean = new CompraBean();
-//			Date randomDate = new Date(ThreadLocalRandom.current().nextLong(date1.getTime(), date2.getTime()));
+//          Date randomDate = new Date(ThreadLocalRandom.current().nextLong(date1.getTime(), date2.getTime()));
             int numAleatorio = (int) Math.floor(Math.random() * (1 - 50) + 50);
             int alProducto_id = (int) Math.floor(Math.random() * 25) + 1;
             int alFactura_id = (int) Math.floor(Math.random() * 25) + 1;
-
             oCompraBean.setCantidad(numAleatorio);
             oCompraBean.setProducto_id(alProducto_id);
             oCompraBean.setFactura_id(alFactura_id);
             oCompraDao.insert(oCompraBean);
         }
-        ResponseBean oResponseBean = new ResponseBean(200, "Insertados los registros con exito");
-        if (oConnection != null) {
-            oConnection.close();
-        }
-        if (oConnectionImplementation != null) {
-            oConnectionImplementation.disposeConnection();
+        oResponseBean = new ResponseBean(200, "Insertados los registros con exito");
+          } catch (Exception ex) {
+                String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName();
+                oConnection.rollback();
+                throw new Exception(msg, ex);
+         } finally {
+                if (oConnection != null) {
+                    oConnection.close();
+                }
+                 if (oConnectionImplementation != null) {
+                    oConnectionImplementation.disposeConnection();
+                }
         }
         return oGson.toJson(oResponseBean);
     }

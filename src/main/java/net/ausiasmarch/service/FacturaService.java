@@ -23,11 +23,15 @@ public class FacturaService extends GenericService implements ServiceInterface {
     }
 
     public String fill() throws Exception {
-        ConnectionInterface oConnectionImplementation = ConnectionFactory
+         ConnectionInterface oConnectionImplementation = null;
+         Connection oConnection = null;
+         ResponseBean oResponseBean = null;
+         Gson oGson = GsonFactory.getGson();
+           try {
+        oConnectionImplementation = ConnectionFactory
                 .getConnection(ConnectionSettings.connectionPool);
-        Connection oConnection = oConnectionImplementation.newConnection();
+        oConnection = oConnectionImplementation.newConnection();
         FacturaDao oFacturaDao = new FacturaDao(oConnection);
-        Gson oGson = GsonFactory.getGson();
         Date date1 = new GregorianCalendar(2014, Calendar.JANUARY, 1).getTime();
         Date date2 = new GregorianCalendar(2019, Calendar.DECEMBER, 31).getTime();
         int numFactura = Integer.parseInt(oRequest.getParameter("number"));
@@ -39,12 +43,17 @@ public class FacturaService extends GenericService implements ServiceInterface {
             oFacturaBean.setUsuario_id((int) (Math.random() * 25) + 2);
             oFacturaDao.insert(oFacturaBean);
         }
-        ResponseBean oResponseBean = new ResponseBean(200, "Insertados los registros con exito");
-        if (oConnection != null) {
-            oConnection.close();
-        }
-        if (oConnectionImplementation != null) {
-            oConnectionImplementation.disposeConnection();
+        oResponseBean = new ResponseBean(200, "Insertados los registros con exito");
+           } catch (Exception ex) {
+                String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName();
+                throw new Exception(msg, ex);
+         } finally {
+                if (oConnection != null) {
+                    oConnection.close();
+                }
+                 if (oConnectionImplementation != null) {
+                    oConnectionImplementation.disposeConnection();
+                }
         }
         return oGson.toJson(oResponseBean);
     }

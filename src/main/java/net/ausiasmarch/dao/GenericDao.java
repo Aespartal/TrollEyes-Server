@@ -23,61 +23,46 @@ public class GenericDao implements DaoInterface {
 
     @Override
     public BeanInterface get(int id) throws Exception {
-        PreparedStatement oPreparedStatement=null;
-        ResultSet oResultSet=null;
+        PreparedStatement oPreparedStatement = null;
+        ResultSet oResultSet = null;
         BeanInterface oBean = null;
-        try{
         String strSQL = "SELECT * FROM " + ob + " WHERE id=?";
         oPreparedStatement = oConnection.prepareStatement(strSQL);
         oPreparedStatement.setInt(1, id);
         oResultSet = oPreparedStatement.executeQuery();
-        
+
         if (oResultSet.next()) {
             oBean = BeanFactory.getBean(ob);
             oBean = oBean.fill(oResultSet, oConnection, ConfigurationSettings.spread);
         } else {
             oBean = null;
         }
-        
-         } catch(Exception ex){
-             String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName();
-            throw new Exception(msg, ex);
-        } finally {
-         if (oResultSet != null) {
-                oResultSet.close();
-            }
-            if (oPreparedStatement != null) {
-                oPreparedStatement.close();
-            }
-        }
-        
         return oBean;
     }
 
     @Override
-    public int getCount() throws SQLException {
-        PreparedStatement oPreparedStatement;
-        ResultSet oResultSet;
+    public int getCount() throws Exception {
+        PreparedStatement oPreparedStatement = null;
+        ResultSet oResultSet = null;
         String strSQL = "SELECT count(*) FROM " + ob;
         oPreparedStatement = oConnection.prepareStatement(strSQL);
         oResultSet = oPreparedStatement.executeQuery();
-
         if (oResultSet.next()) {
             return oResultSet.getInt(1);
         } else {
             return -1;
         }
-        
+
     }
 
     @Override
     public ArrayList<BeanInterface> getPage(int page, int rpp, List<String> orden, String word) throws Exception {
         PreparedStatement oPreparedStatement = null;
         ResultSet oResultSet = null;
-        BeanInterface oBean = BeanFactory.getBean(ob);
-         ArrayList<BeanInterface> listaBean = new ArrayList<>();
-        int offset;
+        ArrayList<BeanInterface> listaBean = new ArrayList<>();
         try{
+        BeanInterface oBean = BeanFactory.getBean(ob); 
+        int offset;
         if (page == 1) {
             offset = 0;
         } else {
@@ -91,11 +76,11 @@ public class GenericDao implements DaoInterface {
             if (word != null) {
                 oPreparedStatement = oConnection.prepareStatement("SELECT * FROM " + ob + " WHERE " + oBean.getFieldConcat() + " LIKE CONCAT('%', ?, '%')");
                 oPreparedStatement.setString(1, word);
-               
+
             }
         } else {
-            String sqlQuery = "SELECT * FROM " + ob +" ORDER BY ";
-            
+            String sqlQuery = "SELECT * FROM " + ob + " ORDER BY ";
+
             for (int i = 1; i <= orden.size(); i++) {
                 if (orden.get((i - 1)).equalsIgnoreCase("asc")) {
                     sqlQuery += "ASC ";
@@ -113,18 +98,18 @@ public class GenericDao implements DaoInterface {
         }
 
         oResultSet = oPreparedStatement.executeQuery();
-        
-       
+
         while (oResultSet.next()) {
             oBean = BeanFactory.getBean(ob);
             oBean = oBean.fill(oResultSet, oConnection, ConfigurationSettings.spread);
             listaBean.add(oBean);
         }
-        } catch(Exception ex){
-             String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName();
-            throw new Exception(msg, ex);
+        } catch (Exception ex) {
+           String msg = this.getClass().getName() + " ob: " + ob + "; insert method ";
+           oConnection.rollback();
+           throw new Exception(msg, ex);
         } finally {
-         if (oResultSet != null) {
+            if (oResultSet != null) {
                 oResultSet.close();
             }
             if (oPreparedStatement != null) {
@@ -139,19 +124,12 @@ public class GenericDao implements DaoInterface {
         BeanInterface oBean = BeanFactory.getBean(ob);
         PreparedStatement oPreparedStatement = null;
         int iResult = 0;
-        try {
-            String strsql = "INSERT INTO " + ob + oBean.getFieldInsert();
-            oPreparedStatement = oConnection.prepareStatement(strsql);
-            oPreparedStatement = oBean.setFieldInsert(oBeanParam, oPreparedStatement);
-            iResult = oPreparedStatement.executeUpdate();
-        } catch (Exception ex) {
-            String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName();
-            throw new Exception(msg, ex);
-        } finally {
-            if (oPreparedStatement != null) {
-                oPreparedStatement.close();
-            }
-        }
+
+        String strsql = "INSERT INTO " + ob + oBean.getFieldInsert();
+        oPreparedStatement = oConnection.prepareStatement(strsql);
+        oPreparedStatement = oBean.setFieldInsert(oBeanParam, oPreparedStatement);
+        iResult = oPreparedStatement.executeUpdate();
+
         return iResult;
     }
 
@@ -159,19 +137,10 @@ public class GenericDao implements DaoInterface {
     public Integer remove(int id) throws Exception {
         PreparedStatement oPreparedStatement = null;
         int iResult = 0;
-        try {
-            String strSQL = "DELETE FROM " + ob + " WHERE id=?";
-            oPreparedStatement = oConnection.prepareStatement(strSQL, Statement.RETURN_GENERATED_KEYS);
-            oPreparedStatement.setInt(1, id);
-            iResult = oPreparedStatement.executeUpdate();
-        } catch (Exception ex) {
-            String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName();
-            throw new Exception(msg, ex);
-        } finally {
-            if (oPreparedStatement != null) {
-                oPreparedStatement.close();
-            }
-        }
+        String strSQL = "DELETE FROM " + ob + " WHERE id=?";
+        oPreparedStatement = oConnection.prepareStatement(strSQL, Statement.RETURN_GENERATED_KEYS);
+        oPreparedStatement.setInt(1, id);
+        iResult = oPreparedStatement.executeUpdate();
         return iResult;
     }
 
@@ -180,21 +149,10 @@ public class GenericDao implements DaoInterface {
         BeanInterface oBean = BeanFactory.getBean(ob);
         PreparedStatement oPreparedStatement = null;
         int iResult = 0;
-        try {
-            String strSQL = "UPDATE " + ob + " SET " + oBean.getFieldUpdate() + " WHERE id = ?";
-
-            oPreparedStatement = oConnection.prepareStatement(strSQL, Statement.RETURN_GENERATED_KEYS);
-            oPreparedStatement = oBean.setFieldUpdate(oBeanParam, oPreparedStatement);
-            iResult = oPreparedStatement.executeUpdate();
-        } catch (Exception ex) {
-            String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName();
-            throw new Exception(msg, ex);
-        } finally {
-            if (oPreparedStatement != null) {
-                oPreparedStatement.close();
-            }
-        }
-
+        String strSQL = "UPDATE " + ob + " SET " + oBean.getFieldUpdate() + " WHERE id = ?";
+        oPreparedStatement = oConnection.prepareStatement(strSQL, Statement.RETURN_GENERATED_KEYS);
+        oPreparedStatement = oBean.setFieldUpdate(oBeanParam, oPreparedStatement);
+        iResult = oPreparedStatement.executeUpdate();
         return iResult;
     }
 

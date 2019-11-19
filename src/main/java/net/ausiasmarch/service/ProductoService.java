@@ -24,11 +24,15 @@ public class ProductoService extends GenericService implements ServiceInterface 
     }
 
     public String fill() throws Exception {
-        ConnectionInterface oConnectionImplementation = ConnectionFactory
+         ConnectionInterface oConnectionImplementation = null;
+         Connection oConnection = null;
+         ResponseBean oResponseBean = null;
+         Gson oGson = GsonFactory.getGson();
+        try{
+          oConnectionImplementation = ConnectionFactory
                 .getConnection(ConnectionSettings.connectionPool);
-        Connection oConnection = oConnectionImplementation.newConnection();
+         oConnection = oConnectionImplementation.newConnection();    
         ProductoDao oProductoDao = new ProductoDao(oConnection);
-        Gson oGson = GsonFactory.getGson();
         int numProd = Integer.parseInt(oRequest.getParameter("number"));
         for (int i = 0; i < numProd; i++) {
             ProductoBean oProductoBean = new ProductoBean();
@@ -46,12 +50,17 @@ public class ProductoService extends GenericService implements ServiceInterface 
             oProductoBean.setTipo_producto_id(alTipoProducto_id);
             oProductoDao.insert(oProductoBean);
         }
-        ResponseBean oResponseBean = new ResponseBean(200, "Insertados los registros con exito");
-        if (oConnection != null) {
-            oConnection.close();
-        }
-        if (oConnectionImplementation != null) {
-            oConnectionImplementation.disposeConnection();
+        oResponseBean = new ResponseBean(200, "Insertados los registros con exito");
+         } catch (Exception ex) {
+                String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName();
+                throw new Exception(msg, ex);
+         } finally {
+                if (oConnection != null) {
+                    oConnection.close();
+                }
+                 if (oConnectionImplementation != null) {
+                    oConnectionImplementation.disposeConnection();
+                }
         }
         return oGson.toJson(oResponseBean);
     }

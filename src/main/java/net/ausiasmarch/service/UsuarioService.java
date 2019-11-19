@@ -2,9 +2,6 @@ package net.ausiasmarch.service;
 
 import com.google.gson.Gson;
 import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import net.ausiasmarch.bean.ResponseBean;
@@ -80,7 +77,7 @@ public class UsuarioService extends GenericService implements ServiceInterface {
             oConnection = oConnectionImplementation.newConnection();
             String usuario = (String) oSession.getAttribute("usuario");
             UsuarioDao oUsuarioDao = new UsuarioDao(oConnection);
-            UsuarioBean oUsuarioBean;          
+            UsuarioBean oUsuarioBean;
             if (usuario == null) {
                 oResponseBean = new ResponseBean(500, "No autorizado");
             } else {
@@ -91,8 +88,15 @@ public class UsuarioService extends GenericService implements ServiceInterface {
         } catch (Exception ex) {
             String msg = this.getClass().getName() + " ob: " + ob + "; check method ";
             throw new Exception(msg, ex);
+        } finally {
+            if (oConnection != null) {
+                oConnection.close();
+            }
+            if (oConnectionImplementation != null) {
+                oConnectionImplementation.disposeConnection();
+            }
         }
-            return oGson.toJson(oResponseBean);
+        return oGson.toJson(oResponseBean);
     }
 
     public String logout() {
@@ -105,37 +109,47 @@ public class UsuarioService extends GenericService implements ServiceInterface {
     }
 
     public String fill() throws Exception {
-        ConnectionInterface oConnectionImplementation = ConnectionFactory
-                .getConnection(ConnectionSettings.connectionPool);
-        Connection oConnection = oConnectionImplementation.newConnection();
-        UsuarioDao oUsuarioDao = new UsuarioDao(oConnection);
+        ConnectionInterface oConnectionImplementation = null;
+        Connection oConnection = null;
         Gson oGson = GsonFactory.getGson();
-        int numUsuario = Integer.parseInt(oRequest.getParameter("number"));
-        for (int i = 0; i < numUsuario; i++) {
-            UsuarioBean oUsuarioBean = new UsuarioBean();
-            oUsuarioBean.setDni((int) Math.floor(Math.random() * (10000000 - 99999999) + 99999999) + "O");
-            String nombrePersona = nombre[(int) (Math.random() * nombre.length) + 0];
-            String apellido1Persona = apellido1[(int) (Math.random() * apellido1.length) + 0];
-            String apellido2Persona = apellido2[(int) (Math.random() * apellido2.length) + 0];
-            String username = nombrePersona.substring(0, 2).toLowerCase().trim()
-                    + apellido1Persona.substring(0, 2).toLowerCase().trim()
-                    + apellido2Persona.substring(0, 2).toLowerCase().trim()
-                    + (int) Math.floor(Math.random() * (1000 - 9999) + 9999);
-            oUsuarioBean.setNombre(nombrePersona);
-            oUsuarioBean.setApellido1(apellido1Persona);
-            oUsuarioBean.setApellido2(apellido2Persona);
-            oUsuarioBean.setEmail(username + "@trolleyes.com");
-            oUsuarioBean.setLogin(username);
-            oUsuarioBean.setPassword("da8ab09ab4889c6208116a675cad0b13e335943bd7fc418782d054b32fdfba04");
-            oUsuarioBean.setTipo_usuario_id(2);
-            oUsuarioDao.insert(oUsuarioBean);
-        }
-        ResponseBean oResponseBean = new ResponseBean(200, "Insertados los registros con exito");
-        if (oConnection != null) {
-            oConnection.close();
-        }
-        if (oConnectionImplementation != null) {
-            oConnectionImplementation.disposeConnection();
+        ResponseBean oResponseBean = null;
+        try {
+            oConnectionImplementation = ConnectionFactory
+                    .getConnection(ConnectionSettings.connectionPool);
+            oConnection = oConnectionImplementation.newConnection();
+            UsuarioDao oUsuarioDao = new UsuarioDao(oConnection);
+
+            int numUsuario = Integer.parseInt(oRequest.getParameter("number"));
+            for (int i = 0; i < numUsuario; i++) {
+                UsuarioBean oUsuarioBean = new UsuarioBean();
+                oUsuarioBean.setDni((int) Math.floor(Math.random() * (10000000 - 99999999) + 99999999) + "O");
+                String nombrePersona = nombre[(int) (Math.random() * nombre.length) + 0];
+                String apellido1Persona = apellido1[(int) (Math.random() * apellido1.length) + 0];
+                String apellido2Persona = apellido2[(int) (Math.random() * apellido2.length) + 0];
+                String username = nombrePersona.substring(0, 2).toLowerCase().trim()
+                        + apellido1Persona.substring(0, 2).toLowerCase().trim()
+                        + apellido2Persona.substring(0, 2).toLowerCase().trim()
+                        + (int) Math.floor(Math.random() * (1000 - 9999) + 9999);
+                oUsuarioBean.setNombre(nombrePersona);
+                oUsuarioBean.setApellido1(apellido1Persona);
+                oUsuarioBean.setApellido2(apellido2Persona);
+                oUsuarioBean.setEmail(username + "@trolleyes.com");
+                oUsuarioBean.setLogin(username);
+                oUsuarioBean.setPassword("da8ab09ab4889c6208116a675cad0b13e335943bd7fc418782d054b32fdfba04");
+                oUsuarioBean.setTipo_usuario_id(2);
+                oUsuarioDao.insert(oUsuarioBean);
+            }
+            oResponseBean = new ResponseBean(200, "Insertados los registros con exito");
+        } catch (Exception ex) {
+            String msg = this.getClass().getName() + " ob: " + ob + "; check method ";
+            throw new Exception(msg, ex);
+        } finally {
+            if (oConnection != null) {
+                oConnection.close();
+            }
+            if (oConnectionImplementation != null) {
+                oConnectionImplementation.disposeConnection();
+            }
         }
         return oGson.toJson(oResponseBean);
     }

@@ -64,7 +64,8 @@ public class CarritoService {
             return oGson.toJson(new ResponseBean(200, "OK"));
          } catch (Exception ex) {
                 String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName();
-                throw new Exception(msg, ex);
+                oConnection.rollback();
+                throw new Exception(msg, ex);             
          } finally {
                 if (oConnection != null) {
                     oConnection.close();
@@ -111,6 +112,7 @@ public class CarritoService {
             return oGson.toJson(new ResponseBean(200, "OK"));
          } catch (Exception ex) {
                 String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName();
+                oConnection.rollback();
                 throw new Exception(msg, ex);
          } finally {
                 if (oConnection != null) {
@@ -130,6 +132,7 @@ public class CarritoService {
             ArrayList<ItemBean> alCarrito = (ArrayList<ItemBean>) oSession.getAttribute("carrito");
             return "{\"status\":200,\"message\":" + oGson.toJson(alCarrito) + "}";
         } catch (Exception ex) {
+        
             return oGson.toJson(new ResponseBean(500, ex.getMessage()));
         }
     }
