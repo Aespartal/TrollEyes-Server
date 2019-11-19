@@ -27,6 +27,13 @@ public class ProductoBean implements BeanInterface {
     @Expose(deserialize = false)
     private TipoProductoBean tipo_producto_obj;
 
+    public ProductoBean() {
+    }
+
+    public ProductoBean(Integer id) {
+        this.id = id;
+    }
+
     @Override
     public Integer getId() {
         return id;
