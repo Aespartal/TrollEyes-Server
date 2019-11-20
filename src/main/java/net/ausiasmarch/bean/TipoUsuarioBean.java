@@ -71,7 +71,7 @@ public class TipoUsuarioBean implements BeanInterface {
 
     @Override
     public String getFieldUpdate() {
-        return " (descripcion) VALUES(?)";
+        return " descripcion=? ";
     }
 
     @Override

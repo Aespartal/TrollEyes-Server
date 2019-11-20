@@ -119,7 +119,7 @@ public class FacturaBean implements BeanInterface {
 
     @Override
     public String getFieldUpdate() {
-        return " (fecha,iva,usuario_id) VALUES(?,?,?)";
+        return " fecha=?,iva=?,usuario_id=? ";
     }
 
     @Override

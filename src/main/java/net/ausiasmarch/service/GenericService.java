@@ -43,8 +43,7 @@ public class GenericService implements ServiceInterface {
             strJson = oGson.toJson(oBean);
             return "{\"status\":200,\"message\":" + strJson + "}";
         } catch (Exception ex) {
-            String msg = this.getClass().getName() + " ob: " + ob + "; get method ";
-            oConnection.rollback();
+            String msg = this.getClass().getName() + " ob: " + ob + "; get method ";;
             throw new Exception(msg, ex);
         } finally {
             if (oConnection != null) {
@@ -78,7 +77,6 @@ public class GenericService implements ServiceInterface {
             return "{\"status\":200,\"message\":" + strJson + "}";
         } catch (Exception ex) {
             String msg = this.getClass().getName() + " ob: " + ob + "; getPage method ";
-            oConnection.rollback();
             throw new Exception(msg, ex);
         } finally {
             if (oConnection != null) {
@@ -143,7 +141,6 @@ public class GenericService implements ServiceInterface {
                 return oGson.toJson(oResponseBean);
             } catch (Exception ex) {
                 String msg = this.getClass().getName() + " ob: " + ob + "; update method ";
-                oConnection.rollback();
                 throw new Exception(msg, ex);
             } finally {
                 if (oConnection != null) {
@@ -181,12 +178,11 @@ public class GenericService implements ServiceInterface {
                     oResponseBean = new ResponseBean(500, "KO");
                 } else {
                     oResponseBean = new ResponseBean(200, "OK");
-                };
+                }
                 oConnection.commit();
                 return oGson.toJson(oResponseBean);
             } catch (Exception ex) {
                 String msg = this.getClass().getName() + " ob: " + ob + "; insert method ";
-                oConnection.rollback();
                 throw new Exception(msg, ex);
             } finally {
                 if (oConnection != null) {
@@ -223,7 +219,6 @@ public class GenericService implements ServiceInterface {
                 return oGson.toJson(oResponseBean);
             } catch (Exception ex) {
                 String msg = this.getClass().getName() + " ob: " + ob + "; remove method ";
-                oConnection.rollback();
                 throw new Exception(msg, ex);
             } finally {
                 if (oConnection != null) {

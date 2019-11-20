@@ -68,7 +68,7 @@ public class ServiceCall {
                     strResult = oCarritoService.remove();
                     break;
                 case "buy":
-                    strResult = "Aun por hacer :P";
+                    strResult = oCarritoService.buy();
                     break;
             }
         }

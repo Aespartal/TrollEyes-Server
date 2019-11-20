@@ -106,9 +106,7 @@ public class CompraBean implements BeanInterface {
                 oPreparedStatement.setInt(i, 2);
             } else if (orden.get((i - 1)).equalsIgnoreCase("factura_id")) {
                 oPreparedStatement.setInt(i, 3);
-            } else if (orden.get((i - 1)).equalsIgnoreCase("producto_id")) {
-                oPreparedStatement.setInt(i, 4);
-            }
+            } 
         }
         return oPreparedStatement;
     }
@@ -135,7 +133,7 @@ public class CompraBean implements BeanInterface {
 
     @Override
     public String getFieldUpdate() {
-        return " (cantidad,producto_id,factura_id) VALUES(?,?,?)";
+        return " cantidad=?,producto_id=?,factura_id=? ";
     }
 
     @Override

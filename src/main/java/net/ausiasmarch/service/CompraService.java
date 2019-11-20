@@ -47,7 +47,6 @@ public class CompraService extends GenericService implements ServiceInterface {
         oResponseBean = new ResponseBean(200, "Insertados los registros con exito");
           } catch (Exception ex) {
                 String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName();
-                oConnection.rollback();
                 throw new Exception(msg, ex);
          } finally {
                 if (oConnection != null) {

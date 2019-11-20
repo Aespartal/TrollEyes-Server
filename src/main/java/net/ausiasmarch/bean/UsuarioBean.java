@@ -173,7 +173,7 @@ public class UsuarioBean implements BeanInterface {
     
     @Override
     public String getFieldConcat(){
-        return "CONCAT(`id`,`dni`,`nombre`,`apellido1`,`apellido2`,`email`,`login`)";
+        return " CONCAT(id,dni,nombre,apellido1,apellido2,email,login) ";
     }
 
     @Override
@@ -193,7 +193,7 @@ public class UsuarioBean implements BeanInterface {
 
     @Override
     public String getFieldUpdate() {
-        return " (dni,nombre,apellido1,apellido2,email,login,password,tipo_usuario_id) VALUES(?,?,?,?,?,?,?,?)";
+        return " dni=?,nombre=?,apellido1=?,apellido2=?,email=?,login=?,password=?,tipo_usuario_id=? ";
     }
 
     @Override

@@ -71,7 +71,7 @@ public class TipoProductoBean implements BeanInterface {
 
     @Override
     public String getFieldUpdate() {
-        return " (descripcion) VALUES(?)";
+        return " descripcion=? ";
     }
 
     @Override

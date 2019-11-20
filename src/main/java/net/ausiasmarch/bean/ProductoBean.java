@@ -167,7 +167,7 @@ public class ProductoBean implements BeanInterface {
 
     @Override
     public String getFieldUpdate() {
-        return " (codigo,existencias,precio,imagen,descripcion,tipo_producto_id) VALUES(?,?,?,?,?,?)";
+        return " codigo=?,existencias=?,precio=?,imagen=?,descripcion=?,tipo_producto_id=? ";
     }
 
     @Override
