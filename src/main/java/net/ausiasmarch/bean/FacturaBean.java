@@ -126,7 +126,7 @@ public class FacturaBean implements BeanInterface {
     public PreparedStatement setFieldUpdate(BeanInterface oBeanParam, PreparedStatement oPreparedStatement)
             throws SQLException {
         FacturaBean oFacturaBean = (FacturaBean) oBeanParam;
-        oPreparedStatement.setDate(1, (java.sql.Date) oFacturaBean.getFecha());
+        oPreparedStatement.setDate(1,  new java.sql.Date(oFacturaBean.getFecha().getTime()));
         oPreparedStatement.setInt(2, oFacturaBean.getIva());
         oPreparedStatement.setInt(3, oFacturaBean.getUsuario_id());
         oPreparedStatement.setInt(4, oFacturaBean.getId());

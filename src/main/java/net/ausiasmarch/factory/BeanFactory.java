@@ -47,10 +47,10 @@ public class BeanFactory {
                 oBean = oGson.fromJson(data, UsuarioBean.class);
                 break;
             case "compra":
-                oBean = oGson.fromJson(data, ProductoBean.class);
+                oBean = oGson.fromJson(data, CompraBean.class);
                 break;
             case "factura":
-                oBean = oGson.fromJson(data, CompraBean.class);
+                oBean = oGson.fromJson(data, FacturaBean.class);
                 break;
             case "tipo_producto":
                 oBean = oGson.fromJson(data, TipoProductoBean.class);
