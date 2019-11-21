@@ -24,6 +24,7 @@ public class UsuarioBean implements BeanInterface {
     private String email;
     @Expose
     private String login;
+    @Expose(serialize = false)
     private String password;
     @Expose(serialize = false)
     private Integer tipo_usuario_id;

@@ -168,7 +168,6 @@ public class GenericService implements ServiceInterface {
             try {
                 oConnectionImplementation = ConnectionFactory.getConnection(ConnectionSettings.connectionPool);
                 oConnection = oConnectionImplementation.newConnection();
-                oConnection.setAutoCommit(false);
                 final GsonBuilder builder = new GsonBuilder();
                 builder.excludeFieldsWithoutExposeAnnotation();
                 BeanInterface oBean = BeanFactory.getBean(ob);
@@ -179,7 +178,6 @@ public class GenericService implements ServiceInterface {
                 } else {
                     oResponseBean = new ResponseBean(200, "OK");
                 }
-                oConnection.commit();
                 return oGson.toJson(oResponseBean);
             } catch (Exception ex) {
                 String msg = this.getClass().getName() + " ob: " + ob + "; insert method ";
