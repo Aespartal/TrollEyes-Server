@@ -220,6 +220,9 @@ public class CarritoService {
                             oProductoBean.setExistencias(oProductoBean.getExistencias() - oItemBean.getCantidad());
                             oProductoDao.update(oProductoBean);
                             oProductoDao.insert(oProductoBean);
+                        } else{
+                        oResponseBean = new ResponseBean(500, "No hay suficientes existencias.");   
+                        return oGson.toJson(oResponseBean);
                         }
                     }
                     alCarrito.clear();
@@ -227,11 +230,11 @@ public class CarritoService {
                 }
 
             } catch (Exception ex) {
+                 oConnection.rollback();
                 String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName();
                 throw new Exception(msg, ex);
             } finally {
                 if (oConnection != null) {
-                    oConnection.rollback();
                     oConnection.close();
                 }
                     if (oConnectionImplementation != null) {
