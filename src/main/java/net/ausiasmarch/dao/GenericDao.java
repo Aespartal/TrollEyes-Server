@@ -133,17 +133,23 @@ public class GenericDao implements DaoInterface {
     public Integer insert(BeanInterface oBeanParam) throws Exception {
         BeanInterface oBean = BeanFactory.getBean(ob);
         PreparedStatement oPreparedStatement = null;
+        ResultSet oResultSet = null;
         int iResult = 0;
         try {
             String strsql = "INSERT INTO " + ob + oBean.getFieldInsert();
-            oPreparedStatement = oConnection.prepareStatement(strsql);
+            oPreparedStatement = oConnection.prepareStatement(strsql, Statement.RETURN_GENERATED_KEYS);
             oPreparedStatement = oBean.setFieldInsert(oBeanParam, oPreparedStatement);
             iResult = oPreparedStatement.executeUpdate();
+            oResultSet = oPreparedStatement.getGeneratedKeys(); 
+            oResultSet.next();    
+            iResult = oResultSet.getInt(1);    
         } catch (Exception ex) {
             String msg = this.getClass().getName() + " ob: " + ob + "; insert method ";
             throw new Exception(msg, ex);
         } finally {
-
+            if (oResultSet != null) {
+                    oResultSet.close();
+            }
             if (oPreparedStatement != null) {
                 oPreparedStatement.close();
             }
