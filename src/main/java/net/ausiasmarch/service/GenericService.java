@@ -32,6 +32,7 @@ public class GenericService implements ServiceInterface {
     public String get() throws Exception {
         ConnectionInterface oConnectionImplementation = null;
         Connection oConnection = null;
+        String strJson = null;
         try {
             oConnectionImplementation = ConnectionFactory.getConnection(ConnectionSettings.connectionPool);
             oConnection = oConnectionImplementation.newConnection();
@@ -39,9 +40,8 @@ public class GenericService implements ServiceInterface {
             DaoInterface oDao = DaoFactory.getDao(ob, oConnection);
             BeanInterface oBean = oDao.get(id);
             Gson oGson = GsonFactory.getGson();
-            String strJson = null;
             strJson = oGson.toJson(oBean);
-            return "{\"status\":200,\"message\":" + strJson + "}";
+            
         } catch (Exception ex) {
             String msg = this.getClass().getName() + " ob: " + ob + "; get method ";;
             throw new Exception(msg, ex);
@@ -53,6 +53,7 @@ public class GenericService implements ServiceInterface {
                 oConnectionImplementation.disposeConnection();
             }
         }
+        return "{\"status\":200,\"message\":" + strJson + "}";
     }
 
     @Override

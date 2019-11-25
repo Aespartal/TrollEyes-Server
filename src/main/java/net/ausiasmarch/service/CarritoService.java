@@ -202,8 +202,9 @@ public class CarritoService {
                     oFacturaBean.setIva(21);
                     oFacturaBean.setFecha(Calendar.getInstance().getTime());
                     FacturaDao oFacturaDao = new FacturaDao(oConnection);
-                    oFacturaBean.setId(oFacturaDao.insert(oFacturaBean));
-                    //--                              
+                    oFacturaDao.insert(oFacturaBean);
+                    oFacturaBean.setId(oFacturaBean.getId());
+                    //-----------------------------------------------------                              
                     Iterator<ItemBean> iterator = alCarrito.iterator();
                     while (iterator.hasNext()) {
                         ItemBean oItemBean = iterator.next();
@@ -216,7 +217,9 @@ public class CarritoService {
                             oCompraBean.setFactura_id(oFacturaBean.getId());
                             oCompraBean.setProducto_id(oProductoBean.getId());      
                             CompraDao oCompraDao = new CompraDao(oConnection);
-                            oCompraBean.setId(oCompraDao.insert(oCompraBean));
+                            oCompraDao.insert(oCompraBean);
+                            oCompraBean.setId(oCompraBean.getId());
+                            
                             oProductoBean.setExistencias(oProductoBean.getExistencias() - oItemBean.getCantidad());
                             oProductoDao.update(oProductoBean);
                             oProductoDao.insert(oProductoBean);
