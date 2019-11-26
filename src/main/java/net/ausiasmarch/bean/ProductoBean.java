@@ -147,11 +147,31 @@ public class ProductoBean implements BeanInterface {
     public String getFieldInsert() {
         return " (codigo,existencias,precio,imagen,descripcion,tipo_producto_id) VALUES(?,?,?,?,?,?)";
     }
-    
-    @Override
-    public String getFieldConcat(){
-        return "CONCAT(`codigo`,`existencias`,`precio`,`imagen`,`descripcion`,`tipo_producto_id`)";
+
+    private String getFieldFilter(String campo) {
+        return " OR " + campo + "LIKE CONCAT('%', \'?\', '%')";
     }
+
+    @Override
+    public String getFieldConcat() {
+        
+        return getFieldFilter("codigo") +
+                getFieldFilter("existencias") + 
+                getFieldFilter("precio") + 
+                getFieldFilter("imagen") +
+                getFieldFilter("descripcion") +
+                getFieldFilter("tipo_producto_id");
+        
+        
+    }
+    
+    public PreparedStatement setFilter(int numparam,PreparedStatement oPreparedStatement,String word) throws SQLException{
+        for (int i=0;i<=numparam;i++){
+                            oPreparedStatement.setString(++numparam, word);
+        }
+        return oPreparedStatement;
+    }
+            
 
     @Override
     public PreparedStatement setFieldInsert(BeanInterface oBeanParam, PreparedStatement oPreparedStatement) throws Exception {

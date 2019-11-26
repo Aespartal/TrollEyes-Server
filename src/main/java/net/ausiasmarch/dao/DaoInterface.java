@@ -10,7 +10,7 @@ public interface DaoInterface {
 
     int getCount() throws Exception;
 
-    ArrayList getPage(int page, int rpp, List<String> orden, String word) throws Exception;
+    ArrayList getPage(int page, int rpp, List<String> orden, String word, int id, String filter) throws Exception;
 
     Integer insert(BeanInterface oBean) throws Exception;
 

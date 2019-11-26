@@ -173,8 +173,8 @@ public class UsuarioBean implements BeanInterface {
     }
     
     @Override
-    public String getFieldConcat(){
-        return " CONCAT(id,dni,nombre,apellido1,apellido2,email,login) ";
+    public String getFieldFilter(){
+        return "dni";
     }
 
     @Override

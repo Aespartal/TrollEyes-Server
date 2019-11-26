@@ -58,7 +58,7 @@ public class TipoUsuarioBean implements BeanInterface {
 
     @Override
     public String getFieldConcat(){
-        return "CONCAT(`descripcion`)";
+        return "descripcion";
     }
     
     @Override

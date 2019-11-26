@@ -67,7 +67,7 @@ public class GenericDao implements DaoInterface {
     }
 
     @Override
-    public ArrayList<BeanInterface> getPage(int page, int rpp, List<String> orden, String word) throws Exception {
+    public ArrayList<BeanInterface> getPage(int page, int rpp, String orden, String direccion, String word, int id, String filter) throws Exception {
         PreparedStatement oPreparedStatement = null;
         ResultSet oResultSet = null;
         ArrayList<BeanInterface> listaBean = new ArrayList<>();
@@ -79,33 +79,29 @@ public class GenericDao implements DaoInterface {
             } else {
                 offset = (rpp * page) - rpp;
             }
-
+            int numparam = 0;
             if (orden == null) {
                 oPreparedStatement = oConnection.prepareStatement("SELECT * FROM " + ob + " LIMIT ? OFFSET ?");
-                oPreparedStatement.setInt(1, rpp);
-                oPreparedStatement.setInt(2, offset);
-                if (word != null) {
-                    oPreparedStatement = oConnection.prepareStatement("SELECT * FROM " + ob + " WHERE " + oBean.getFieldConcat() + " LIKE CONCAT('%', ?, '%')");
-                    oPreparedStatement.setString(1, word);
+                oPreparedStatement.setInt(++numparam, rpp);
+                oPreparedStatement.setInt(++numparam, offset);
 
-                }
             } else {
-                String sqlQuery = "SELECT * FROM " + ob + " ORDER BY ";
-
-                for (int i = 1; i <= orden.size(); i++) {
-                    if (orden.get((i - 1)).equalsIgnoreCase("asc")) {
-                        sqlQuery += "ASC ";
-                    } else if (orden.get((i - 1)).equalsIgnoreCase("desc")) {
-                        sqlQuery += "DESC ";
-                    } else {
-                        sqlQuery += "? ";
-                    }
+                String sqlQuery = "SELECT * FROM " + ob + " ORDER BY ? ";
+                if (direccion.equalsIgnoreCase("asc")) {
+                    sqlQuery += "ASC ";
+                } else if (direccion.equalsIgnoreCase("desc")) {
+                    sqlQuery += "DESC ";
                 }
                 sqlQuery += "LIMIT ? OFFSET ?";
                 oPreparedStatement = oConnection.prepareStatement(sqlQuery);
-                oPreparedStatement = oBean.orderSQL(orden, oPreparedStatement);
-                oPreparedStatement.setInt((orden.size()), rpp);
-                oPreparedStatement.setInt((orden.size() + 1), offset);
+                oPreparedStatement.setString(++numparam, orden);
+                oPreparedStatement.setInt(++numparam, rpp);
+                oPreparedStatement.setInt(++numparam, offset);
+            }
+            if (filter != null) {
+                oPreparedStatement = oConnection.prepareStatement("SELECT * FROM " + ob + " WHERE 1=1" + oBean.getFieldConcat(numparam) );
+                oBean.setFilter(oPreparedStatement, word);
+
             }
 
             oResultSet = oPreparedStatement.executeQuery();
@@ -133,17 +129,23 @@ public class GenericDao implements DaoInterface {
     public Integer insert(BeanInterface oBeanParam) throws Exception {
         BeanInterface oBean = BeanFactory.getBean(ob);
         PreparedStatement oPreparedStatement = null;
+        ResultSet oResultSet = null;
         int iResult = 0;
         try {
             String strsql = "INSERT INTO " + ob + oBean.getFieldInsert();
-            oPreparedStatement = oConnection.prepareStatement(strsql);
+            oPreparedStatement = oConnection.prepareStatement(strsql, Statement.RETURN_GENERATED_KEYS);
             oPreparedStatement = oBean.setFieldInsert(oBeanParam, oPreparedStatement);
             iResult = oPreparedStatement.executeUpdate();
+            oResultSet = oPreparedStatement.getGeneratedKeys();
+            oResultSet.next();
+            iResult = oResultSet.getInt(1);
         } catch (Exception ex) {
             String msg = this.getClass().getName() + " ob: " + ob + "; insert method ";
             throw new Exception(msg, ex);
         } finally {
-
+            if (oResultSet != null) {
+                oResultSet.close();
+            }
             if (oPreparedStatement != null) {
                 oPreparedStatement.close();
             }

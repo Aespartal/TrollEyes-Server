@@ -18,7 +18,7 @@ public interface BeanInterface {
 
     public String getFieldInsert();
 
-    public String getFieldConcat();
+    public String getFieldConcat(int numparam);
     
     public PreparedStatement setFieldInsert(BeanInterface oBeanParam, PreparedStatement oPreparedStatement) throws Exception;
 

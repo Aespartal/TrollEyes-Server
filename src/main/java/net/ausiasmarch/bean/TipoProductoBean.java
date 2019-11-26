@@ -58,7 +58,7 @@ public class TipoProductoBean implements BeanInterface {
 
      @Override
     public String getFieldConcat(){
-        return "CONCAT(`descripcion`)";
+        return "id";
     }
     
     @Override

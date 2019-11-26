@@ -34,7 +34,7 @@ public class CarritoService {
 
     public CarritoService(HttpServletRequest oRequest) {
         this.oRequest = oRequest;
-   
+
     }
 
     public String add() throws Exception {
@@ -44,7 +44,8 @@ public class CarritoService {
         int cantidad = Integer.parseInt(oRequest.getParameter("cantidad"));
         ConnectionInterface oConnectionImplementation = null;
         Connection oConnection = null;
-        ProductoDao oProductoDao = null; 
+        ProductoDao oProductoDao = null;
+        ResponseBean oResponseBean = null;
         Gson oGson = GsonFactory.getGson();
         try {
             oConnectionImplementation = ConnectionFactory.getConnection(ConnectionSettings.connectionPool);
@@ -52,82 +53,106 @@ public class CarritoService {
             ProductoBean oProductoBean = new ProductoBean(id);
             oProductoDao = new ProductoDao(oConnection);
             oProductoBean = (ProductoBean) oProductoDao.get(id);
-            oItemBean = new ItemBean(cantidad, oProductoBean);
-            HttpSession oSession = oRequest.getSession();
-            ArrayList<ItemBean> alCarrito = (ArrayList<ItemBean>) oSession.getAttribute("carrito");
-            if (alCarrito == null) {
-                alCarrito = new ArrayList<ItemBean>();
-            }
-            oItemBean = find(alCarrito, oItemBean.getProducto_obj().getId());    
-           //Comprueba si encuentra el producto, si no lo encuentra lo añade a la lista, si lo encuentra lo suma.
-            if (oItemBean == null) {
+            if (oProductoBean != null) {
+                if (cantidad != 0) {
                     oItemBean = new ItemBean(cantidad, oProductoBean);
-                    alCarrito.add(oItemBean);
+                    HttpSession oSession = oRequest.getSession();
+                    ArrayList<ItemBean> alCarrito = (ArrayList<ItemBean>) oSession.getAttribute("carrito");
+                    if (alCarrito == null) {
+                        alCarrito = new ArrayList<ItemBean>();
+                    }
+                    oItemBean = find(alCarrito, oItemBean.getProducto_obj().getId());
+                    if (oProductoBean.getExistencias() >= cantidad) {
+                        if (oItemBean == null) {
+                            oItemBean = new ItemBean(cantidad, oProductoBean);
+                            alCarrito.add(oItemBean);
+                            oRequest.getSession().setAttribute("carrito", alCarrito);
+                            oResponseBean = new ResponseBean(200, "Nuevo producto añadido");
+                        } else {
+                            int oldCantidad = oItemBean.getCantidad();
+                            int newCantidad = oldCantidad + cantidad;
+                            if (oProductoBean.getExistencias() >= newCantidad) {
+                                oItemBean.setCantidad(oldCantidad + cantidad);
+                                oRequest.getSession().setAttribute("carrito", alCarrito);
+                                oResponseBean = new ResponseBean(200, "Producto añadido");
+                            } else {
+                                oResponseBean = new ResponseBean(400, "No hay suficientes existencias para este producto");
+                            }
+                        }
+                    } else {
+                        oResponseBean = new ResponseBean(400, "No hay suficientes existencias para este producto");
+                    }
                 } else {
-                    Integer oldCantidad = oItemBean.getCantidad();
-                    oItemBean.setCantidad(oldCantidad + cantidad);
+                    oResponseBean = new ResponseBean(400, "Selecciona una cantidad apropiada");
                 }
+            } else {
+                oResponseBean = new ResponseBean(400, "Este producto no esta almacenador en la tienda");
+            }
 
-            oRequest.getSession().setAttribute("carrito", alCarrito);
-            return oGson.toJson(new ResponseBean(200, "OK"));
-         } catch (Exception ex) {
-                String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName();
-                throw new Exception(msg, ex);             
-         } finally {
-                if (oConnection != null) {
-                    oConnection.close();
-                }
-                 if (oConnectionImplementation != null) {
-                    oConnectionImplementation.disposeConnection();
-                }
+        } catch (Exception ex) {
+            String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName();
+            throw new Exception(msg, ex);
+        } finally {
+            if (oConnection != null) {
+                oConnection.close();
+            }
+            if (oConnectionImplementation != null) {
+                oConnectionImplementation.disposeConnection();
+            }
         }
+        return oGson.toJson(oResponseBean);
     }
 
     public String remove() throws Exception {
-        ItemBean oItemBean = null;
         int id = Integer.parseInt(oRequest.getParameter("id"));
-        int cantidad = Integer.parseInt(oRequest.getParameter("cantidad"));
+        HttpSession oSession = oRequest.getSession();
         ConnectionInterface oConnectionImplementation = null;
         Connection oConnection = null;
-        ProductoDao oProductoDao = null; 
+        ProductoDao oProductoDao = null;
+        ProductoBean oProductoBean = null;
+        ResponseBean oResponseBean = null;
         Gson oGson = GsonFactory.getGson();
         try {
             oConnectionImplementation = ConnectionFactory.getConnection(ConnectionSettings.connectionPool);
             oConnection = oConnectionImplementation.newConnection();
-            ProductoBean oProductoBean = new ProductoBean(id);
             oProductoDao = new ProductoDao(oConnection);
             oProductoBean = (ProductoBean) oProductoDao.get(id);
-            oItemBean = new ItemBean(cantidad, oProductoBean);
-             HttpSession oSession = oRequest.getSession();
-            ArrayList<ItemBean> alCarrito = (ArrayList<ItemBean>) oSession.getAttribute("carrito");
-            if (alCarrito == null) {
-                return oGson.toJson(new ResponseBean(200, "OK"));
-            }
-            int resultadoFind = this.findRemove(alCarrito, id);
-            if (resultadoFind >= 0) {
-                oItemBean = alCarrito.get(resultadoFind);
-                oItemBean.setCantidad(oItemBean.getCantidad() - cantidad);
-                if (oItemBean.getCantidad() > 0) {
-                    alCarrito.set(resultadoFind, oItemBean);
+            if (oProductoBean != null) {
+                ArrayList<ItemBean> alCarrito = (ArrayList<ItemBean>) oSession.getAttribute("carrito");
+                if (alCarrito != null) {
+                    int resultadoFind = this.findRemove(alCarrito, id);
+                    if (resultadoFind >= 0) {
+                        alCarrito.remove(resultadoFind);
+                        if (!alCarrito.isEmpty()) {
+                            oRequest.getSession().setAttribute("carrito", alCarrito);
+                            oResponseBean = new ResponseBean(200, "Ha eliminado el prodcto del carrito");
+                        } else {
+                            if (alCarrito.isEmpty()) {
+                                oRequest.getSession().setAttribute("carrito", null);
+                                oResponseBean = new ResponseBean(200, "El carrito se ha vaciado.");
+                            }
+                        }
+                    } else {
+                        oResponseBean = new ResponseBean(400, "El producto que quiere eliminar no esta en el carrito");
+                    }
                 } else {
-                    alCarrito.remove(resultadoFind);
+                    oResponseBean = new ResponseBean(400, "El carrito esta vacio.");
                 }
             } else {
-                alCarrito.add(new ItemBean(id, cantidad));
+                oResponseBean = new ResponseBean(400, "El producto que quieres eliminar no existe");
             }
-            oSession.setAttribute("carrito", alCarrito);
-            return oGson.toJson(new ResponseBean(200, "OK"));
-         } catch (Exception ex) {
-                String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName();
-                throw new Exception(msg, ex);
-         } finally {
-                if (oConnection != null) {
-                    oConnection.close();
-                }
-                 if (oConnectionImplementation != null) {
-                    oConnectionImplementation.disposeConnection();
-                }
+        } catch (Exception ex) {
+            String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName();
+            throw new Exception(msg, ex);
+        } finally {
+            if (oConnection != null) {
+                oConnection.close();
+            }
+            if (oConnectionImplementation != null) {
+                oConnectionImplementation.disposeConnection();
+            }
         }
+        return oGson.toJson(oResponseBean);
     }
 
     public String list() throws Exception {
@@ -138,7 +163,7 @@ public class CarritoService {
             ArrayList<ItemBean> alCarrito = (ArrayList<ItemBean>) oSession.getAttribute("carrito");
             return "{\"status\":200,\"message\":" + oGson.toJson(alCarrito) + "}";
         } catch (Exception ex) {
-        
+
             return oGson.toJson(new ResponseBean(500, ex.getMessage()));
         }
     }
@@ -153,9 +178,9 @@ public class CarritoService {
             return oGson.toJson(new ResponseBean(500, ex.getMessage()));
         }
     }
-  
-     private ItemBean find(ArrayList<ItemBean> alCarrito, int id) {
-         
+
+    private ItemBean find(ArrayList<ItemBean> alCarrito, int id) {
+
         for (int i = 0; i < alCarrito.size(); i++) {
             ItemBean oItemBean = alCarrito.get(i);
             if (id == (oItemBean.getProducto_obj().getId())) {
@@ -164,8 +189,8 @@ public class CarritoService {
         }
         return null;
     }
-     
-     private int findRemove(ArrayList<ItemBean> alCarrito, int id) {
+
+    private int findRemove(ArrayList<ItemBean> alCarrito, int id) {
         for (int i = 0; i < alCarrito.size(); i++) {
             ItemBean oItemBean = alCarrito.get(i);
             if (oItemBean.getProducto_obj().getId() == id) {
@@ -174,78 +199,78 @@ public class CarritoService {
         }
         return -1;
     }
-    
-     public String buy() throws Exception {
-            HttpSession oSession = oRequest.getSession();
-            ArrayList<ItemBean> alCarrito = (ArrayList) oSession.getAttribute("carrito");     
-            String usuario = (String) oSession.getAttribute("usuario");
-            UsuarioBean oUsuarioBean= null;
-            ConnectionInterface oConnectionImplementation = null;
-            Connection oConnection = null;
-            Gson oGson = GsonFactory.getGson();
-            ResponseBean oResponseBean=null;
-          
-            try {
-                oConnectionImplementation = ConnectionFactory.getConnection(ConnectionSettings.connectionPool);
-                oConnection = oConnectionImplementation.newConnection();
+
+    public String buy() throws Exception {
+        HttpSession oSession = oRequest.getSession();
+        ArrayList<ItemBean> alCarrito = (ArrayList) oSession.getAttribute("carrito");
+        String usuario = (String) oSession.getAttribute("usuario");
+        UsuarioBean oUsuarioBean = null;
+        ConnectionInterface oConnectionImplementation = null;
+        Connection oConnection = null;
+        Gson oGson = GsonFactory.getGson();
+        ResponseBean oResponseBean = null;
+
+        try {
+            oConnectionImplementation = ConnectionFactory.getConnection(ConnectionSettings.connectionPool);
+            oConnection = oConnectionImplementation.newConnection();
+            if (usuario != null) {
                 if (alCarrito != null && alCarrito.size() > 0) {
-                    oConnection.setAutoCommit(false);
-                    FacturaBean oFacturaBean = new FacturaBean();
                     UsuarioDao oUsuarioDao = new UsuarioDao(oConnection);
-                     if (usuario == null) {
-                    oResponseBean = new ResponseBean(500, "No autorizado");
-                    } else {
                     oUsuarioBean = oUsuarioDao.get(usuario);
-                      }
+                    oConnection.setAutoCommit(false);
+                    //CREA FACTURA
+                    FacturaBean oFacturaBean = new FacturaBean();
                     ProductoDao oProductoDao = new ProductoDao(oConnection);
                     oFacturaBean.setUsuario_id(oUsuarioBean.getId());
                     oFacturaBean.setIva(21);
                     oFacturaBean.setFecha(Calendar.getInstance().getTime());
                     FacturaDao oFacturaDao = new FacturaDao(oConnection);
-                    oFacturaDao.insert(oFacturaBean);
-                    oFacturaBean.setId(oFacturaBean.getId());
-                    //-----------------------------------------------------                              
+                    oFacturaBean.setId(oFacturaDao.insert(oFacturaBean));
+                    //----------------------------------------------------                         
                     Iterator<ItemBean> iterator = alCarrito.iterator();
                     while (iterator.hasNext()) {
                         ItemBean oItemBean = iterator.next();
                         ProductoBean oProductoBean = oItemBean.getProducto_obj();
-                        
                         ProductoBean oProductoBeanDeDB = (ProductoBean) oProductoDao.get(oProductoBean.getId());
-                        if (oProductoBeanDeDB.getExistencias() > oItemBean.getCantidad()) {
+                        //COMPRUEBA EXISTENCIAS Y CREA COMPRA
+                        if (oProductoBeanDeDB.getExistencias() >= oItemBean.getCantidad()) {
                             CompraBean oCompraBean = new CompraBean();
                             oCompraBean.setCantidad(oItemBean.getCantidad());
                             oCompraBean.setFactura_id(oFacturaBean.getId());
-                            oCompraBean.setProducto_id(oProductoBean.getId());      
+                            oCompraBean.setProducto_id(oProductoBean.getId());
                             CompraDao oCompraDao = new CompraDao(oConnection);
                             oCompraDao.insert(oCompraBean);
-                            oCompraBean.setId(oCompraBean.getId());
-                            
+                            oCompraBean.setId(oCompraBean.getId());          
                             oProductoBean.setExistencias(oProductoBean.getExistencias() - oItemBean.getCantidad());
                             oProductoDao.update(oProductoBean);
                             oProductoDao.insert(oProductoBean);
-                        } else{
-                        oResponseBean = new ResponseBean(500, "No hay suficientes existencias.");   
-                        return oGson.toJson(oResponseBean);
+                            oResponseBean = new ResponseBean(400, "Se ha realizado la compra");
+                        } else {
+                            oResponseBean = new ResponseBean(400, "No hay suficientes existencias");
+                            return oGson.toJson(oResponseBean);
                         }
                     }
                     alCarrito.clear();
                     oConnection.commit();
+                } else {
+                    oResponseBean = new ResponseBean(400, "El carrito está vacio");
                 }
-
-            } catch (Exception ex) {
-                 oConnection.rollback();
-                String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName();
-                throw new Exception(msg, ex);
-            } finally {
-                if (oConnection != null) {
-                    oConnection.close();
-                }
-                    if (oConnectionImplementation != null) {
-                    oConnectionImplementation.disposeConnection();
-                }
+            } else {
+                oResponseBean = new ResponseBean(400, "Regístrate para realizar la compra");
             }
-            oResponseBean = new ResponseBean(200, "OK");
-            return oGson.toJson(oResponseBean);
+        } catch (Exception ex) {
+            oConnection.rollback();
+            String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName();
+            throw new Exception(msg, ex);
+        } finally {
+            if (oConnection != null) {
+                oConnection.close();
+            }
+            if (oConnectionImplementation != null) {
+                oConnectionImplementation.disposeConnection();
+            }
+        }
+        return oGson.toJson(oResponseBean);
     }
 
 }
