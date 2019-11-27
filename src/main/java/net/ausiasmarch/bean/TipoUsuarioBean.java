@@ -13,7 +13,17 @@ public class TipoUsuarioBean implements BeanInterface {
     private Integer id;
     @Expose
     private String descripcion;
+    @Expose(deserialize = false)
+    private Integer link_usuario;
 
+    public Integer getLink_usuario() {
+        return link_usuario;
+    }
+
+    public void setLink_usuario(Integer link_usuario) {
+        this.link_usuario = link_usuario;
+    }
+    
     @Override
     public Integer getId() {
         return id;
@@ -56,9 +66,22 @@ public class TipoUsuarioBean implements BeanInterface {
         return " (descripcion) VALUES(?)";
     }
 
+     private String getFieldFilter(String campo) {
+        return " OR " + campo + "LIKE CONCAT('%', \'?\', '%') ";
+    }
+
     @Override
-    public String getFieldConcat(){
-        return "descripcion";
+    public String getFieldConcat() {
+        
+        return getFieldFilter("id") +
+                getFieldFilter("descripcion");
+    }
+    @Override
+    public PreparedStatement setFilter(int numparam,PreparedStatement oPreparedStatement,String word) throws SQLException{
+        for (int i=0;i<=numparam;i++){
+                            oPreparedStatement.setString(++numparam, word);
+        }
+        return oPreparedStatement;
     }
     
     @Override
@@ -83,4 +106,21 @@ public class TipoUsuarioBean implements BeanInterface {
         return oPreparedStatement;
     }
 
+     @Override
+    public String getFieldLink() {
+       return "link_usuario";
+    }
+
+    @Override
+    public String getFieldId() {
+        return "id";
+    }
+    
+    @Override
+    public PreparedStatement setFieldId(int numparam,PreparedStatement oPreparedStatement,int id) throws SQLException {
+       //  oPreparedStatement.setString(++numparam, filter);
+       // oPreparedStatement.setString(++numparam, filter);
+        oPreparedStatement.setInt(++numparam, id);
+        return oPreparedStatement;
+    }
 }

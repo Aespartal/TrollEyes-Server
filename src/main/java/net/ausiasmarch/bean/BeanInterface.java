@@ -18,7 +18,15 @@ public interface BeanInterface {
 
     public String getFieldInsert();
 
-    public String getFieldConcat(int numparam);
+    public String getFieldConcat();
+    
+    public String getFieldLink();
+    
+    public String getFieldId();
+    
+    public PreparedStatement setFieldId(int numparam,PreparedStatement oPreparedStatement, int id) throws Exception;
+    
+    public PreparedStatement setFilter(int numparam, PreparedStatement oPreparedStatement, String word) throws Exception;
     
     public PreparedStatement setFieldInsert(BeanInterface oBeanParam, PreparedStatement oPreparedStatement) throws Exception;
 

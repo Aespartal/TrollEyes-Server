@@ -7,7 +7,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
+import net.ausiasmarch.dao.CompraDao;
+import net.ausiasmarch.dao.DaoInterface;
 import net.ausiasmarch.dao.UsuarioDao;
+import net.ausiasmarch.factory.DaoFactory;
 
 public class FacturaBean implements BeanInterface {
 
@@ -21,7 +24,17 @@ public class FacturaBean implements BeanInterface {
     private Integer usuario_id;
     @Expose(deserialize = false)
     private UsuarioBean usuario_obj;
+    @Expose(deserialize = false)
+    private Integer link_compra;
+    
+    public Integer getLink_compra() {
+        return link_compra;
+    }
 
+    public void setLink_compra(Integer link_compra) {
+        this.link_compra = link_compra;
+    }
+    
     @Override
     public Integer getId() {
         return id;
@@ -70,7 +83,13 @@ public class FacturaBean implements BeanInterface {
         this.setFecha(oResultSet.getDate("fecha"));
         this.setIva(oResultSet.getInt("iva"));
         this.setUsuario_id(oResultSet.getInt("usuario_id"));
+        //this.setLink_compra(oResultSet.getInt("link_compra"));
 
+        DaoInterface oCompraDao = DaoFactory.getDao( "compra",oConnection);
+
+        this.setLink_compra(oCompraDao.getCount(this.id, "compra"));
+        //this.setTipo_usuario_id(oResultSet.getInt("link_factura"));
+        
         if (spread > 0) {
             spread--;
             UsuarioDao oUsuarioDao = new UsuarioDao(oConnection);
@@ -102,11 +121,26 @@ public class FacturaBean implements BeanInterface {
         return " (fecha,iva,usuario_id) VALUES(?,?,?)";
     }
     
-     @Override
-    public String getFieldConcat(){
-        return "CONCAT(`fecha`,`iva`,`usuario_id`)";
+    private String getFieldFilter(String campo) {
+        return " OR " + campo + "LIKE CONCAT('%', \'?\', '%') ";
     }
 
+    @Override
+    public String getFieldConcat() {
+        
+        return getFieldFilter("fecha") +
+                getFieldFilter("iva") + 
+                getFieldFilter("usuario_id");
+    }
+
+    @Override
+    public PreparedStatement setFilter(int numparam,PreparedStatement oPreparedStatement,String word) throws SQLException{
+        for (int i=0;i<=numparam;i++){
+                            oPreparedStatement.setString(++numparam, word);
+        }
+        return oPreparedStatement;
+    }
+    
     @Override
     public PreparedStatement setFieldInsert(BeanInterface oBeanParam, PreparedStatement oPreparedStatement)
             throws SQLException {
@@ -133,4 +167,21 @@ public class FacturaBean implements BeanInterface {
         return oPreparedStatement;
     }
 
+    @Override
+    public String getFieldLink() {
+       return "link_compra";
+    }
+
+    @Override
+    public String getFieldId() {
+        return "usuario_id";
+    }
+    
+    @Override
+    public PreparedStatement setFieldId(int numparam,PreparedStatement oPreparedStatement,int id) throws SQLException {
+       // oPreparedStatement.setString(++numparam, filter);
+       // oPreparedStatement.setString(++numparam, filter);
+        oPreparedStatement.setInt(++numparam, id);
+        return oPreparedStatement;
+    }
 }

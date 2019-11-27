@@ -24,7 +24,6 @@ public class CompraBean implements BeanInterface {
     @Expose(deserialize = false)
     private FacturaBean factura_obj;
 
-
     @Override
     public Integer getId() {
         return id;
@@ -116,11 +115,25 @@ public class CompraBean implements BeanInterface {
         return " (cantidad,producto_id,factura_id) VALUES(?,?,?)";
     }
     
-      @Override
-    public String getFieldConcat(){
-        return "CONCAT(`cantidad`,`producto_id`,`factura_id`)";
+    private String getFieldFilter(String campo) {
+        return " OR " + campo + "LIKE CONCAT('%', \'?\', '%') ";
     }
 
+    @Override
+    public String getFieldConcat() {
+        
+        return getFieldFilter("cantidad") +
+                getFieldFilter("producto_id") + 
+                getFieldFilter("factura_id");
+    }
+    @Override
+    public PreparedStatement setFilter(int numparam,PreparedStatement oPreparedStatement,String word) throws SQLException{
+        for (int i=0;i<=numparam;i++){
+                            oPreparedStatement.setString(++numparam, word);
+        }
+        return oPreparedStatement;
+    }
+    
     @Override
     public PreparedStatement setFieldInsert(BeanInterface oBeanParam, PreparedStatement oPreparedStatement)
             throws SQLException {
@@ -144,6 +157,21 @@ public class CompraBean implements BeanInterface {
         oPreparedStatement.setInt(2, oCompraBean.getProducto_id());
         oPreparedStatement.setInt(3, oCompraBean.getFactura_id());
         oPreparedStatement.setInt(4, oCompraBean.getId());
+        return oPreparedStatement;
+    }
+
+    @Override
+    public String getFieldLink() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public String getFieldId() {
+        return "factura_id";
+    }
+    @Override
+    public PreparedStatement setFieldId(int numparam,PreparedStatement oPreparedStatement, int id) throws SQLException {
+        oPreparedStatement.setInt(++numparam, id);
         return oPreparedStatement;
     }
 }

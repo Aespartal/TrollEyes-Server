@@ -13,7 +13,17 @@ public class TipoProductoBean implements BeanInterface {
     private Integer id;
     @Expose
     private String descripcion;
+     @Expose(deserialize = false)
+    private Integer link_producto;
 
+    public Integer getLink_producto() {
+        return link_producto;
+    }
+
+    public void setLink_producto(Integer link_producto) {
+        this.link_producto = link_producto;
+    }
+    
     @Override
     public Integer getId() {
         return id;
@@ -56,9 +66,22 @@ public class TipoProductoBean implements BeanInterface {
         return " (descripcion) VALUES(?)";
     }
 
-     @Override
-    public String getFieldConcat(){
-        return "id";
+     private String getFieldFilter(String campo) {
+        return " OR " + campo + "LIKE CONCAT('%', \'?\', '%') ";
+    }
+
+    @Override
+    public String getFieldConcat() {
+        
+        return getFieldFilter("id") +
+                getFieldFilter("descripcion");
+    }
+    @Override
+    public PreparedStatement setFilter(int numparam,PreparedStatement oPreparedStatement,String word) throws SQLException{
+        for (int i=0;i<=numparam;i++){
+                            oPreparedStatement.setString(++numparam, word);
+        }
+        return oPreparedStatement;
     }
     
     @Override
@@ -83,4 +106,22 @@ public class TipoProductoBean implements BeanInterface {
         return oPreparedStatement;
     }
 
+     @Override
+    public String getFieldLink() {
+       return "link_producto";
+    }
+
+    @Override
+    public String getFieldId() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    @Override
+    public PreparedStatement setFieldId(int numparam,PreparedStatement oPreparedStatement,int id) throws SQLException {
+       //  oPreparedStatement.setString(++numparam, filter);
+       // oPreparedStatement.setString(++numparam, filter);
+        oPreparedStatement.setInt(++numparam, id);
+        return oPreparedStatement;
+    }
+    
 }

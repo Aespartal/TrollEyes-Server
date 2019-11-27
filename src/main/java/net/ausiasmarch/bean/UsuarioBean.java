@@ -6,7 +6,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import net.ausiasmarch.dao.DaoInterface;
+import net.ausiasmarch.dao.FacturaDao;
+import net.ausiasmarch.dao.GenericDao;
 import net.ausiasmarch.dao.TipoUsuarioDao;
+import net.ausiasmarch.factory.DaoFactory;
 
 public class UsuarioBean implements BeanInterface {
 
@@ -30,7 +34,17 @@ public class UsuarioBean implements BeanInterface {
     private Integer tipo_usuario_id;
     @Expose(deserialize = false)
     private TipoUsuarioBean tipo_usuario_obj;
+    @Expose(deserialize = false)
+    private Integer link_factura;
 
+    public Integer getLink_factura() {
+        return link_factura;
+    }
+
+    public void setLink_factura(Integer link_factura) {
+        this.link_factura = link_factura;
+    }
+    
     public UsuarioBean() {
     }
 
@@ -132,7 +146,12 @@ public class UsuarioBean implements BeanInterface {
         this.setLogin(oResultSet.getString("login"));
         this.setPassword(oResultSet.getString("password"));
         this.setTipo_usuario_id(oResultSet.getInt("tipo_usuario_id"));
+       
+        FacturaDao oFacturaDao = new FacturaDao(oConnection);
+        this.setLink_factura(oFacturaDao.getCount(id, "usuario"));
 
+        
+         
         if (spread > 0) {
             spread--;
             TipoUsuarioDao oTipoUsuarioDao = new TipoUsuarioDao(oConnection);
@@ -172,9 +191,28 @@ public class UsuarioBean implements BeanInterface {
         return " (dni,nombre,apellido1,apellido2,email,login,password,tipo_usuario_id) VALUES(?,?,?,?,?,?,?,?)";
     }
     
+    private String getFieldFilter(String campo) {
+        return " OR " + campo + "LIKE CONCAT('%', \'?\', '%') ";
+    }
+
     @Override
-    public String getFieldFilter(){
-        return "dni";
+    public String getFieldConcat() {
+        
+        return getFieldFilter("dni") +
+                getFieldFilter("nombre") + 
+                getFieldFilter("apellido1") + 
+                getFieldFilter("apellido2") +
+                getFieldFilter("email") +
+                getFieldFilter("login") +
+                getFieldFilter("password") +
+                getFieldFilter("tipo_usuario_id"); 
+    }
+    @Override
+    public PreparedStatement setFilter(int numparam,PreparedStatement oPreparedStatement,String word) throws SQLException{
+        for (int i=0;i<=numparam;i++){
+                            oPreparedStatement.setString(++numparam, word);
+        }
+        return oPreparedStatement;
     }
 
     @Override
@@ -212,5 +250,22 @@ public class UsuarioBean implements BeanInterface {
         oPreparedStatement.setInt(9, oUsuarioBean.getId());
         return oPreparedStatement;
     }
-
+    
+     @Override
+    public String getFieldLink() {
+       return "link_factura";
+    }
+    
+    @Override
+    public String getFieldId() {
+        return "tipo_usuario_id";
+    }
+    
+    @Override
+    public PreparedStatement setFieldId(int numparam,PreparedStatement oPreparedStatement, int id) throws SQLException {
+       // oPreparedStatement.setString(++numparam, filter);
+       // oPreparedStatement.setString(++numparam, filter);
+        oPreparedStatement.setInt(++numparam, id);
+        return oPreparedStatement;
+    }
 }

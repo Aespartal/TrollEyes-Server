@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import net.ausiasmarch.dao.CompraDao;
 import net.ausiasmarch.dao.TipoProductoDao;
 
 public class ProductoBean implements BeanInterface {
@@ -26,7 +27,17 @@ public class ProductoBean implements BeanInterface {
     private Integer tipo_producto_id;
     @Expose(deserialize = false)
     private TipoProductoBean tipo_producto_obj;
+    @Expose(deserialize = false)
+    private Integer link_compra;
 
+    public Integer getLink_compra() {
+        return link_compra;
+    }
+
+    public void setLink_compra(Integer link_compra) {
+        this.link_compra = link_compra;
+    }
+    
     public ProductoBean() {
     }
 
@@ -109,7 +120,12 @@ public class ProductoBean implements BeanInterface {
         this.setImagen(oResultSet.getString("imagen"));
         this.setDescripcion(oResultSet.getString("descripcion"));
         this.setTipo_producto_id(oResultSet.getInt("tipo_producto_id"));
+        //this.setLink_compra(oResultSet.getInt("link_compra"));
 
+        CompraDao oCompraDao = new CompraDao(oConnection);
+        this.setLink_compra(oCompraDao.getCount(this.id, "compra"));
+
+        
         if (spread > 0) {
             spread--;
             TipoProductoDao oTipoProductoDao = new TipoProductoDao(oConnection);
@@ -149,7 +165,7 @@ public class ProductoBean implements BeanInterface {
     }
 
     private String getFieldFilter(String campo) {
-        return " OR " + campo + "LIKE CONCAT('%', \'?\', '%')";
+        return " OR " + campo + "LIKE CONCAT('%', \'?\', '%') ";
     }
 
     @Override
@@ -164,7 +180,7 @@ public class ProductoBean implements BeanInterface {
         
         
     }
-    
+    @Override
     public PreparedStatement setFilter(int numparam,PreparedStatement oPreparedStatement,String word) throws SQLException{
         for (int i=0;i<=numparam;i++){
                             oPreparedStatement.setString(++numparam, word);
@@ -200,6 +216,24 @@ public class ProductoBean implements BeanInterface {
         oPreparedStatement.setString(5, oProductoBean.getDescripcion());
         oPreparedStatement.setInt(6, oProductoBean.getTipo_producto_id());
         oPreparedStatement.setInt(7, oProductoBean.getId());
+        return oPreparedStatement;
+    }
+    
+    @Override
+    public String getFieldLink() {
+       return "link_compra";
+    }
+    
+    @Override
+    public String getFieldId() {
+        return "tipo_producto_id";
+    }
+    
+    @Override
+    public PreparedStatement setFieldId(int numparam,PreparedStatement oPreparedStatement,int id) throws SQLException {
+        // oPreparedStatement.setString(++numparam, filter);
+        // oPreparedStatement.setString(++numparam, filter);
+        oPreparedStatement.setInt(++numparam, id);
         return oPreparedStatement;
     }
 

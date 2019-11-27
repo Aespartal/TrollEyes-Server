@@ -40,11 +40,18 @@ public class GenericDao implements DaoInterface {
     }
 
     @Override
-    public int getCount() throws Exception {
+    public Integer getCount(Integer id, String filter) throws Exception {
         PreparedStatement oPreparedStatement = null;
         ResultSet oResultSet = null;
+        BeanInterface oBean = BeanFactory.getBean(ob);
+        String strSQL = null;
         try {
-            String strSQL = "SELECT count(*) FROM " + ob;
+            if (id != null && filter != null) {
+                strSQL = "SELECT count(*) FROM " + ob + " WHERE " + oBean.getFieldId() + " = " + id;
+
+            } else {
+                strSQL = "SELECT count(*) FROM " + ob;             
+            }
             oPreparedStatement = oConnection.prepareStatement(strSQL);
             oResultSet = oPreparedStatement.executeQuery();
             if (oResultSet.next()) {
@@ -67,7 +74,7 @@ public class GenericDao implements DaoInterface {
     }
 
     @Override
-    public ArrayList<BeanInterface> getPage(int page, int rpp, String orden, String direccion, String word, int id, String filter) throws Exception {
+    public ArrayList<BeanInterface> getPage(int page, int rpp, String orden, String direccion, String word, Integer id, String filter) throws Exception {
         PreparedStatement oPreparedStatement = null;
         ResultSet oResultSet = null;
         ArrayList<BeanInterface> listaBean = new ArrayList<>();
@@ -80,11 +87,11 @@ public class GenericDao implements DaoInterface {
                 offset = (rpp * page) - rpp;
             }
             int numparam = 0;
+            //Condicion de ordenar
             if (orden == null) {
                 oPreparedStatement = oConnection.prepareStatement("SELECT * FROM " + ob + " LIMIT ? OFFSET ?");
                 oPreparedStatement.setInt(++numparam, rpp);
                 oPreparedStatement.setInt(++numparam, offset);
-
             } else {
                 String sqlQuery = "SELECT * FROM " + ob + " ORDER BY ? ";
                 if (direccion.equalsIgnoreCase("asc")) {
@@ -98,12 +105,19 @@ public class GenericDao implements DaoInterface {
                 oPreparedStatement.setInt(++numparam, rpp);
                 oPreparedStatement.setInt(++numparam, offset);
             }
-            if (filter != null) {
-                oPreparedStatement = oConnection.prepareStatement("SELECT * FROM " + ob + " WHERE 1=1" + oBean.getFieldConcat(numparam) );
-                oBean.setFilter(oPreparedStatement, word);
+            //Condicion de busqueda
+            numparam = 0;
+            if (word != null) {
+                oPreparedStatement = oConnection.prepareStatement("SELECT * FROM " + ob + " WHERE 1=1" + oBean.getFieldConcat() + "LIMIT ? OFFSET ?");
+                oPreparedStatement = oBean.setFilter(numparam, oPreparedStatement, word);
 
             }
-
+            //Condicion de filtro de objeto
+            if (id !=null && filter != null) {
+                oPreparedStatement = oConnection.prepareStatement("SELECT * FROM " + ob + " INNER JOIN " + filter + " ON " + filter + ".id = " + ob + "." + oBean.getFieldId() + ""
+                        + " WHERE " + oBean.getFieldId() + " = ?");
+                oPreparedStatement = oBean.setFieldId(numparam, oPreparedStatement, id);
+            }
             oResultSet = oPreparedStatement.executeQuery();
 
             while (oResultSet.next()) {

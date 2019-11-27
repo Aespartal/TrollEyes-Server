@@ -41,7 +41,7 @@ public class GenericService implements ServiceInterface {
             BeanInterface oBean = oDao.get(id);
             Gson oGson = GsonFactory.getGson();
             strJson = oGson.toJson(oBean);
-            
+
         } catch (Exception ex) {
             String msg = this.getClass().getName() + " ob: " + ob + "; get method ";;
             throw new Exception(msg, ex);
@@ -65,18 +65,26 @@ public class GenericService implements ServiceInterface {
             oConnection = oConnectionImplementation.newConnection();
             int iRpp = Integer.parseInt(oRequest.getParameter("rpp"));
             int iPage = Integer.parseInt(oRequest.getParameter("page"));
-            int id = Integer.parseInt(null);
-            String filter = null;
-            if (oRequest.getParameter("filter") != null && oRequest.getParameter("id") !=null) {
+            //opcional
+            Integer id = null;
+            String filter = null; //filtro objeto 
+            String orden = null;
+            String direccion = null;
+            String word = null; // filtro para la busqueda
+            if (oRequest.getParameter("filter") != null && oRequest.getParameter("id") != null) {
                 filter = oRequest.getParameter("filter");
-                id= Integer.parseInt(oRequest.getParameter("id"));
+                id = Integer.parseInt(oRequest.getParameter("id"));
             }
-            List<String> orden = null;
-            if (oRequest.getParameter("order") != null) {
-                orden = Arrays.asList(oRequest.getParameter("order").split("\\s*,\\s*"));
+            if (oRequest.getParameter("order") != null && oRequest.getParameter("direccion") != null) {
+                orden = oRequest.getParameter("order");
+                direccion = oRequest.getParameter("direccion");
             }
+            if (oRequest.getParameter("word") != null) {
+                word = oRequest.getParameter("word");
+            }
+            // acaba opcional
             DaoInterface oDao = DaoFactory.getDao(ob, oConnection);
-            ArrayList alBean = oDao.getPage(iPage, iRpp, orden, id, filter);
+            ArrayList alBean = oDao.getPage(iPage, iRpp, orden, direccion, word, id, filter); //--------DAO GETPAGE--------
             Gson oGson = GsonFactory.getGson();
             String strJson = null;
             strJson = oGson.toJson(alBean);
@@ -98,18 +106,26 @@ public class GenericService implements ServiceInterface {
     public String getCount() throws Exception {
         ConnectionInterface oConnectionImplementation = null;
         Connection oConnection = null;
+        ResponseBean oResponseBean = null;
+        Integer iCount = null;
         try {
             oConnectionImplementation = ConnectionFactory.getConnection(ConnectionSettings.connectionPool);
             oConnection = oConnectionImplementation.newConnection();
-            ResponseBean oResponseBean = null;
+            //int id = Integer.parseInt(oRequest.getParameter("id"));
+            Integer id = null;
+            String filter = null;
+             if (oRequest.getParameter("filter") != null && oRequest.getParameter("id") != null) {
+                filter = oRequest.getParameter("filter");
+                id = Integer.parseInt(oRequest.getParameter("id"));
+            }     
             Gson oGson = GsonFactory.getGson();
             DaoInterface oDao = DaoFactory.getDao(ob, oConnection);
-            Integer iCount = oDao.getCount();
+            iCount = oDao.getCount(id,filter);    
             if (iCount < 0) {
                 oResponseBean = new ResponseBean(500, iCount.toString());
             } else {
                 oResponseBean = new ResponseBean(200, iCount.toString());
-            }
+            }               
             return oGson.toJson(oResponseBean);
         } catch (Exception ex) {
             String msg = this.getClass().getName() + " ob: " + ob + "; getCount method ";
