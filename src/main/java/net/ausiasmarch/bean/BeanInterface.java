@@ -22,7 +22,7 @@ public interface BeanInterface {
     
     public String getFieldLink();
     
-    public String getFieldId();
+    public String getFieldId(String filter);
     
     public PreparedStatement setFieldId(int numparam,PreparedStatement oPreparedStatement, int id) throws Exception;
     

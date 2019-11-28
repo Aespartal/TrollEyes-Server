@@ -83,12 +83,10 @@ public class FacturaBean implements BeanInterface {
         this.setFecha(oResultSet.getDate("fecha"));
         this.setIva(oResultSet.getInt("iva"));
         this.setUsuario_id(oResultSet.getInt("usuario_id"));
-        //this.setLink_compra(oResultSet.getInt("link_compra"));
 
-        DaoInterface oCompraDao = DaoFactory.getDao( "compra",oConnection);
+        CompraDao oCompraDao = new CompraDao(oConnection);
+        this.setLink_compra(oCompraDao.getCount(id, "factura"));
 
-        this.setLink_compra(oCompraDao.getCount(this.id, "compra"));
-        //this.setTipo_usuario_id(oResultSet.getInt("link_factura"));
         
         if (spread > 0) {
             spread--;
@@ -173,7 +171,7 @@ public class FacturaBean implements BeanInterface {
     }
 
     @Override
-    public String getFieldId() {
+    public String getFieldId(String filter) {
         return "usuario_id";
     }
     

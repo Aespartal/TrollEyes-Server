@@ -47,7 +47,7 @@ public class GenericDao implements DaoInterface {
         String strSQL = null;
         try {
             if (id != null && filter != null) {
-                strSQL = "SELECT count(*) FROM " + ob + " WHERE " + oBean.getFieldId() + " = " + id;
+                strSQL = "SELECT count(*) FROM " + ob + " WHERE " + oBean.getFieldId(filter) + " = " + id;
 
             } else {
                 strSQL = "SELECT count(*) FROM " + ob;             
@@ -114,8 +114,8 @@ public class GenericDao implements DaoInterface {
             }
             //Condicion de filtro de objeto
             if (id !=null && filter != null) {
-                oPreparedStatement = oConnection.prepareStatement("SELECT * FROM " + ob + " INNER JOIN " + filter + " ON " + filter + ".id = " + ob + "." + oBean.getFieldId() + ""
-                        + " WHERE " + oBean.getFieldId() + " = ?");
+                oPreparedStatement = oConnection.prepareStatement("SELECT * FROM " + ob + " INNER JOIN " + filter + " ON " + filter + ".id = " + ob + "." + oBean.getFieldId(filter) + ""
+                        + " WHERE " + oBean.getFieldId(filter) + " = ?");
                 oPreparedStatement = oBean.setFieldId(numparam, oPreparedStatement, id);
             }
             oResultSet = oPreparedStatement.executeQuery();

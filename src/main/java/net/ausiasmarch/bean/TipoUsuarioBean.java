@@ -112,7 +112,7 @@ public class TipoUsuarioBean implements BeanInterface {
     }
 
     @Override
-    public String getFieldId() {
+    public String getFieldId(String filter) {
         return "id";
     }
     

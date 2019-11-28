@@ -112,7 +112,7 @@ public class TipoProductoBean implements BeanInterface {
     }
 
     @Override
-    public String getFieldId() {
+    public String getFieldId(String filter) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

@@ -166,8 +166,13 @@ public class CompraBean implements BeanInterface {
     }
 
     @Override
-    public String getFieldId() {
-        return "factura_id";
+    public String getFieldId(String filter) {
+        if(filter.equalsIgnoreCase("factura")){
+            return "factura_id";
+        } else {
+            return "producto_id";
+        }
+        
     }
     @Override
     public PreparedStatement setFieldId(int numparam,PreparedStatement oPreparedStatement, int id) throws SQLException {

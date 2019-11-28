@@ -123,7 +123,7 @@ public class ProductoBean implements BeanInterface {
         //this.setLink_compra(oResultSet.getInt("link_compra"));
 
         CompraDao oCompraDao = new CompraDao(oConnection);
-        this.setLink_compra(oCompraDao.getCount(this.id, "compra"));
+        this.setLink_compra(oCompraDao.getCount(id, "producto"));
 
         
         if (spread > 0) {
@@ -225,7 +225,7 @@ public class ProductoBean implements BeanInterface {
     }
     
     @Override
-    public String getFieldId() {
+    public String getFieldId(String filter) {
         return "tipo_producto_id";
     }
     

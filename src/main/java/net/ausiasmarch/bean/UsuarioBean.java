@@ -257,7 +257,7 @@ public class UsuarioBean implements BeanInterface {
     }
     
     @Override
-    public String getFieldId() {
+    public String getFieldId(String filter) {
         return "tipo_usuario_id";
     }
     
