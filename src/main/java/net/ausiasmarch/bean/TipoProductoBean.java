@@ -43,7 +43,7 @@ public class TipoProductoBean implements BeanInterface {
     }
 
     @Override
-    public TipoProductoBean fill(ResultSet oResultSet, Connection oConnection, int spread) throws SQLException {
+    public TipoProductoBean fill(ResultSet oResultSet, Connection oConnection, int spread, UsuarioBean oUsuarioBeanSession) throws SQLException {
         this.setId(oResultSet.getInt("id"));
         this.setDescripcion(oResultSet.getString("descripcion"));
         return this;
@@ -124,4 +124,8 @@ public class TipoProductoBean implements BeanInterface {
         return oPreparedStatement;
     }
     
+    @Override
+    public String getFieldOrder(String orden) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

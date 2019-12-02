@@ -43,7 +43,7 @@ public class TipoUsuarioBean implements BeanInterface {
     }
 
     @Override
-    public TipoUsuarioBean fill(ResultSet oResultSet, Connection oConnection, int spread) throws SQLException {
+    public TipoUsuarioBean fill(ResultSet oResultSet, Connection oConnection, int spread, UsuarioBean oUsuarioBeanSession) throws SQLException {
         this.setId(oResultSet.getInt("id"));
         this.setDescripcion(oResultSet.getString("descripcion"));
         return this;
@@ -122,5 +122,10 @@ public class TipoUsuarioBean implements BeanInterface {
        // oPreparedStatement.setString(++numparam, filter);
         oPreparedStatement.setInt(++numparam, id);
         return oPreparedStatement;
+    }
+    
+    @Override
+    public String getFieldOrder(String orden) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

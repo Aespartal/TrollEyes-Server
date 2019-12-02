@@ -1,24 +1,26 @@
-package net.ausiasmarch.service;
+package net.ausiasmarch.service.specificservice_1;
 
 import com.google.gson.Gson;
 import java.sql.Connection;
-import java.sql.SQLException;
 import javax.servlet.http.HttpServletRequest;
 import net.ausiasmarch.bean.CompraBean;
 import net.ausiasmarch.bean.ResponseBean;
 import net.ausiasmarch.connection.ConnectionInterface;
-import net.ausiasmarch.dao.CompraDao;
+import net.ausiasmarch.dao.specificdao_1.CompraDao_1;
 import net.ausiasmarch.factory.ConnectionFactory;
 import net.ausiasmarch.factory.GsonFactory;
+import net.ausiasmarch.service.genericservice.GenericService;
+import net.ausiasmarch.service.serviceinterface.ServiceInterface;
 import net.ausiasmarch.setting.ConnectionSettings;
 
-public class CompraService extends GenericService implements ServiceInterface {
+public class CompraService_1 extends GenericService implements ServiceInterface {
 
     String[] frasesInicio = {"El fin de la estructura ", "La agrupacion logica ", "El objetivo conjunto ",
         "Una dinámica apropiada "};
-
-    public CompraService(HttpServletRequest oRequest) {
+     
+    public CompraService_1(HttpServletRequest oRequest) {
         super(oRequest);
+        ob = oRequest.getParameter("ob");
     }
 
     public String fill() throws Exception {
@@ -30,8 +32,8 @@ public class CompraService extends GenericService implements ServiceInterface {
         oConnectionImplementation = ConnectionFactory
                 .getConnection(ConnectionSettings.connectionPool);
         oConnection = oConnectionImplementation.newConnection();  
-        CompraDao oCompraDao = new CompraDao(oConnection);
-        
+        CompraDao_1 oCompraDao = new CompraDao_1(oConnection,ob,oUsuarioBeanSession);
+       
         int numCompra = Integer.parseInt(oRequest.getParameter("number"));
         for (int i = 0; i < numCompra; i++) {
             CompraBean oCompraBean = new CompraBean();

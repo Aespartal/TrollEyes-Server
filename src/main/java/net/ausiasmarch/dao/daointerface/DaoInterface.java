@@ -1,4 +1,4 @@
-package net.ausiasmarch.dao;
+package net.ausiasmarch.dao.daointerface;
 
 import java.util.ArrayList;
 import net.ausiasmarch.bean.BeanInterface;

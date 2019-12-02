@@ -1,21 +1,25 @@
-package net.ausiasmarch.dao;
+package net.ausiasmarch.dao.specificdao_1;
 
+import net.ausiasmarch.dao.daointerface.DaoInterface;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import net.ausiasmarch.bean.UsuarioBean;
+import net.ausiasmarch.dao.genericdao.GenericDao;
 import net.ausiasmarch.setting.ConfigurationSettings;
 
 
-public class UsuarioDao extends GenericDao implements DaoInterface {
+public class UsuarioDao_1 extends GenericDao implements DaoInterface {
 
-    public UsuarioDao(Connection oConnection) {
-        super(oConnection, "usuario");
+    public UsuarioDao_1(Connection oConnection,String ob,UsuarioBean oUsuarioBeanSession) {
+        super(oConnection, "usuario", oUsuarioBeanSession);
     }
     
      public UsuarioBean get(String username, String password) throws Exception {
-        String strSQL = "SELECT * FROM usuario WHERE login=? AND password=?";
+        strSQL += " AND login=?";
+        strSQL += " AND password=?";    
+        
         UsuarioBean oUsuarioBean;
         ResultSet oResultSet = null;
         PreparedStatement oPreparedStatement = null;
@@ -26,7 +30,7 @@ public class UsuarioDao extends GenericDao implements DaoInterface {
             oResultSet = oPreparedStatement.executeQuery();
             if (oResultSet.next()) {
                 oUsuarioBean = new UsuarioBean();
-                oUsuarioBean.fill(oResultSet, oConnection, ConfigurationSettings.spread);
+                oUsuarioBean.fill(oResultSet, oConnection, ConfigurationSettings.spread, oUsuarioBeanSession);
             } else {
                 oUsuarioBean = null;
             }
@@ -44,7 +48,7 @@ public class UsuarioDao extends GenericDao implements DaoInterface {
     }
 
     public UsuarioBean get(String username)throws Exception {
-        String strSQL = "SELECT * FROM usuario WHERE login=?";
+        strSQL += " AND login=?";
           UsuarioBean oUsuarioBean;
         ResultSet oResultSet = null;
         PreparedStatement oPreparedStatement = null;
@@ -54,7 +58,7 @@ public class UsuarioDao extends GenericDao implements DaoInterface {
             oResultSet = oPreparedStatement.executeQuery();
             if (oResultSet.next()) {
                 oUsuarioBean = new UsuarioBean();
-                oUsuarioBean.fill(oResultSet, oConnection, ConfigurationSettings.spread);
+                oUsuarioBean.fill(oResultSet, oConnection, ConfigurationSettings.spread, oUsuarioBeanSession);
             } else {
                 oUsuarioBean = null;
             }

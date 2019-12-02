@@ -6,10 +6,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import net.ausiasmarch.dao.DaoInterface;
-import net.ausiasmarch.dao.FacturaDao;
-import net.ausiasmarch.dao.GenericDao;
-import net.ausiasmarch.dao.TipoUsuarioDao;
+import net.ausiasmarch.dao.daointerface.DaoInterface;
+import net.ausiasmarch.dao.specificdao_1.FacturaDao_1;
+import net.ausiasmarch.dao.specificdao_1.TipoUsuarioDao_1;
+import net.ausiasmarch.dao.specificdao_2.FacturaDao_2;
 import net.ausiasmarch.factory.DaoFactory;
 
 public class UsuarioBean implements BeanInterface {
@@ -44,7 +44,7 @@ public class UsuarioBean implements BeanInterface {
     public void setLink_factura(Integer link_factura) {
         this.link_factura = link_factura;
     }
-    
+
     public UsuarioBean() {
     }
 
@@ -136,7 +136,7 @@ public class UsuarioBean implements BeanInterface {
     }
 
     @Override
-    public UsuarioBean fill(ResultSet oResultSet, Connection oConnection, int spread) throws Exception {
+    public UsuarioBean fill(ResultSet oResultSet, Connection oConnection, int spread, UsuarioBean oUsuarioBeanSession) throws Exception {
         this.setId(oResultSet.getInt("id"));
         this.setDni(oResultSet.getString("dni"));
         this.setNombre(oResultSet.getString("nombre"));
@@ -146,16 +146,22 @@ public class UsuarioBean implements BeanInterface {
         this.setLogin(oResultSet.getString("login"));
         this.setPassword(oResultSet.getString("password"));
         this.setTipo_usuario_id(oResultSet.getInt("tipo_usuario_id"));
-       
-        FacturaDao oFacturaDao = new FacturaDao(oConnection);
-        this.setLink_factura(oFacturaDao.getCount(id, "usuario"));
 
-        
-         
+        DaoInterface oFacturaDao = DaoFactory.getDao(oConnection, "factura", oUsuarioBeanSession);
+        if (oFacturaDao != null) {
+            if (oFacturaDao.getClass() == FacturaDao_1.class) {
+                FacturaDao_1 oFacturaDao_1 = (FacturaDao_1) oFacturaDao;
+                this.setLink_factura(oFacturaDao_1.getCount(id, "usuario"));
+            } else {
+                FacturaDao_2 oFacturaDao_2 = (FacturaDao_2) oFacturaDao;
+                this.setLink_factura(oFacturaDao_2.getCount(id, "usuario"));
+            }
+        }
+
         if (spread > 0) {
             spread--;
-            TipoUsuarioDao oTipoUsuarioDao = new TipoUsuarioDao(oConnection);
-            TipoUsuarioBean oTipoUsuarioBean = new TipoUsuarioBean();
+            TipoUsuarioDao_1 oTipoUsuarioDao = new TipoUsuarioDao_1(oConnection, "tipo_usuario", oUsuarioBeanSession);
+            TipoUsuarioBean oTipoUsuarioBean;
             oTipoUsuarioBean = (TipoUsuarioBean) oTipoUsuarioDao.get(this.tipo_usuario_id);
             this.tipo_usuario_obj = oTipoUsuarioBean;
         }
@@ -190,27 +196,28 @@ public class UsuarioBean implements BeanInterface {
     public String getFieldInsert() {
         return " (dni,nombre,apellido1,apellido2,email,login,password,tipo_usuario_id) VALUES(?,?,?,?,?,?,?,?)";
     }
-    
+
     private String getFieldFilter(String campo) {
         return " OR " + campo + "LIKE CONCAT('%', \'?\', '%') ";
     }
 
     @Override
     public String getFieldConcat() {
-        
-        return getFieldFilter("dni") +
-                getFieldFilter("nombre") + 
-                getFieldFilter("apellido1") + 
-                getFieldFilter("apellido2") +
-                getFieldFilter("email") +
-                getFieldFilter("login") +
-                getFieldFilter("password") +
-                getFieldFilter("tipo_usuario_id"); 
+
+        return getFieldFilter("dni")
+                + getFieldFilter("nombre")
+                + getFieldFilter("apellido1")
+                + getFieldFilter("apellido2")
+                + getFieldFilter("email")
+                + getFieldFilter("login")
+                + getFieldFilter("password")
+                + getFieldFilter("tipo_usuario_id");
     }
+
     @Override
-    public PreparedStatement setFilter(int numparam,PreparedStatement oPreparedStatement,String word) throws SQLException{
-        for (int i=0;i<=numparam;i++){
-                            oPreparedStatement.setString(++numparam, word);
+    public PreparedStatement setFilter(int numparam, PreparedStatement oPreparedStatement, String word) throws SQLException {
+        for (int i = 0; i <= numparam; i++) {
+            oPreparedStatement.setString(++numparam, word);
         }
         return oPreparedStatement;
     }
@@ -250,22 +257,25 @@ public class UsuarioBean implements BeanInterface {
         oPreparedStatement.setInt(9, oUsuarioBean.getId());
         return oPreparedStatement;
     }
-    
-     @Override
+
+    @Override
     public String getFieldLink() {
-       return "link_factura";
+        return "link_factura";
     }
-    
+
     @Override
     public String getFieldId(String filter) {
         return "tipo_usuario_id";
     }
-    
+
     @Override
-    public PreparedStatement setFieldId(int numparam,PreparedStatement oPreparedStatement, int id) throws SQLException {
-       // oPreparedStatement.setString(++numparam, filter);
-       // oPreparedStatement.setString(++numparam, filter);
+    public PreparedStatement setFieldId(int numparam, PreparedStatement oPreparedStatement, int id) throws SQLException {
         oPreparedStatement.setInt(++numparam, id);
         return oPreparedStatement;
+    }
+
+    @Override
+    public String getFieldOrder(String orden) {
+        return orden.matches("id|dni|nombre|apellido1|login|email") ? orden : null;
     }
 }

@@ -1,8 +1,8 @@
-package net.ausiasmarch.service;
+package net.ausiasmarch.service.specificservice_1;
 
+import net.ausiasmarch.service.genericservice.GenericService;
 import com.google.gson.Gson;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -11,17 +11,19 @@ import javax.servlet.http.HttpServletRequest;
 import net.ausiasmarch.bean.FacturaBean;
 import net.ausiasmarch.bean.ResponseBean;
 import net.ausiasmarch.connection.ConnectionInterface;
-import net.ausiasmarch.dao.FacturaDao;
+import net.ausiasmarch.dao.specificdao_1.FacturaDao_1;
 import net.ausiasmarch.factory.ConnectionFactory;
 import net.ausiasmarch.factory.GsonFactory;
+import net.ausiasmarch.service.serviceinterface.ServiceInterface;
 import net.ausiasmarch.setting.ConnectionSettings;
 
-public class FacturaService extends GenericService implements ServiceInterface {
+public class FacturaService_1 extends GenericService implements ServiceInterface {
 
-    public FacturaService(HttpServletRequest oRequest) {
-        super(oRequest);
+    public FacturaService_1(HttpServletRequest request) {
+        super(request);
+        ob = oRequest.getParameter("ob");
     }
-
+    
     public String fill() throws Exception {
          ConnectionInterface oConnectionImplementation = null;
          Connection oConnection = null;
@@ -31,7 +33,7 @@ public class FacturaService extends GenericService implements ServiceInterface {
         oConnectionImplementation = ConnectionFactory
                 .getConnection(ConnectionSettings.connectionPool);
         oConnection = oConnectionImplementation.newConnection();
-        FacturaDao oFacturaDao = new FacturaDao(oConnection);
+        FacturaDao_1 oFacturaDao = new FacturaDao_1(oConnection, ob, oUsuarioBeanSession);
         Date date1 = new GregorianCalendar(2014, Calendar.JANUARY, 1).getTime();
         Date date2 = new GregorianCalendar(2019, Calendar.DECEMBER, 31).getTime();
         int numFactura = Integer.parseInt(oRequest.getParameter("number"));

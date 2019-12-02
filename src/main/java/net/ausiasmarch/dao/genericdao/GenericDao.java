@@ -1,23 +1,38 @@
-package net.ausiasmarch.dao;
+package net.ausiasmarch.dao.genericdao;
 
+import net.ausiasmarch.dao.daointerface.DaoInterface;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.List;
 import net.ausiasmarch.bean.BeanInterface;
+import net.ausiasmarch.bean.UsuarioBean;
 import net.ausiasmarch.factory.BeanFactory;
 import net.ausiasmarch.setting.ConfigurationSettings;
 
 public class GenericDao implements DaoInterface {
 
-    Connection oConnection = null;
-    String ob = null;
+    protected Connection oConnection = null;
+    protected String ob = null;
+    protected String strSQL = null;
+    protected String strCountSQL = null;
+    protected UsuarioBean oUsuarioBeanSession;
+    protected int idSessionUser;
+    protected int idSessionUserTipe;
 
-    public GenericDao(Connection oConnection, String ob) {
+    public GenericDao(Connection oConnection, String ob, UsuarioBean oUsuarioBeanSession) {
         this.oConnection = oConnection;
         this.ob = ob;
+        //Sentencias SQL 
+        this.strSQL = "SELECT * FROM " + ob + " WHERE 1=1 ";
+        this.strCountSQL = "SELECT COUNT(*) FROM " + ob + " WHERE 1=1 ";
+        
+         if (oUsuarioBeanSession != null) {
+            this.oUsuarioBeanSession = oUsuarioBeanSession;
+            this.idSessionUser = oUsuarioBeanSession.getId();
+            this.idSessionUserTipe = oUsuarioBeanSession.getTipo_usuario_id();
+        }
     }
 
     @Override
@@ -25,14 +40,14 @@ public class GenericDao implements DaoInterface {
         PreparedStatement oPreparedStatement = null;
         ResultSet oResultSet = null;
         BeanInterface oBean = null;
-        String strSQL = "SELECT * FROM " + ob + " WHERE id=?";
+        strSQL += "AND id=?";
         oPreparedStatement = oConnection.prepareStatement(strSQL);
         oPreparedStatement.setInt(1, id);
         oResultSet = oPreparedStatement.executeQuery();
 
         if (oResultSet.next()) {
             oBean = BeanFactory.getBean(ob);
-            oBean = oBean.fill(oResultSet, oConnection, ConfigurationSettings.spread);
+            oBean = oBean.fill(oResultSet, oConnection, ConfigurationSettings.spread, oUsuarioBeanSession);
         } else {
             oBean = null;
         }
@@ -44,15 +59,11 @@ public class GenericDao implements DaoInterface {
         PreparedStatement oPreparedStatement = null;
         ResultSet oResultSet = null;
         BeanInterface oBean = BeanFactory.getBean(ob);
-        String strSQL = null;
         try {
             if (id != null && filter != null) {
-                strSQL = "SELECT count(*) FROM " + ob + " WHERE " + oBean.getFieldId(filter) + " = " + id;
-
-            } else {
-                strSQL = "SELECT count(*) FROM " + ob;             
-            }
-            oPreparedStatement = oConnection.prepareStatement(strSQL);
+                strCountSQL += "AND " + oBean.getFieldId(filter) + " = " + id;
+            }  
+            oPreparedStatement = oConnection.prepareStatement(strCountSQL);
             oResultSet = oPreparedStatement.executeQuery();
             if (oResultSet.next()) {
                 return oResultSet.getInt(1);
@@ -89,18 +100,19 @@ public class GenericDao implements DaoInterface {
             int numparam = 0;
             //Condicion de ordenar
             if (orden == null) {
-                oPreparedStatement = oConnection.prepareStatement("SELECT * FROM " + ob + " LIMIT ? OFFSET ?");
+                strSQL += " LIMIT ? OFFSET ?";
+                oPreparedStatement = oConnection.prepareStatement(strSQL);
                 oPreparedStatement.setInt(++numparam, rpp);
                 oPreparedStatement.setInt(++numparam, offset);
             } else {
-                String sqlQuery = "SELECT * FROM " + ob + " ORDER BY ? ";
+                strSQL += " ORDER BY ? ";
                 if (direccion.equalsIgnoreCase("asc")) {
-                    sqlQuery += "ASC ";
+                    strSQL += "ASC ";
                 } else if (direccion.equalsIgnoreCase("desc")) {
-                    sqlQuery += "DESC ";
+                    strSQL += "DESC ";
                 }
-                sqlQuery += "LIMIT ? OFFSET ?";
-                oPreparedStatement = oConnection.prepareStatement(sqlQuery);
+                strSQL += "LIMIT ? OFFSET ?";
+                oPreparedStatement = oConnection.prepareStatement(strSQL);
                 oPreparedStatement.setString(++numparam, orden);
                 oPreparedStatement.setInt(++numparam, rpp);
                 oPreparedStatement.setInt(++numparam, offset);
@@ -108,7 +120,8 @@ public class GenericDao implements DaoInterface {
             //Condicion de busqueda
             numparam = 0;
             if (word != null) {
-                oPreparedStatement = oConnection.prepareStatement("SELECT * FROM " + ob + " WHERE 1=1" + oBean.getFieldConcat() + "LIMIT ? OFFSET ?");
+                strSQL += " AND " + oBean.getFieldConcat() + "LIMIT ? OFFSET ?";
+                oPreparedStatement = oConnection.prepareStatement(strSQL);
                 oPreparedStatement = oBean.setFilter(numparam, oPreparedStatement, word);
 
             }
@@ -122,11 +135,11 @@ public class GenericDao implements DaoInterface {
 
             while (oResultSet.next()) {
                 oBean = BeanFactory.getBean(ob);
-                oBean = oBean.fill(oResultSet, oConnection, ConfigurationSettings.spread);
+                oBean = oBean.fill(oResultSet, oConnection, ConfigurationSettings.spread, oUsuarioBeanSession);
                 listaBean.add(oBean);
             }
         } catch (Exception ex) {
-            String msg = this.getClass().getName() + " ob: " + ob + "; insert method ";
+            String msg = this.getClass().getName() + " ob: " + ob + "; getPage method ";
             throw new Exception(msg, ex);
         } finally {
             if (oResultSet != null) {

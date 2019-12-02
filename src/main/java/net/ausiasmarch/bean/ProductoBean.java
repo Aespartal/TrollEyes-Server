@@ -6,8 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import net.ausiasmarch.dao.CompraDao;
-import net.ausiasmarch.dao.TipoProductoDao;
+import net.ausiasmarch.dao.specificdao_1.CompraDao_1;
+import net.ausiasmarch.dao.specificdao_1.TipoProductoDao_1;
 
 public class ProductoBean implements BeanInterface {
 
@@ -112,7 +112,7 @@ public class ProductoBean implements BeanInterface {
     }
 
     @Override
-    public ProductoBean fill(ResultSet oResultSet, Connection oConnection, int spread) throws Exception {
+    public ProductoBean fill(ResultSet oResultSet, Connection oConnection, int spread,UsuarioBean oUsuarioBeanSession) throws Exception {
         this.setId(oResultSet.getInt("id"));
         this.setCodigo(oResultSet.getString("codigo"));
         this.setExistencias(oResultSet.getInt("existencias"));
@@ -120,15 +120,14 @@ public class ProductoBean implements BeanInterface {
         this.setImagen(oResultSet.getString("imagen"));
         this.setDescripcion(oResultSet.getString("descripcion"));
         this.setTipo_producto_id(oResultSet.getInt("tipo_producto_id"));
-        //this.setLink_compra(oResultSet.getInt("link_compra"));
 
-        CompraDao oCompraDao = new CompraDao(oConnection);
+        CompraDao_1 oCompraDao = new CompraDao_1(oConnection,"compra",oUsuarioBeanSession);
         this.setLink_compra(oCompraDao.getCount(id, "producto"));
 
         
         if (spread > 0) {
             spread--;
-            TipoProductoDao oTipoProductoDao = new TipoProductoDao(oConnection);
+            TipoProductoDao_1 oTipoProductoDao = new TipoProductoDao_1(oConnection,"tipo_producto", oUsuarioBeanSession);
             TipoProductoBean oTipoProductoBean = new TipoProductoBean();
             oTipoProductoBean = (TipoProductoBean) oTipoProductoDao.get(this.tipo_producto_id);
             this.tipo_producto_obj = oTipoProductoBean;
@@ -235,6 +234,11 @@ public class ProductoBean implements BeanInterface {
         // oPreparedStatement.setString(++numparam, filter);
         oPreparedStatement.setInt(++numparam, id);
         return oPreparedStatement;
+    }
+    
+    @Override
+    public String getFieldOrder(String orden) {
+        return orden.matches("id|codigo|existencias|descripcion|precio") ? orden : null;
     }
 
 }

@@ -1,4 +1,4 @@
-package net.ausiasmarch.service;
+package net.ausiasmarch.service.specificservice_1;
 
 import com.google.gson.Gson;
 import java.sql.Connection;
@@ -6,18 +6,21 @@ import javax.servlet.http.HttpServletRequest;
 import net.ausiasmarch.bean.ResponseBean;
 import net.ausiasmarch.bean.TipoProductoBean;
 import net.ausiasmarch.connection.ConnectionInterface;
-import net.ausiasmarch.dao.TipoProductoDao;
+import net.ausiasmarch.dao.specificdao_1.TipoProductoDao_1;
 import net.ausiasmarch.factory.ConnectionFactory;
 import net.ausiasmarch.factory.GsonFactory;
+import net.ausiasmarch.service.genericservice.GenericService;
+import net.ausiasmarch.service.serviceinterface.ServiceInterface;
 import net.ausiasmarch.setting.ConnectionSettings;
 
-public class TipoProductoService extends GenericService implements ServiceInterface {
+public class TipoProductoService_1 extends GenericService implements ServiceInterface {
 
     String[] frasesInicio = {"Alimentación ", "Juguetes ", "Electronica ", "Higiene "};
     String[] frasesFinal = {"del hogar. ", "de la empresa. ", "para centros educativos. ", "sanitaria. "};
 
-    public TipoProductoService(HttpServletRequest oRequest) {
+    public TipoProductoService_1(HttpServletRequest oRequest) {
         super(oRequest);
+        ob = oRequest.getParameter("ob");
     }
 
     public String fill() throws Exception {
@@ -27,7 +30,7 @@ public class TipoProductoService extends GenericService implements ServiceInterf
             oConnectionImplementation = ConnectionFactory
                     .getConnection(ConnectionSettings.connectionPool);
             oConnection = oConnectionImplementation.newConnection();
-            TipoProductoDao oTipoProductoDao = new TipoProductoDao(oConnection);
+            TipoProductoDao_1 oTipoProductoDao = new TipoProductoDao_1(oConnection,ob, oUsuarioBeanSession);
             Gson oGson = GsonFactory.getGson();
             int numProd = Integer.parseInt(oRequest.getParameter("number"));
             for (int i = 0; i < numProd; i++) {

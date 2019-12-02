@@ -1,26 +1,28 @@
-package net.ausiasmarch.service;
+package net.ausiasmarch.service.specificservice_1;
 
 import com.google.gson.Gson;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.text.DecimalFormat;
 import javax.servlet.http.HttpServletRequest;
 import net.ausiasmarch.bean.ProductoBean;
 import net.ausiasmarch.bean.ResponseBean;
 import net.ausiasmarch.connection.ConnectionInterface;
-import net.ausiasmarch.dao.ProductoDao;
+import net.ausiasmarch.dao.specificdao_1.ProductoDao_1;
 import net.ausiasmarch.factory.ConnectionFactory;
 import net.ausiasmarch.factory.GsonFactory;
+import net.ausiasmarch.service.genericservice.GenericService;
+import net.ausiasmarch.service.serviceinterface.ServiceInterface;
 import net.ausiasmarch.setting.ConnectionSettings;
 
-public class ProductoService extends GenericService implements ServiceInterface {
+public class ProductoService_1 extends GenericService implements ServiceInterface {
 
     String[] frasesInicio = {"Maquina de ", "Interruptor para ", "Libro de ", "Bebida de  "};
     String[] frasesFinal = {"emparejar. ", "montar tubos. ", "manzana. ", "dientes. "};
     String[] imagesRandom = {"https://www.revistacambio.com.mx/wp-content/uploads/2019/10/istock-640143244-1-300x200.jpg", "http://www.entretantomagazine.com/wp-content/uploads/2018/02/salad-2756467_1920-300x200.jpg", "https://www.aimdigital.com.ar/wp-content/uploads/2018/07/alimentos-cifra-300x200.jpg", "https://blog.cofciudadreal.com/wp-content/uploads/2017/12/duck-2957809__340-300x200.jpg"};
 
-    public ProductoService(HttpServletRequest oRequest) {
+    public ProductoService_1(HttpServletRequest oRequest) {
         super(oRequest);
+        ob = oRequest.getParameter("ob");
     }
 
     public String fill() throws Exception {
@@ -32,7 +34,7 @@ public class ProductoService extends GenericService implements ServiceInterface 
           oConnectionImplementation = ConnectionFactory
                 .getConnection(ConnectionSettings.connectionPool);
          oConnection = oConnectionImplementation.newConnection();    
-        ProductoDao oProductoDao = new ProductoDao(oConnection);
+        ProductoDao_1 oProductoDao = new ProductoDao_1(oConnection,ob,oUsuarioBeanSession);
         int numProd = Integer.parseInt(oRequest.getParameter("number"));
         for (int i = 0; i < numProd; i++) {
             ProductoBean oProductoBean = new ProductoBean();

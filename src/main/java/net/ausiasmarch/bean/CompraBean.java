@@ -6,8 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import net.ausiasmarch.dao.FacturaDao;
-import net.ausiasmarch.dao.ProductoDao;
+import net.ausiasmarch.dao.specificdao_1.FacturaDao_1;
+import net.ausiasmarch.dao.specificdao_1.ProductoDao_1;
 
 public class CompraBean implements BeanInterface {
 
@@ -75,7 +75,7 @@ public class CompraBean implements BeanInterface {
     }
 
     @Override
-    public CompraBean fill(ResultSet oResultSet, Connection oConnection, int spread) throws Exception {
+    public CompraBean fill(ResultSet oResultSet, Connection oConnection, int spread,UsuarioBean oUsuarioBeanSession) throws Exception {
         this.setId(oResultSet.getInt("id"));
         this.setCantidad(oResultSet.getInt("cantidad"));
         this.setFactura_id(oResultSet.getInt("factura_id"));
@@ -83,12 +83,12 @@ public class CompraBean implements BeanInterface {
 
         if (spread > 0) {
             spread--;
-            ProductoDao oProductoDao = new ProductoDao(oConnection);
+            ProductoDao_1 oProductoDao = new ProductoDao_1(oConnection,"producto", oUsuarioBeanSession);
             ProductoBean oProductoBean = new ProductoBean();
             oProductoBean = (ProductoBean) oProductoDao.get(this.producto_id);
             this.producto_obj = oProductoBean;
 
-            FacturaDao oFacturaDao = new FacturaDao(oConnection);
+            FacturaDao_1 oFacturaDao = new FacturaDao_1(oConnection,"factura",oUsuarioBeanSession);
             FacturaBean oFacturaBean = new FacturaBean();
             oFacturaBean = (FacturaBean) oFacturaDao.get(this.factura_id);
             this.factura_obj = oFacturaBean;
@@ -178,5 +178,10 @@ public class CompraBean implements BeanInterface {
     public PreparedStatement setFieldId(int numparam,PreparedStatement oPreparedStatement, int id) throws SQLException {
         oPreparedStatement.setInt(++numparam, id);
         return oPreparedStatement;
+    }
+
+    @Override
+    public String getFieldOrder(String orden) {
+        return orden.matches("id|cantidad|factura_id|producto_id") ? orden : null;
     }
 }

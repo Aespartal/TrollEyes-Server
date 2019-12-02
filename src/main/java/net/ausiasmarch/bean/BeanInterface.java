@@ -12,7 +12,7 @@ public interface BeanInterface {
 
     void setId(Integer id);
 
-    public BeanInterface fill(ResultSet oResultSet, Connection oConnection, int spread) throws Exception;
+    public BeanInterface fill(ResultSet oResultSet, Connection oConnection, int spread,UsuarioBean oUsuarioBeanSession) throws Exception;
 
     public PreparedStatement orderSQL(List<String> orden, PreparedStatement oPreparedStatement) throws Exception;
 
@@ -33,5 +33,7 @@ public interface BeanInterface {
     public String getFieldUpdate();
 
     public PreparedStatement setFieldUpdate(BeanInterface oBeanParam, PreparedStatement oPreparedStatement) throws Exception;
+    
+    public String getFieldOrder(String orden);
 
 }

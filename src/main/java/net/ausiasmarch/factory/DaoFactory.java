@@ -1,37 +1,93 @@
 package net.ausiasmarch.factory;
 
 import java.sql.Connection;
-import net.ausiasmarch.dao.CompraDao;
-import net.ausiasmarch.dao.DaoInterface;
-import net.ausiasmarch.dao.FacturaDao;
-import net.ausiasmarch.dao.ProductoDao;
-import net.ausiasmarch.dao.TipoProductoDao;
-import net.ausiasmarch.dao.TipoUsuarioDao;
-import net.ausiasmarch.dao.UsuarioDao;
+import net.ausiasmarch.bean.UsuarioBean;
+import net.ausiasmarch.dao.daointerface.DaoInterface;
+import net.ausiasmarch.dao.specificdao_0.ProductoDao_0;
+import net.ausiasmarch.dao.specificdao_0.UsuarioDao_0;
+import net.ausiasmarch.dao.specificdao_1.CompraDao_1;
+import net.ausiasmarch.dao.specificdao_1.FacturaDao_1;
+import net.ausiasmarch.dao.specificdao_1.ProductoDao_1;
+import net.ausiasmarch.dao.specificdao_1.TipoProductoDao_1;
+import net.ausiasmarch.dao.specificdao_1.TipoUsuarioDao_1;
+import net.ausiasmarch.dao.specificdao_1.UsuarioDao_1;
+import net.ausiasmarch.dao.specificdao_2.CompraDao_2;
+import net.ausiasmarch.dao.specificdao_2.FacturaDao_2;
+import net.ausiasmarch.dao.specificdao_2.ProductoDao_2;
+import net.ausiasmarch.dao.specificdao_2.TipoProductoDao_2;
+import net.ausiasmarch.dao.specificdao_2.TipoUsuarioDao_2;
+import net.ausiasmarch.dao.specificdao_2.UsuarioDao_2;
 
 public class DaoFactory {
-      public static DaoInterface getDao(String ob,Connection oConnection) {
+
+    public static DaoInterface getDao(Connection oConnection, String ob, UsuarioBean oUsuarioBeanSession) throws Exception {
         DaoInterface oDao = null;
-        switch (ob) {
-            case "producto":
-                oDao = new ProductoDao(oConnection);
+        int idSessionUserTipe;
+        if (oUsuarioBeanSession != null) {
+            idSessionUserTipe = oUsuarioBeanSession.getTipo_usuario_obj().getId();
+        } else {
+            idSessionUserTipe = 0;
+        }
+
+        switch (idSessionUserTipe) {
+            case 1:
+                switch (ob) {
+                    case "producto":
+                        oDao = new ProductoDao_1(oConnection,ob, oUsuarioBeanSession);
+                        break;
+                    case "compra":
+                        oDao = new CompraDao_1(oConnection,ob, oUsuarioBeanSession);
+                        break;
+                    case "factura":
+                        oDao = new FacturaDao_1(oConnection,ob, oUsuarioBeanSession);
+                        break;
+                    case "tipo_producto":
+                        oDao = new TipoProductoDao_1(oConnection,ob, oUsuarioBeanSession);
+                        break;
+                    case "tipo_usuario":
+                        oDao = new TipoUsuarioDao_1(oConnection,ob, oUsuarioBeanSession);
+                        break;
+                    case "usuario":
+                        oDao = new UsuarioDao_1(oConnection,ob, oUsuarioBeanSession);
+                        break;
+                }
                 break;
-            case "compra":
-                oDao = new CompraDao(oConnection);
+            case 2:
+                switch (ob) {
+                    case "producto":
+                        oDao = new ProductoDao_2(oConnection,ob, oUsuarioBeanSession);
+                        break;
+                    case "compra":
+                        oDao = new CompraDao_2(oConnection,ob, oUsuarioBeanSession);
+                        break;
+                    case "factura":
+                        oDao = new FacturaDao_2(oConnection,ob, oUsuarioBeanSession);
+                        break;
+                    case "tipo_producto":
+                        oDao = new TipoProductoDao_2(oConnection,ob, oUsuarioBeanSession);
+                        break;
+                    case "tipo_usuario":
+                        oDao = new TipoUsuarioDao_2(oConnection,ob, oUsuarioBeanSession);
+                        break;
+                    case "usuario":
+                        oDao = new UsuarioDao_2(oConnection,ob, oUsuarioBeanSession);
+                        break;
+                }
                 break;
-            case "factura":
-                oDao = new FacturaDao(oConnection);
+            case 0:
+                switch (ob) {    
+               case "usuario":
+                    oDao = new UsuarioDao_0(oConnection,ob, oUsuarioBeanSession);
+                    break;
+                case "producto":
+                    oDao = new ProductoDao_0(oConnection,ob, oUsuarioBeanSession);
+                    break;
+                }
                 break;
-            case "tipo_producto":
-                oDao = new TipoProductoDao(oConnection);
-                break;
-            case "tipo_usuario":
-                oDao = new TipoUsuarioDao(oConnection);
-                break;
-            case "usuario":
-                oDao = new UsuarioDao(oConnection);
-                break;
+            default:
+                throw new Exception("Error en Dao factory de " + ob);
         }
         return oDao;
     }
+
 }

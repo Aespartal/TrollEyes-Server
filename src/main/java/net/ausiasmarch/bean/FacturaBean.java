@@ -7,10 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
-import net.ausiasmarch.dao.CompraDao;
-import net.ausiasmarch.dao.DaoInterface;
-import net.ausiasmarch.dao.UsuarioDao;
-import net.ausiasmarch.factory.DaoFactory;
+import net.ausiasmarch.dao.specificdao_1.CompraDao_1;
+import net.ausiasmarch.dao.specificdao_1.UsuarioDao_1;
 
 public class FacturaBean implements BeanInterface {
 
@@ -78,19 +76,18 @@ public class FacturaBean implements BeanInterface {
     }
 
     @Override
-    public FacturaBean fill(ResultSet oResultSet, Connection oConnection, int spread) throws Exception {
+    public FacturaBean fill(ResultSet oResultSet, Connection oConnection, int spread,UsuarioBean oUsuarioBeanSession) throws Exception {
         this.setId(oResultSet.getInt("id"));
         this.setFecha(oResultSet.getDate("fecha"));
         this.setIva(oResultSet.getInt("iva"));
         this.setUsuario_id(oResultSet.getInt("usuario_id"));
 
-        CompraDao oCompraDao = new CompraDao(oConnection);
+        CompraDao_1 oCompraDao = new CompraDao_1(oConnection,"compra",oUsuarioBeanSession);
         this.setLink_compra(oCompraDao.getCount(id, "factura"));
 
-        
         if (spread > 0) {
             spread--;
-            UsuarioDao oUsuarioDao = new UsuarioDao(oConnection);
+            UsuarioDao_1 oUsuarioDao = new UsuarioDao_1(oConnection,"usuario",oUsuarioBeanSession);
             UsuarioBean oUsuarioBean = new UsuarioBean();
             oUsuarioBean = (UsuarioBean) oUsuarioDao.get(this.usuario_id);
             this.usuario_obj = oUsuarioBean;
@@ -181,5 +178,10 @@ public class FacturaBean implements BeanInterface {
        // oPreparedStatement.setString(++numparam, filter);
         oPreparedStatement.setInt(++numparam, id);
         return oPreparedStatement;
+    }
+    
+     @Override
+    public String getFieldOrder(String orden) {
+        return orden.matches("id|fecha|iva|usuario_id") ? orden : null;
     }
 }
