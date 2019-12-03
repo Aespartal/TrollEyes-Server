@@ -24,17 +24,15 @@ import net.ausiasmarch.setting.ConnectionSettings;
 
 public class CarritoService_2 {
 
-    HttpServletRequest oRequest;
-    String ob = null;
-    Gson oGson =  GsonFactory.getGson();
-    Connection oConnection = null;
+    HttpServletRequest oRequest = null;
     UsuarioBean oUsuarioBeanSession;
-    ResponseBean oResponseBean = null;
-    ConnectionInterface oConnectionImplementation = null;
-    HttpSession oSession = oRequest.getSession();
+    String ob = null;
+    Gson oGson = GsonFactory.getGson();
+    Connection oConnection = null;
+  
 
     public CarritoService_2(HttpServletRequest oRequest) {
-        super();
+         super();
         this.oRequest = oRequest;
         ob = oRequest.getParameter("ob");
     }
@@ -48,10 +46,12 @@ public class CarritoService_2 {
     }
      
     public String add() throws Exception {
-     
+        HttpSession oSession = oRequest.getSession();
         int id = Integer.parseInt(oRequest.getParameter("id"));
         int cantidad = Integer.parseInt(oRequest.getParameter("cantidad"));
         ProductoDao_2 oProductoDao;
+        ConnectionInterface oConnectionImplementation = null;
+        ResponseBean oResponseBean = null;
          @SuppressWarnings("unchecked")
         ItemBean oItemBean;
         try {
@@ -113,7 +113,9 @@ public class CarritoService_2 {
         int id = Integer.parseInt(oRequest.getParameter("id"));
         ProductoDao_2 oProductoDao;
         ProductoBean oProductoBean;
-
+        HttpSession oSession = oRequest.getSession();
+        ConnectionInterface oConnectionImplementation = null;
+        ResponseBean oResponseBean = null;
         try {
             oConnectionImplementation = ConnectionFactory.getConnection(ConnectionSettings.connectionPool);
             oConnection = oConnectionImplementation.newConnection();
@@ -158,6 +160,7 @@ public class CarritoService_2 {
     }
 
     public String list() throws Exception {
+          HttpSession oSession = oRequest.getSession();
         try {
             @SuppressWarnings("unchecked")
             ArrayList<ItemBean> alCarrito = (ArrayList<ItemBean>) oSession.getAttribute("carrito");
@@ -169,6 +172,7 @@ public class CarritoService_2 {
     }
 
     public String empty() throws Exception {
+          HttpSession oSession = oRequest.getSession();
         try {
             oSession.setAttribute("carrito", null);
             return oGson.toJson(new ResponseBean(200, "OK"));
@@ -197,11 +201,12 @@ public class CarritoService_2 {
         return -1;
     }
     public String buy() throws Exception {
-       
+         HttpSession oSession = oRequest.getSession();
         ArrayList<ItemBean> alCarrito = (ArrayList) oSession.getAttribute("carrito");
         String usuario = (String) oSession.getAttribute("usuario");
         UsuarioBean oUsuarioBean;
-
+        ConnectionInterface oConnectionImplementation = null;
+        ResponseBean oResponseBean = null;
         try {
             oConnectionImplementation = ConnectionFactory.getConnection(ConnectionSettings.connectionPool);
             oConnection = oConnectionImplementation.newConnection();

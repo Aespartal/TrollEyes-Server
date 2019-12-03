@@ -320,6 +320,12 @@ public class ServiceCall {
                             case "getpage":
                                 strResult = oFacturaService.getPage();
                                 break;
+                            case "getpagefactureuser":
+                                strResult = oFacturaService.getPageFactureUser();
+                                break;
+                            case "getcountfactureuser":
+                                strResult = oFacturaService.getCountFactureUser();
+                                break;
                             default:
                                 strResult = "Operation doesn't exist";
                                 break;
