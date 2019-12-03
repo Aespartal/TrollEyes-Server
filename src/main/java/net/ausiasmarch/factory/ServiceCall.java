@@ -282,9 +282,6 @@ public class ServiceCall {
                             case "update":
                                 strResult = oUsuarioService.update();
                                 break;
-                            case "login":
-                                strResult = oUsuarioService.login();
-                                break;
                             case "logout":
                                 strResult = oUsuarioService.logout();
                                 break;
@@ -313,18 +310,11 @@ public class ServiceCall {
                             case "get":
                                 strResult = oFacturaService.get();
                                 break;
-
                             case "getcount":
                                 strResult = oFacturaService.getCount();
                                 break;
                             case "getpage":
                                 strResult = oFacturaService.getPage();
-                                break;
-                            case "getpagefactureuser":
-                                strResult = oFacturaService.getPageFactureUser();
-                                break;
-                            case "getcountfactureuser":
-                                strResult = oFacturaService.getCountFactureUser();
                                 break;
                             default:
                                 strResult = "Operation doesn't exist";

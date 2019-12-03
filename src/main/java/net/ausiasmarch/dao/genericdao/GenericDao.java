@@ -27,8 +27,8 @@ public class GenericDao implements DaoInterface {
         //Sentencias SQL 
         this.strSQL = "SELECT * FROM " + ob + " WHERE 1=1 ";
         this.strCountSQL = "SELECT COUNT(*) FROM " + ob + " WHERE 1=1 ";
-        
-         if (oUsuarioBeanSession != null) {
+
+        if (oUsuarioBeanSession != null) {
             this.oUsuarioBeanSession = oUsuarioBeanSession;
             this.idSessionUser = oUsuarioBeanSession.getId();
             this.idSessionUserTipe = oUsuarioBeanSession.getTipo_usuario_id();
@@ -61,8 +61,8 @@ public class GenericDao implements DaoInterface {
         BeanInterface oBean = BeanFactory.getBean(ob);
         try {
             if (id != null && filter != null) {
-                strCountSQL += "AND " + oBean.getFieldId(filter) + " = " + id;
-            }  
+                strCountSQL += " AND " + oBean.getFieldId(filter) + " = " + id;
+            }
             oPreparedStatement = oConnection.prepareStatement(strCountSQL);
             oResultSet = oPreparedStatement.executeQuery();
             if (oResultSet.next()) {
@@ -126,10 +126,14 @@ public class GenericDao implements DaoInterface {
 
             }
             //Condicion de filtro de objeto
-            if (id !=null && filter != null) {
-                oPreparedStatement = oConnection.prepareStatement("SELECT * FROM " + ob + " INNER JOIN " + filter + " ON " + filter + ".id = " + ob + "." + oBean.getFieldId(filter) + ""
-                        + " WHERE " + oBean.getFieldId(filter) + " = ?");
-                oPreparedStatement = oBean.setFieldId(numparam, oPreparedStatement, id);
+            if (id != null && filter != null) {
+                if (idSessionUser == 1) {
+                    strSQL += "";
+                    oPreparedStatement = oConnection.prepareStatement("SELECT * FROM " + ob + " INNER JOIN " + filter
+                            + " ON " + filter + ".id = " + ob + "." + oBean.getFieldId(filter)
+                            + " WHERE " + oBean.getFieldId(filter) + " = ?");
+                    oPreparedStatement = oBean.setFieldId(numparam, oPreparedStatement, id);
+                }
             }
             oResultSet = oPreparedStatement.executeQuery();
 
@@ -154,30 +158,35 @@ public class GenericDao implements DaoInterface {
 
     @Override
     public Integer insert(BeanInterface oBeanParam) throws Exception {
-        BeanInterface oBean = BeanFactory.getBean(ob);
-        PreparedStatement oPreparedStatement = null;
-        ResultSet oResultSet = null;
-        int iResult = 0;
-        try {
-            String strsql = "INSERT INTO " + ob + oBean.getFieldInsert();
-            oPreparedStatement = oConnection.prepareStatement(strsql, Statement.RETURN_GENERATED_KEYS);
-            oPreparedStatement = oBean.setFieldInsert(oBeanParam, oPreparedStatement);
-            iResult = oPreparedStatement.executeUpdate();
-            oResultSet = oPreparedStatement.getGeneratedKeys();
-            oResultSet.next();
-            iResult = oResultSet.getInt(1);
-        } catch (Exception ex) {
-            String msg = this.getClass().getName() + " ob: " + ob + "; insert method ";
-            throw new Exception(msg, ex);
-        } finally {
-            if (oResultSet != null) {
-                oResultSet.close();
+        if (idSessionUser == 1) {
+            BeanInterface oBean = BeanFactory.getBean(ob);
+            PreparedStatement oPreparedStatement = null;
+            ResultSet oResultSet = null;
+            int iResult = 0;
+            try {
+                String strsql = "INSERT INTO " + ob + oBean.getFieldInsert();
+                oPreparedStatement = oConnection.prepareStatement(strsql, Statement.RETURN_GENERATED_KEYS);
+                oPreparedStatement = oBean.setFieldInsert(oBeanParam, oPreparedStatement);
+                iResult = oPreparedStatement.executeUpdate();
+                oResultSet = oPreparedStatement.getGeneratedKeys();
+                oResultSet.next();
+                iResult = oResultSet.getInt(1);
+            } catch (Exception ex) {
+                String msg = this.getClass().getName() + " ob: " + ob + "; insert method ";
+                throw new Exception(msg, ex);
+            } finally {
+                if (oResultSet != null) {
+                    oResultSet.close();
+                }
+                if (oPreparedStatement != null) {
+                    oPreparedStatement.close();
+                }
             }
-            if (oPreparedStatement != null) {
-                oPreparedStatement.close();
-            }
+            return iResult;
+        } else {
+            return -1;
         }
-        return iResult;
+
     }
 
     @Override

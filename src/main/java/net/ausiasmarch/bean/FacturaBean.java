@@ -90,6 +90,7 @@ public class FacturaBean implements BeanInterface {
             UsuarioDao_1 oUsuarioDao = new UsuarioDao_1(oConnection,"usuario",oUsuarioBeanSession);
             UsuarioBean oUsuarioBean = new UsuarioBean();
             oUsuarioBean = (UsuarioBean) oUsuarioDao.get(this.usuario_id);
+
             this.usuario_obj = oUsuarioBean;
         }
         return this;
