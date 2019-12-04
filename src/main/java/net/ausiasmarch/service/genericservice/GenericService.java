@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import net.ausiasmarch.bean.BeanInterface;
@@ -75,9 +77,12 @@ public class GenericService implements ServiceInterface {
             String orden = null;
             String direccion = null;
             String word = null; // filtro para la busqueda
-            if (oRequest.getParameter("filter") != null && oRequest.getParameter("id") != null) {
+        
+            if (oRequest.getParameter("filter") != null ) {
                 filter = oRequest.getParameter("filter");
-                id = Integer.parseInt(oRequest.getParameter("id"));
+            }
+            if(oRequest.getParameter("id") != null){
+              id = Integer.parseInt(oRequest.getParameter("id"));
             }
             if (oRequest.getParameter("order") != null && oRequest.getParameter("direccion") != null) {
                 orden = oRequest.getParameter("order");
@@ -86,6 +91,8 @@ public class GenericService implements ServiceInterface {
             if (oRequest.getParameter("word") != null) {
                 word = oRequest.getParameter("word");
             }
+            
+            
             // acaba opcional
             DaoInterface oDao = DaoFactory.getDao(oConnection, ob, oUsuarioBeanSession);
             ArrayList alBean = oDao.getPage(iPage, iRpp, orden, direccion, word, id, filter); //--------DAO GETPAGE--------
@@ -115,9 +122,11 @@ public class GenericService implements ServiceInterface {
             oConnection = oConnectionImplementation.newConnection();
             Integer id = null;
             String filter = null;
-            if (oRequest.getParameter("filter") != null && oRequest.getParameter("id") != null) {
-                filter = oRequest.getParameter("filter");
-                id = Integer.parseInt(oRequest.getParameter("id"));
+            if (oRequest.getParameter("filter")!= null) {
+                filter = oRequest.getParameter("filter");     
+            }
+            if(oRequest.getParameter("id") != null){
+                  id = Integer.parseInt(oRequest.getParameter("id"));
             }
             DaoInterface oDao = DaoFactory.getDao(oConnection, ob, oUsuarioBeanSession);
             iCount = oDao.getCount(id, filter);
