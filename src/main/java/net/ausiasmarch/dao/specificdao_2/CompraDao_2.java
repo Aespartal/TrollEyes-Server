@@ -15,13 +15,13 @@ public class CompraDao_2 extends GenericDao implements DaoInterface {
     
      @Override
     public BeanInterface get(int id) throws Exception {
-        strSQL += " AND WHERE factura_id=" + id;
+        strSQL += " AND factura_id=" + id;
         return super.get(id);
     }
     
     @Override
     public Integer getCount(Integer id, String filter) throws Exception {
-        strCountSQL += " AND WHERE factura_id=" + id;
+        strCountSQL += " AND factura_id=" + id;
         return super.getCount(id, filter);
     }
 
