@@ -9,16 +9,16 @@ import net.ausiasmarch.dao.genericdao.GenericDao;
 
 public class CompraDao_2 extends GenericDao implements DaoInterface {
 
-    public CompraDao_2(Connection oConnection, String ob,UsuarioBean oUsuarioBeanSession) {
+    public CompraDao_2(Connection oConnection, String ob, UsuarioBean oUsuarioBeanSession) {
         super(oConnection, "compra", oUsuarioBeanSession);
     }
-    
-     @Override
+
+    @Override
     public BeanInterface get(int id) throws Exception {
         strSQL += " AND factura_id=" + id;
         return super.get(id);
     }
-    
+
     @Override
     public Integer getCount(Integer id, String filter) throws Exception {
         strCountSQL += " AND factura_id=" + id;
@@ -28,16 +28,23 @@ public class CompraDao_2 extends GenericDao implements DaoInterface {
     @Override
     public ArrayList<BeanInterface> getPage(int page, int rpp, String orden, String direccion, String word, Integer id, String filter) throws Exception {
         //strSQL += " AND WHERE factura_id = " + id;
-        strSQL = "SELECT * FROM compra "
-                + "INNER JOIN factura ON "
-                + "factura.id = compra.factura_id "
-                + "INNER JOIN usuario "
-                + "WHERE factura_id = " + id +" "
-                + "AND usuario_id = " + oUsuarioBeanSession.getId();
+        if (id == null) {
+            strSQL = "SELECT compra.* FROM compra "
+                    + "INNER JOIN factura ON "
+                    + "factura.id = compra.factura_id "
+                    + "INNER JOIN usuario ON usuario.id = factura.usuario_id "
+                    + "WHERE factura.usuario_id = " + oUsuarioBeanSession.getId();
+        } else {
+            strSQL = "SELECT compra.* FROM compra "
+                    + "INNER JOIN factura ON "
+                    + "factura.id = compra.factura_id "
+                    + "INNER JOIN usuario ON usuario.id = factura.usuario_id "
+                    + "WHERE factura_id = " + id + " "
+                    + "AND usuario_id = " + oUsuarioBeanSession.getId();
+        }
         return super.getPage(page, rpp, orden, direccion, word, id, filter);
     }
 
-    
     @Override
     public Integer remove(int id) throws Exception {
         throw new Exception("Error en Dao remove de " + ob + ": No autorizado");
@@ -47,5 +54,5 @@ public class CompraDao_2 extends GenericDao implements DaoInterface {
     public Integer update(BeanInterface oBeanParam) throws Exception {
         throw new Exception("Error en Dao update de " + ob + ": No autorizado");
     }
-    
+
 }
