@@ -37,12 +37,8 @@ public class CarritoService_2 {
         ob = oRequest.getParameter("ob");
     }
      private Boolean checkPermission() throws Exception {
-        boolean check = false; 
         oUsuarioBeanSession = (UsuarioBean) oRequest.getSession().getAttribute("usuario");
-        if (oUsuarioBeanSession != null) {
-            return check;
-        }
-        return check;
+        return oUsuarioBeanSession != null;
     }
      
     public String add() throws Exception {
@@ -203,8 +199,7 @@ public class CarritoService_2 {
     public String buy() throws Exception {
          HttpSession oSession = oRequest.getSession();
         ArrayList<ItemBean> alCarrito = (ArrayList) oSession.getAttribute("carrito");
-        String usuario = (String) oSession.getAttribute("usuario");
-        UsuarioBean oUsuarioBean;
+        UsuarioBean oUsuarioBean = (UsuarioBean) oSession.getAttribute("usuario");
         ConnectionInterface oConnectionImplementation = null;
         ResponseBean oResponseBean = null;
         try {
@@ -213,7 +208,6 @@ public class CarritoService_2 {
              if (this.checkPermission()) {
                 if (alCarrito != null && alCarrito.size() > 0) {
                     UsuarioDao_2 oUsuarioDao = new UsuarioDao_2(oConnection,"usuario",oUsuarioBeanSession);
-                    oUsuarioBean = oUsuarioDao.get(usuario);
                     oConnection.setAutoCommit(false);
                     //CREA FACTURA
                     FacturaBean oFacturaBean = new FacturaBean();
@@ -241,7 +235,7 @@ public class CarritoService_2 {
                             oProductoBean.setExistencias(oProductoBean.getExistencias() - oItemBean.getCantidad());
                             oProductoDao.update(oProductoBean);
                             oProductoDao.insert(oProductoBean);
-                            oResponseBean = new ResponseBean(400, "Se ha realizado la compra");
+                            oResponseBean = new ResponseBean(200, "Se ha realizado la compra");
                         } else {
                             oResponseBean = new ResponseBean(400, "No hay suficientes existencias");
                             return oGson.toJson(oResponseBean);

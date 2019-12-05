@@ -40,7 +40,7 @@ public class GenericDao implements DaoInterface {
         PreparedStatement oPreparedStatement = null;
         ResultSet oResultSet = null;
         BeanInterface oBean = null;
-        strSQL += "AND id=?";
+        strSQL = "Select * From " + ob + " WHERE id=?";
         oPreparedStatement = oConnection.prepareStatement(strSQL);
         oPreparedStatement.setInt(1, id);
         oResultSet = oPreparedStatement.executeQuery();
@@ -158,7 +158,6 @@ public class GenericDao implements DaoInterface {
 
     @Override
     public Integer insert(BeanInterface oBeanParam) throws Exception {
-        if (idSessionUser == 1) {
             BeanInterface oBean = BeanFactory.getBean(ob);
             PreparedStatement oPreparedStatement = null;
             ResultSet oResultSet = null;
@@ -183,10 +182,6 @@ public class GenericDao implements DaoInterface {
                 }
             }
             return iResult;
-        } else {
-            return -1;
-        }
-
     }
 
     @Override

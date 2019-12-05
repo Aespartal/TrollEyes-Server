@@ -47,10 +47,5 @@ public class CompraDao_2 extends GenericDao implements DaoInterface {
     public Integer update(BeanInterface oBeanParam) throws Exception {
         throw new Exception("Error en Dao update de " + ob + ": No autorizado");
     }
-
-    @Override
-    public Integer insert(BeanInterface oBeanParam) throws Exception {
-        throw new Exception("Error en Dao insert de " + ob + ": No autorizado");
-    }
     
 }
