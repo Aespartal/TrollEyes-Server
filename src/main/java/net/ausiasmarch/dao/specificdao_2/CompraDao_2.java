@@ -15,19 +15,26 @@ public class CompraDao_2 extends GenericDao implements DaoInterface {
 
     @Override
     public BeanInterface get(int id) throws Exception {
-        strSQL += " AND factura_id=" + id;
+        strGetSQL += "SELECT compra.* FROM compra "
+                    + "INNER JOIN factura ON "
+                    + "factura.id = compra.factura_id "
+                    + "INNER JOIN usuario ON usuario.id = factura.usuario_id "
+                    + "WHERE compra.id = ? AND factura.usuario_id = " + oUsuarioBeanSession.getId();
         return super.get(id);
     }
 
     @Override
     public Integer getCount(Integer id, String filter) throws Exception {
-        strCountSQL += " AND factura_id=" + id;
+        strCountSQL = "SELECT COUNT(*) FROM compra "
+                    + "INNER JOIN factura ON "
+                    + "factura.id = compra.factura_id "
+                    + "INNER JOIN usuario ON usuario.id = factura.usuario_id "
+                    + "WHERE factura.usuario_id = " + oUsuarioBeanSession.getId();
         return super.getCount(id, filter);
     }
 
     @Override
     public ArrayList<BeanInterface> getPage(int page, int rpp, String orden, String direccion, String word, Integer id, String filter) throws Exception {
-        //strSQL += " AND WHERE factura_id = " + id;
         if (id == null) {
             strSQL = "SELECT compra.* FROM compra "
                     + "INNER JOIN factura ON "

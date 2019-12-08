@@ -17,6 +17,7 @@ public class GenericDao implements DaoInterface {
     protected String ob = null;
     protected String strSQL = null;
     protected String strCountSQL = null;
+    protected String strGetSQL = null;
     protected UsuarioBean oUsuarioBeanSession;
     protected int idSessionUser;
     protected int idSessionUserTipe;
@@ -27,7 +28,8 @@ public class GenericDao implements DaoInterface {
         //Sentencias SQL 
         this.strSQL = "SELECT * FROM " + ob + " WHERE 1=1 ";
         this.strCountSQL = "SELECT COUNT(*) FROM " + ob + " WHERE 1=1 ";
-
+        this.strGetSQL = "SELECT * FROM " + ob + " WHERE id=?";
+        
         if (oUsuarioBeanSession != null) {
             this.oUsuarioBeanSession = oUsuarioBeanSession;
             this.idSessionUser = oUsuarioBeanSession.getId();

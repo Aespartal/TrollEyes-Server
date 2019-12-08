@@ -17,7 +17,7 @@ public class FacturaDao_2 extends GenericDao implements DaoInterface {
 
     @Override
     public BeanInterface get(int id) throws Exception {
-        strSQL += " WHERE usuario_id=" + oUsuarioBeanSession.getId();
+        strGetSQL += " WHERE usuario_id=" + oUsuarioBeanSession.getId();
         return super.get(id);
     }
     
