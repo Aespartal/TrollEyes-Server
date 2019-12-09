@@ -85,7 +85,7 @@ public class GenericService implements ServiceInterface {
               id = Integer.parseInt(oRequest.getParameter("id"));
             }
             if (oRequest.getParameter("order") != null && oRequest.getParameter("direccion") != null) {
-                orden = oRequest.getParameter("order");
+                orden = oRequest.getParameter("order").replace("\"", "`");              
                 direccion = oRequest.getParameter("direccion");
             }
             if (oRequest.getParameter("word") != null) {

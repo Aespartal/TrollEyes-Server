@@ -215,7 +215,7 @@ public class UsuarioBean implements BeanInterface {
     }
 
     @Override
-    public PreparedStatement setFilter(int numparam, PreparedStatement oPreparedStatement, String word) throws SQLException {
+    public PreparedStatement setFilter(int numparam, PreparedStatement oPreparedStatement, String word,int rpp, int offset) throws SQLException {
         for (int i = 0; i <= numparam; i++) {
             oPreparedStatement.setString(++numparam, word);
         }

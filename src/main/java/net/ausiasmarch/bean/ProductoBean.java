@@ -151,9 +151,7 @@ public class ProductoBean implements BeanInterface {
                 oPreparedStatement.setInt(i, 5);
             } else if (orden.get((i - 1)).equalsIgnoreCase("descripcion")) {
                 oPreparedStatement.setInt(i, 6);
-            } else if (orden.get((i - 1)).equalsIgnoreCase("tipo_producto_id")) {
-                oPreparedStatement.setInt(i, 7);
-            }
+            } 
         }
         return oPreparedStatement;
     }
@@ -164,26 +162,29 @@ public class ProductoBean implements BeanInterface {
     }
 
     private String getFieldFilter(String campo) {
-        return " OR " + campo + "LIKE CONCAT('%', \'?\', '%') ";
+        return " OR " + campo + " LIKE ? ";
     }
 
     @Override
     public String getFieldConcat() {
         
-        return getFieldFilter("codigo") +
+        return " id LIKE ? " + 
+                getFieldFilter("codigo") +
                 getFieldFilter("existencias") + 
                 getFieldFilter("precio") + 
                 getFieldFilter("imagen") +
-                getFieldFilter("descripcion") +
-                getFieldFilter("tipo_producto_id");
+                getFieldFilter("descripcion");
         
         
     }
     @Override
-    public PreparedStatement setFilter(int numparam,PreparedStatement oPreparedStatement,String word) throws SQLException{
-        for (int i=0;i<=numparam;i++){
+    public PreparedStatement setFilter(int numparam,PreparedStatement oPreparedStatement,String word, int rpp, int offset) throws SQLException{
+        
+        for (int i=0;i<=5;i++){
                             oPreparedStatement.setString(++numparam, word);
         }
+        oPreparedStatement.setInt(++numparam, rpp);
+        oPreparedStatement.setInt(++numparam, offset);
         return oPreparedStatement;
     }
             

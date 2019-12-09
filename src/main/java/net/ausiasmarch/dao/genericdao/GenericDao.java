@@ -107,36 +107,40 @@ public class GenericDao implements DaoInterface {
                 oPreparedStatement.setInt(++numparam, rpp);
                 oPreparedStatement.setInt(++numparam, offset);
             } else {
-                strSQL += " ORDER BY ? ";
+                strSQL += " ORDER BY " + orden ;
                 if (direccion.equalsIgnoreCase("asc")) {
-                    strSQL += "ASC ";
+                    strSQL += " ASC ";
                 } else if (direccion.equalsIgnoreCase("desc")) {
-                    strSQL += "DESC ";
+                    strSQL += " DESC ";
                 }
                 strSQL += "LIMIT ? OFFSET ?";
+               
                 oPreparedStatement = oConnection.prepareStatement(strSQL);
-                oPreparedStatement.setString(++numparam, orden);
+                //oPreparedStatement.setString(++numparam, orden);
                 oPreparedStatement.setInt(++numparam, rpp);
                 oPreparedStatement.setInt(++numparam, offset);
             }
-            //Condicion de busqueda
             numparam = 0;
             if (word != null) {
-                strSQL += " AND " + oBean.getFieldConcat() + "LIMIT ? OFFSET ?";
+                strSQL = "SELECT * FROM " + ob + " WHERE 1=1 AND " + oBean.getFieldConcat() + " LIMIT ? OFFSET ?";
                 oPreparedStatement = oConnection.prepareStatement(strSQL);
-                oPreparedStatement = oBean.setFilter(numparam, oPreparedStatement, word);
-
+                oPreparedStatement = oBean.setFilter(numparam, oPreparedStatement, word, rpp, offset);
             }
+                        //Condicion de busqueda
+            numparam = 0;
             //Condicion de filtro de objeto
             if (id != null && filter != null) {
                 if (idSessionUser == 1) {
                     strSQL += "";
                     oPreparedStatement = oConnection.prepareStatement("SELECT * FROM " + ob + " INNER JOIN " + filter
                             + " ON " + filter + ".id = " + ob + "." + oBean.getFieldId(filter)
-                            + " WHERE " + oBean.getFieldId(filter) + " = ?");
+                            + " WHERE " + oBean.getFieldId(filter) + " = ?  LIMIT ? OFFSET ?");
                     oPreparedStatement = oBean.setFieldId(numparam, oPreparedStatement, id);
+                    oPreparedStatement.setInt(++numparam, rpp);
+                    oPreparedStatement.setInt(++numparam, offset);
                 }
             }
+           
             oResultSet = oPreparedStatement.executeQuery();
 
             while (oResultSet.next()) {
