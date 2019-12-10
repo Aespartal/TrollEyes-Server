@@ -116,21 +116,23 @@ public class CompraBean implements BeanInterface {
     }
     
     private String getFieldFilter(String campo) {
-        return " OR " + campo + "LIKE CONCAT('%', \'?\', '%') ";
+        return " OR " + campo + " LIKE ? ";
     }
 
     @Override
     public String getFieldConcat() {
         
-        return getFieldFilter("cantidad") +
-                getFieldFilter("producto_id") + 
-                getFieldFilter("factura_id");
+        return " id LIKE ? " + 
+                getFieldFilter("cantidad");
     }
     @Override
-    public PreparedStatement setFilter(int numparam,PreparedStatement oPreparedStatement,String word,int rpp, int offset) throws SQLException{
-        for (int i=0;i<=numparam;i++){
+    public PreparedStatement setFilter(int numparam,PreparedStatement oPreparedStatement,String word, int rpp, int offset) throws SQLException{
+        
+        for (int i=0;i<=1;i++){
                             oPreparedStatement.setString(++numparam, word);
         }
+        oPreparedStatement.setInt(++numparam, rpp);
+        oPreparedStatement.setInt(++numparam, offset);
         return oPreparedStatement;
     }
     
@@ -175,8 +177,10 @@ public class CompraBean implements BeanInterface {
         
     }
     @Override
-    public PreparedStatement setFieldId(int numparam,PreparedStatement oPreparedStatement, int id) throws SQLException {
+    public PreparedStatement setFieldId(int numparam,PreparedStatement oPreparedStatement, int id, int rpp,int offset) throws SQLException {
         oPreparedStatement.setInt(++numparam, id);
+        oPreparedStatement.setInt(++numparam, rpp);
+        oPreparedStatement.setInt(++numparam, offset);
         return oPreparedStatement;
     }
 

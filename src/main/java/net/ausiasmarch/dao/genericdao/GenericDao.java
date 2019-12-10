@@ -135,9 +135,8 @@ public class GenericDao implements DaoInterface {
                     oPreparedStatement = oConnection.prepareStatement("SELECT * FROM " + ob + " INNER JOIN " + filter
                             + " ON " + filter + ".id = " + ob + "." + oBean.getFieldId(filter)
                             + " WHERE " + oBean.getFieldId(filter) + " = ?  LIMIT ? OFFSET ?");
-                    oPreparedStatement = oBean.setFieldId(numparam, oPreparedStatement, id);
-                    oPreparedStatement.setInt(++numparam, rpp);
-                    oPreparedStatement.setInt(++numparam, offset);
+                    oPreparedStatement = oBean.setFieldId(numparam, oPreparedStatement, id, rpp, offset);
+                    
                 }
             }
            

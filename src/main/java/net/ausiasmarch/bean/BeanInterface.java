@@ -24,7 +24,7 @@ public interface BeanInterface {
     
     public String getFieldId(String filter);
     
-    public PreparedStatement setFieldId(int numparam,PreparedStatement oPreparedStatement, int id) throws Exception;
+    public PreparedStatement setFieldId(int numparam,PreparedStatement oPreparedStatement, int id, int rpp,int offset) throws Exception;
     
     public PreparedStatement setFilter(int numparam, PreparedStatement oPreparedStatement, String word, int rpp, int offset) throws Exception;
     

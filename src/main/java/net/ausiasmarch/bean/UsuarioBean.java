@@ -198,27 +198,28 @@ public class UsuarioBean implements BeanInterface {
     }
 
     private String getFieldFilter(String campo) {
-        return " OR " + campo + "LIKE CONCAT('%', \'?\', '%') ";
+       return " OR " + campo + " LIKE ? ";
     }
 
     @Override
     public String getFieldConcat() {
 
-        return getFieldFilter("dni")
+        return " id LIKE ? "  
+                + getFieldFilter("dni")
                 + getFieldFilter("nombre")
                 + getFieldFilter("apellido1")
                 + getFieldFilter("apellido2")
                 + getFieldFilter("email")
-                + getFieldFilter("login")
-                + getFieldFilter("password")
-                + getFieldFilter("tipo_usuario_id");
+                + getFieldFilter("login");
     }
 
     @Override
     public PreparedStatement setFilter(int numparam, PreparedStatement oPreparedStatement, String word,int rpp, int offset) throws SQLException {
-        for (int i = 0; i <= numparam; i++) {
+        for (int i = 0; i <= 6; i++) {
             oPreparedStatement.setString(++numparam, word);
         }
+        oPreparedStatement.setInt(++numparam, rpp);
+        oPreparedStatement.setInt(++numparam, offset);
         return oPreparedStatement;
     }
 
@@ -269,8 +270,10 @@ public class UsuarioBean implements BeanInterface {
     }
 
     @Override
-    public PreparedStatement setFieldId(int numparam, PreparedStatement oPreparedStatement, int id) throws SQLException {
+    public PreparedStatement setFieldId(int numparam,PreparedStatement oPreparedStatement, int id, int rpp,int offset) throws SQLException {
         oPreparedStatement.setInt(++numparam, id);
+        oPreparedStatement.setInt(++numparam, rpp);
+        oPreparedStatement.setInt(++numparam, offset);
         return oPreparedStatement;
     }
 

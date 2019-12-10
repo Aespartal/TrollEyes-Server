@@ -229,11 +229,11 @@ public class ProductoBean implements BeanInterface {
         return "tipo_producto_id";
     }
     
-    @Override
-    public PreparedStatement setFieldId(int numparam,PreparedStatement oPreparedStatement,int id) throws SQLException {
-        // oPreparedStatement.setString(++numparam, filter);
-        // oPreparedStatement.setString(++numparam, filter);
+   @Override
+    public PreparedStatement setFieldId(int numparam,PreparedStatement oPreparedStatement, int id, int rpp,int offset) throws SQLException {
         oPreparedStatement.setInt(++numparam, id);
+        oPreparedStatement.setInt(++numparam, rpp);
+        oPreparedStatement.setInt(++numparam, offset);
         return oPreparedStatement;
     }
     
