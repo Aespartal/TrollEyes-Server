@@ -107,7 +107,7 @@ public class GenericDao implements DaoInterface {
                 oPreparedStatement.setInt(++numparam, rpp);
                 oPreparedStatement.setInt(++numparam, offset);
             } else {
-                strSQL += " ORDER BY " + orden ;
+                strSQL += " ORDER BY " + oBean.getFieldOrder(orden) ;
                 if (direccion.equalsIgnoreCase("asc")) {
                     strSQL += " ASC ";
                 } else if (direccion.equalsIgnoreCase("desc")) {

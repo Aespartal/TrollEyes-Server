@@ -103,9 +103,7 @@ public class CompraBean implements BeanInterface {
                 oPreparedStatement.setInt(i, 1);
             } else if (orden.get((i - 1)).equalsIgnoreCase("cantidad")) {
                 oPreparedStatement.setInt(i, 2);
-            } else if (orden.get((i - 1)).equalsIgnoreCase("factura_id")) {
-                oPreparedStatement.setInt(i, 3);
-            } 
+            }
         }
         return oPreparedStatement;
     }
