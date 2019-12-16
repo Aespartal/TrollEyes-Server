@@ -27,7 +27,10 @@ public class ProductoService_1 extends GenericService implements ServiceInterfac
 
     String[] frasesInicio = {"Maquina de ", "Interruptor para ", "Libro de ", "Bebida de  "};
     String[] frasesFinal = {"emparejar. ", "montar tubos. ", "manzana. ", "dientes. "};
-    String[] imagesRandom = {"https://www.revistacambio.com.mx/wp-content/uploads/2019/10/istock-640143244-1-300x200.jpg", "http://www.entretantomagazine.com/wp-content/uploads/2018/02/salad-2756467_1920-300x200.jpg", "https://www.aimdigital.com.ar/wp-content/uploads/2018/07/alimentos-cifra-300x200.jpg", "https://blog.cofciudadreal.com/wp-content/uploads/2017/12/duck-2957809__340-300x200.jpg"};
+    String[] imagesRandom = {"https://www.revistacambio.com.mx/wp-content/uploads/2019/10/istock-640143244-1-300x200.jpg", 
+        "http://www.entretantomagazine.com/wp-content/uploads/2018/02/salad-2756467_1920-300x200.jpg", 
+        "https://www.aimdigital.com.ar/wp-content/uploads/2018/07/alimentos-cifra-300x200.jpg", 
+        "https://blog.cofciudadreal.com/wp-content/uploads/2017/12/duck-2957809__340-300x200.jpg"};
 
     public ProductoService_1(HttpServletRequest oRequest) {
         super(oRequest);

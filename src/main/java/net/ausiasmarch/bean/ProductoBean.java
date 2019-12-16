@@ -29,7 +29,37 @@ public class ProductoBean implements BeanInterface {
     private TipoProductoBean tipo_producto_obj;
     @Expose(deserialize = false)
     private Integer link_compra;
+    @Expose
+    private Boolean canCreate;
+    @Expose
+    private Boolean canUpdate;
+    @Expose
+    private Boolean canDelete;
 
+    public Boolean getCanCreate() {
+        return canCreate;
+    }
+
+    public void setCanCreate(Boolean canCreate) {
+        this.canCreate = canCreate;
+    }
+
+    public Boolean getCanUpdate() {
+        return canUpdate;
+    }
+
+    public void setCanUpdate(Boolean canUpdate) {
+        this.canUpdate = canUpdate;
+    }
+
+    public Boolean getCanDelete() {
+        return canDelete;
+    }
+
+    public void setCanDelete(Boolean canDelete) {
+        this.canDelete = canDelete;
+    }
+    
     public Integer getLink_compra() {
         return link_compra;
     }
@@ -122,6 +152,11 @@ public class ProductoBean implements BeanInterface {
         this.setTipo_producto_id(oResultSet.getInt("tipo_producto_id"));
 
         CompraDao_1 oCompraDao = new CompraDao_1(oConnection,"compra",oUsuarioBeanSession);
+        if(this.link_compra > 0){
+        this.canDelete = false;
+        } else {
+        this.canDelete = true;
+        }
         this.setLink_compra(oCompraDao.getCount(id, "producto"));
 
         
