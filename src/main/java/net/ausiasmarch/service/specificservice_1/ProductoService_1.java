@@ -3,6 +3,7 @@ package net.ausiasmarch.service.specificservice_1;
 import com.google.gson.Gson;
 import java.io.File;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -13,8 +14,10 @@ import net.ausiasmarch.bean.ProductoBean;
 import net.ausiasmarch.bean.ResponseBean;
 import net.ausiasmarch.connection.ConnectionInterface;
 import net.ausiasmarch.dao.specificdao_1.ProductoDao_1;
+import net.ausiasmarch.exceptions.MyException;
 import net.ausiasmarch.factory.ConnectionFactory;
 import net.ausiasmarch.factory.GsonFactory;
+import net.ausiasmarch.helper.Log4jHelper;
 import net.ausiasmarch.service.genericservice.GenericService;
 import net.ausiasmarch.service.serviceinterface.ServiceInterface;
 import net.ausiasmarch.setting.ConnectionSettings;
@@ -27,9 +30,9 @@ public class ProductoService_1 extends GenericService implements ServiceInterfac
 
     String[] frasesInicio = {"Maquina de ", "Interruptor para ", "Libro de ", "Bebida de  "};
     String[] frasesFinal = {"emparejar. ", "montar tubos. ", "manzana. ", "dientes. "};
-    String[] imagesRandom = {"67f64cc8-37b0-615b-ebdb-2cb543fd6e41salad.jpg", 
-        "alimentos-300x200.jpg", "4ff44r4r3d34rt5.jpeg", 
-        "67f64cc8-37b0-615b-ebdb-2cb543fd6e41alimentos.jpg", 
+    String[] imagesRandom = {"67f64cc8-37b0-615b-ebdb-2cb543fd6e41salad.jpg",
+        "alimentos-300x200.jpg", "4ff44r4r3d34rt5.jpg",
+        "67f64cc8-37b0-615b-ebdb-2cb543fd6e41alimentos.jpg", "patatasfsfsfsefsfs34.jpg", "manzanas3wr3w443f4.jpg",
         "duck-2957809__340-300x200.jpg"};
 
     public ProductoService_1(HttpServletRequest oRequest) {
@@ -37,7 +40,7 @@ public class ProductoService_1 extends GenericService implements ServiceInterfac
         ob = oRequest.getParameter("ob");
     }
 
-    public String fill() throws Exception {
+    public String fill() throws MyException, SQLException {
         ConnectionInterface oConnectionImplementation = null;
         Connection oConnection = null;
         ResponseBean oResponseBean = null;
@@ -66,8 +69,9 @@ public class ProductoService_1 extends GenericService implements ServiceInterfac
             }
             oResponseBean = new ResponseBean(200, "Insertados los registros con exito");
         } catch (Exception ex) {
-            String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName();
-            throw new Exception(msg, ex);
+            String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
+            Log4jHelper.errorLog(msg, ex);
+            throw new MyException(700, msg, ex);
         } finally {
             if (oConnection != null) {
                 oConnection.close();
@@ -96,7 +100,7 @@ public class ProductoService_1 extends GenericService implements ServiceInterfac
         return imageRandom;
     }
 
-    public String addimage() throws Exception {
+    public String addimage() throws MyException, SQLException {
         ResponseBean oResponseBean = null;
         String name = "";
         HashMap<String, String> hash = new HashMap<>();
@@ -106,14 +110,20 @@ public class ProductoService_1 extends GenericService implements ServiceInterfac
                 for (FileItem item : multiparts) {
                     if (!item.isFormField()) {
                         name = new File(item.getName()).getName();
-                         item.write(new File(".//..//webapps//imagenes//" + name));
+                        item.write(new File(".//..//webapps//imagenes//" + name));
                     } else {
                         hash.put(item.getFieldName(), item.getString());
                     }
                 }
                 oResponseBean = new ResponseBean(200, "Imagen subida con exito");
             } catch (FileUploadException ex) {
-                throw new Exception(ex);
+                String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
+                Log4jHelper.errorLog(msg, ex);
+                throw new MyException(701, msg, ex);
+            } catch (Exception ex) {
+                String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
+                Log4jHelper.errorLog(msg, ex);
+                throw new MyException(711, msg, ex);
             }
         }
         Gson oGson = new Gson();

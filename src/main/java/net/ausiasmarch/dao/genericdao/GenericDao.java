@@ -4,11 +4,14 @@ import net.ausiasmarch.dao.daointerface.DaoInterface;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import net.ausiasmarch.bean.BeanInterface;
 import net.ausiasmarch.bean.UsuarioBean;
+import net.ausiasmarch.exceptions.MyException;
 import net.ausiasmarch.factory.BeanFactory;
+import net.ausiasmarch.helper.Log4jHelper;
 import net.ausiasmarch.setting.ConfigurationSettings;
 
 public class GenericDao implements DaoInterface {
@@ -38,7 +41,7 @@ public class GenericDao implements DaoInterface {
     }
 
     @Override
-    public BeanInterface get(int id) throws Exception {
+    public BeanInterface get(int id) throws MyException, SQLException {
         PreparedStatement oPreparedStatement = null;
         ResultSet oResultSet = null;
         BeanInterface oBean = null;
@@ -57,7 +60,7 @@ public class GenericDao implements DaoInterface {
     }
 
     @Override
-    public Integer getCount(Integer id, String filter) throws Exception {
+    public Integer getCount(Integer id, String filter) throws MyException, SQLException {
         PreparedStatement oPreparedStatement = null;
         ResultSet oResultSet = null;
         BeanInterface oBean = BeanFactory.getBean(ob);
@@ -73,8 +76,9 @@ public class GenericDao implements DaoInterface {
                 return -1;
             }
         } catch (Exception ex) {
-            String msg = this.getClass().getName() + " ob: " + ob + "; getcount method ";
-            throw new Exception(msg, ex);
+             String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
+             Log4jHelper.errorLog(msg, ex);
+             throw new MyException(101,msg,ex);
         } finally {
             if (oResultSet != null) {
                 oResultSet.close();
@@ -87,7 +91,7 @@ public class GenericDao implements DaoInterface {
     }
 
     @Override
-    public ArrayList<BeanInterface> getPage(int page, int rpp, String orden, String direccion, String word, Integer id, String filter) throws Exception {
+    public ArrayList<BeanInterface> getPage(int page, int rpp, String orden, String direccion, String word, Integer id, String filter) throws MyException, SQLException {
         PreparedStatement oPreparedStatement = null;
         ResultSet oResultSet = null;
         ArrayList<BeanInterface> listaBean = new ArrayList<>();
@@ -148,8 +152,9 @@ public class GenericDao implements DaoInterface {
                 listaBean.add(oBean);
             }
         } catch (Exception ex) {
-            String msg = this.getClass().getName() + " ob: " + ob + "; getPage method ";
-            throw new Exception(msg, ex);
+            String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
+             Log4jHelper.errorLog(msg, ex);
+             throw new MyException(102,msg,ex);
         } finally {
             if (oResultSet != null) {
                 oResultSet.close();
@@ -162,7 +167,7 @@ public class GenericDao implements DaoInterface {
     }
 
     @Override
-    public Integer insert(BeanInterface oBeanParam) throws Exception {
+    public Integer insert(BeanInterface oBeanParam) throws MyException, SQLException {
             BeanInterface oBean = BeanFactory.getBean(ob);
             PreparedStatement oPreparedStatement = null;
             ResultSet oResultSet = null;
@@ -176,8 +181,9 @@ public class GenericDao implements DaoInterface {
                 oResultSet.next();
                 iResult = oResultSet.getInt(1);
             } catch (Exception ex) {
-                String msg = this.getClass().getName() + " ob: " + ob + "; insert method ";
-                throw new Exception(msg, ex);
+                String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
+             Log4jHelper.errorLog(msg, ex);
+             throw new MyException(103,msg,ex);
             } finally {
                 if (oResultSet != null) {
                     oResultSet.close();
@@ -190,7 +196,7 @@ public class GenericDao implements DaoInterface {
     }
 
     @Override
-    public Integer remove(int id) throws Exception {
+    public Integer remove(int id) throws MyException, SQLException {
         PreparedStatement oPreparedStatement = null;
         int iResult = 0;
         try {
@@ -199,8 +205,9 @@ public class GenericDao implements DaoInterface {
             oPreparedStatement.setInt(1, id);
             iResult = oPreparedStatement.executeUpdate();
         } catch (Exception ex) {
-            String msg = this.getClass().getName() + " ob: " + ob + "; remove method ";
-            throw new Exception(msg, ex);
+            String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
+             Log4jHelper.errorLog(msg, ex);
+             throw new MyException(104,msg,ex);
         } finally {
             if (oPreparedStatement != null) {
                 oPreparedStatement.close();
@@ -210,7 +217,7 @@ public class GenericDao implements DaoInterface {
     }
 
     @Override
-    public Integer update(BeanInterface oBeanParam) throws Exception {
+    public Integer update(BeanInterface oBeanParam) throws MyException, SQLException {
         BeanInterface oBean = BeanFactory.getBean(ob);
         PreparedStatement oPreparedStatement = null;
         int iResult = 0;
@@ -220,8 +227,9 @@ public class GenericDao implements DaoInterface {
             oPreparedStatement = oBean.setFieldUpdate(oBeanParam, oPreparedStatement);
             iResult = oPreparedStatement.executeUpdate();
         } catch (Exception ex) {
-            String msg = this.getClass().getName() + " ob: " + ob + "; update method ";
-            throw new Exception(msg, ex);
+            String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
+             Log4jHelper.errorLog(msg, ex);
+             throw new MyException(105,msg,ex);
         } finally {
             if (oPreparedStatement != null) {
                 oPreparedStatement.close();

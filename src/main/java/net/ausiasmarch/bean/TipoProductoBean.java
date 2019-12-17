@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import net.ausiasmarch.exceptions.MyException;
 
 public class TipoProductoBean implements BeanInterface {
 
@@ -43,14 +44,14 @@ public class TipoProductoBean implements BeanInterface {
     }
 
     @Override
-    public TipoProductoBean fill(ResultSet oResultSet, Connection oConnection, int spread, UsuarioBean oUsuarioBeanSession) throws SQLException {
+    public TipoProductoBean fill(ResultSet oResultSet, Connection oConnection, int spread, UsuarioBean oUsuarioBeanSession) throws MyException, SQLException {
         this.setId(oResultSet.getInt("id"));
         this.setDescripcion(oResultSet.getString("descripcion"));
         return this;
     }
 
     @Override
-    public PreparedStatement orderSQL(List<String> orden, PreparedStatement oPreparedStatement) throws SQLException {
+    public PreparedStatement orderSQL(List<String> orden, PreparedStatement oPreparedStatement) throws MyException, SQLException {
         for (int i = 1; i < orden.size(); i++) {
             if (orden.get((i - 1)).equalsIgnoreCase("id")) {
                 oPreparedStatement.setInt(i, 1);
@@ -77,7 +78,7 @@ public class TipoProductoBean implements BeanInterface {
                 getFieldFilter("descripcion");
     }
     @Override
-    public PreparedStatement setFilter(int numparam,PreparedStatement oPreparedStatement,String word,int rpp, int offset) throws SQLException{
+    public PreparedStatement setFilter(int numparam,PreparedStatement oPreparedStatement,String word,int rpp, int offset) throws MyException, SQLException{
         for (int i=0;i<=1;i++){
                             oPreparedStatement.setString(++numparam, word);
         }
@@ -119,7 +120,7 @@ public class TipoProductoBean implements BeanInterface {
     }
     
     @Override
-    public PreparedStatement setFieldId(int numparam,PreparedStatement oPreparedStatement, int id, int rpp,int offset) throws SQLException {
+    public PreparedStatement setFieldId(int numparam,PreparedStatement oPreparedStatement, int id, int rpp,int offset) throws MyException, SQLException {
         oPreparedStatement.setInt(++numparam, id);
         oPreparedStatement.setInt(++numparam, rpp);
         oPreparedStatement.setInt(++numparam, offset);

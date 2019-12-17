@@ -10,6 +10,7 @@ import net.ausiasmarch.dao.daointerface.DaoInterface;
 import net.ausiasmarch.dao.specificdao_1.FacturaDao_1;
 import net.ausiasmarch.dao.specificdao_1.TipoUsuarioDao_1;
 import net.ausiasmarch.dao.specificdao_2.FacturaDao_2;
+import net.ausiasmarch.exceptions.MyException;
 import net.ausiasmarch.factory.DaoFactory;
 
 public class UsuarioBean implements BeanInterface {
@@ -167,7 +168,7 @@ public class UsuarioBean implements BeanInterface {
     }
 
     @Override
-    public UsuarioBean fill(ResultSet oResultSet, Connection oConnection, int spread, UsuarioBean oUsuarioBeanSession) throws Exception {
+    public UsuarioBean fill(ResultSet oResultSet, Connection oConnection, int spread, UsuarioBean oUsuarioBeanSession) throws MyException, SQLException {
         this.setId(oResultSet.getInt("id"));
         this.setDni(oResultSet.getString("dni"));
         this.setNombre(oResultSet.getString("nombre"));
@@ -200,7 +201,7 @@ public class UsuarioBean implements BeanInterface {
     }
 
     @Override
-    public PreparedStatement orderSQL(List<String> orden, PreparedStatement oPreparedStatement) throws Exception {
+    public PreparedStatement orderSQL(List<String> orden, PreparedStatement oPreparedStatement) throws MyException, SQLException {
         for (int i = 1; i < orden.size(); i++) {
             if (orden.get((i - 1)).equalsIgnoreCase("id")) {
                 oPreparedStatement.setInt(i, 1);
@@ -245,7 +246,7 @@ public class UsuarioBean implements BeanInterface {
     }
 
     @Override
-    public PreparedStatement setFilter(int numparam, PreparedStatement oPreparedStatement, String word,int rpp, int offset) throws SQLException {
+    public PreparedStatement setFilter(int numparam, PreparedStatement oPreparedStatement, String word,int rpp, int offset) throws MyException, SQLException {
         for (int i = 0; i <= 6; i++) {
             oPreparedStatement.setString(++numparam, word);
         }
@@ -301,7 +302,7 @@ public class UsuarioBean implements BeanInterface {
     }
 
     @Override
-    public PreparedStatement setFieldId(int numparam,PreparedStatement oPreparedStatement, int id, int rpp,int offset) throws SQLException {
+    public PreparedStatement setFieldId(int numparam,PreparedStatement oPreparedStatement, int id, int rpp,int offset) throws MyException, SQLException {
         oPreparedStatement.setInt(++numparam, id);
         oPreparedStatement.setInt(++numparam, rpp);
         oPreparedStatement.setInt(++numparam, offset);

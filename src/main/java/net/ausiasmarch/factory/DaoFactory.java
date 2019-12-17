@@ -1,6 +1,7 @@
 package net.ausiasmarch.factory;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import net.ausiasmarch.bean.UsuarioBean;
 import net.ausiasmarch.dao.daointerface.DaoInterface;
 import net.ausiasmarch.dao.specificdao_0.ProductoDao_0;
@@ -17,10 +18,11 @@ import net.ausiasmarch.dao.specificdao_2.ProductoDao_2;
 import net.ausiasmarch.dao.specificdao_2.TipoProductoDao_2;
 import net.ausiasmarch.dao.specificdao_2.TipoUsuarioDao_2;
 import net.ausiasmarch.dao.specificdao_2.UsuarioDao_2;
+import net.ausiasmarch.exceptions.MyException;
 
 public class DaoFactory {
 
-    public static DaoInterface getDao(Connection oConnection, String ob, UsuarioBean oUsuarioBeanSession) throws Exception {
+    public static DaoInterface getDao(Connection oConnection, String ob, UsuarioBean oUsuarioBeanSession) throws MyException, SQLException {
         DaoInterface oDao = null;
         int idSessionUserTipe;
         if (oUsuarioBeanSession != null) {
@@ -85,7 +87,7 @@ public class DaoFactory {
                 }
                 break;
             default:
-                throw new Exception("Error en Dao factory de " + ob);
+                throw new MyException(7000,"Error en Dao factory de " + ob);
         }
         return oDao;
     }

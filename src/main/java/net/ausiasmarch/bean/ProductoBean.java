@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.List;
 import net.ausiasmarch.dao.specificdao_1.CompraDao_1;
 import net.ausiasmarch.dao.specificdao_1.TipoProductoDao_1;
+import net.ausiasmarch.exceptions.MyException;
 
 public class ProductoBean implements BeanInterface {
 
@@ -142,7 +143,7 @@ public class ProductoBean implements BeanInterface {
     }
 
     @Override
-    public ProductoBean fill(ResultSet oResultSet, Connection oConnection, int spread,UsuarioBean oUsuarioBeanSession) throws Exception {
+    public ProductoBean fill(ResultSet oResultSet, Connection oConnection, int spread,UsuarioBean oUsuarioBeanSession) throws MyException, SQLException {
         this.setId(oResultSet.getInt("id"));
         this.setCodigo(oResultSet.getString("codigo"));
         this.setExistencias(oResultSet.getInt("existencias"));
@@ -213,7 +214,7 @@ public class ProductoBean implements BeanInterface {
         
     }
     @Override
-    public PreparedStatement setFilter(int numparam,PreparedStatement oPreparedStatement,String word, int rpp, int offset) throws SQLException{
+    public PreparedStatement setFilter(int numparam,PreparedStatement oPreparedStatement,String word, int rpp, int offset) throws MyException, SQLException{
         
         for (int i=0;i<=5;i++){
                             oPreparedStatement.setString(++numparam, word);
@@ -225,7 +226,7 @@ public class ProductoBean implements BeanInterface {
             
 
     @Override
-    public PreparedStatement setFieldInsert(BeanInterface oBeanParam, PreparedStatement oPreparedStatement) throws Exception {
+    public PreparedStatement setFieldInsert(BeanInterface oBeanParam, PreparedStatement oPreparedStatement) throws MyException, SQLException {
         ProductoBean oProductoBean = (ProductoBean) oBeanParam;
         oPreparedStatement.setString(1, oProductoBean.getCodigo());
         oPreparedStatement.setInt(2, oProductoBean.getExistencias());
@@ -242,7 +243,7 @@ public class ProductoBean implements BeanInterface {
     }
 
     @Override
-    public PreparedStatement setFieldUpdate(BeanInterface oBeanParam, PreparedStatement oPreparedStatement) throws Exception {
+    public PreparedStatement setFieldUpdate(BeanInterface oBeanParam, PreparedStatement oPreparedStatement) throws MyException, SQLException {
         ProductoBean oProductoBean = (ProductoBean) oBeanParam;
         oPreparedStatement.setString(1, oProductoBean.getCodigo());
         oPreparedStatement.setInt(2, oProductoBean.getExistencias());
@@ -265,7 +266,7 @@ public class ProductoBean implements BeanInterface {
     }
     
    @Override
-    public PreparedStatement setFieldId(int numparam,PreparedStatement oPreparedStatement, int id, int rpp,int offset) throws SQLException {
+    public PreparedStatement setFieldId(int numparam,PreparedStatement oPreparedStatement, int id, int rpp,int offset) throws MyException, SQLException {
         oPreparedStatement.setInt(++numparam, id);
         oPreparedStatement.setInt(++numparam, rpp);
         oPreparedStatement.setInt(++numparam, offset);

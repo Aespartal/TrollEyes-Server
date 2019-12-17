@@ -2,6 +2,7 @@ package net.ausiasmarch.service.specificservice_0;
 
 import com.google.gson.Gson;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -11,8 +12,10 @@ import net.ausiasmarch.bean.ResponseBean;
 import net.ausiasmarch.bean.UsuarioBean;
 import net.ausiasmarch.connection.ConnectionInterface;
 import net.ausiasmarch.dao.specificdao_0.ProductoDao_0;
+import net.ausiasmarch.exceptions.MyException;
 import net.ausiasmarch.factory.ConnectionFactory;
 import net.ausiasmarch.factory.GsonFactory;
+import net.ausiasmarch.helper.Log4jHelper;
 import net.ausiasmarch.setting.ConnectionSettings;
 
 public class CarritoService_0 {
@@ -28,16 +31,18 @@ public class CarritoService_0 {
         this.oRequest = oRequest;
         ob = oRequest.getParameter("ob");
     }
-     private Boolean checkPermission() throws Exception {
-        boolean check = false; 
+    /*
+    protected Boolean checkPermission() throws Exception {
         UsuarioBean oUsuarioBean = (UsuarioBean) oRequest.getSession().getAttribute("usuario");
         if (oUsuarioBean != null) {
-            return check;
+            return true;
+        } else {
+            return false;
         }
-        return check;
     }
+*/
      
-    public String add() throws Exception {
+    public String add() throws MyException, SQLException {
         @SuppressWarnings("unchecked")
         ItemBean oItemBean = null;
         int id = Integer.parseInt(oRequest.getParameter("id"));
@@ -87,9 +92,10 @@ public class CarritoService_0 {
                 oResponseBean = new ResponseBean(400, "Este producto no esta almacenador en la tienda");
             }
 
-        } catch (Exception ex) {
-            String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName();
-            throw new Exception(msg, ex);
+        } catch (MyException ex) {
+            String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
+            Log4jHelper.errorLog(msg, ex);
+            throw new MyException(300,msg,ex);
         } finally {
             if (oConnection != null) {
                 oConnection.close();
@@ -101,7 +107,7 @@ public class CarritoService_0 {
         return oGson.toJson(oResponseBean);
     }
 
-    public String remove() throws Exception {
+    public String remove() throws MyException, SQLException {
         int id = Integer.parseInt(oRequest.getParameter("id"));
         HttpSession oSession = oRequest.getSession();
         ConnectionInterface oConnectionImplementation = null;
@@ -138,8 +144,9 @@ public class CarritoService_0 {
                 oResponseBean = new ResponseBean(400, "El producto que quieres eliminar no existe");
             }
         } catch (Exception ex) {
-            String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName();
-            throw new Exception(msg, ex);
+            String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
+            Log4jHelper.errorLog(msg, ex);
+            throw new MyException(301,msg,ex);
         } finally {
             if (oConnection != null) {
                 oConnection.close();
@@ -151,7 +158,7 @@ public class CarritoService_0 {
         return oGson.toJson(oResponseBean);
     }
 
-    public String list() throws Exception {
+    public String list() throws MyException, SQLException {
         try {
             HttpSession oSession = oRequest.getSession();
             @SuppressWarnings("unchecked")
@@ -163,7 +170,7 @@ public class CarritoService_0 {
         }
     }
 
-    public String empty() throws Exception {
+    public String empty() throws MyException, SQLException {
         try {
             HttpSession oSession = oRequest.getSession();
             oSession.setAttribute("carrito", null);

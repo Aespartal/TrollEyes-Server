@@ -2,14 +2,17 @@ package net.ausiasmarch.service.specificservice_1;
 
 import com.google.gson.Gson;
 import java.sql.Connection;
+import java.sql.SQLException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import net.ausiasmarch.bean.ResponseBean;
 import net.ausiasmarch.bean.UsuarioBean;
 import net.ausiasmarch.connection.ConnectionInterface;
 import net.ausiasmarch.dao.specificdao_1.UsuarioDao_1;
+import net.ausiasmarch.exceptions.MyException;
 import net.ausiasmarch.factory.ConnectionFactory;
 import net.ausiasmarch.factory.GsonFactory;
+import net.ausiasmarch.helper.Log4jHelper;
 import net.ausiasmarch.service.genericservice.GenericService;
 import net.ausiasmarch.service.serviceinterface.ServiceInterface;
 import net.ausiasmarch.setting.ConnectionSettings;
@@ -27,7 +30,7 @@ public class UsuarioService_1 extends GenericService implements ServiceInterface
          ob = oRequest.getParameter("ob");
     }
 
-    public String login() throws Exception {     
+    public String login() throws MyException, SQLException {     
         try {
             oConnectionImplementation = ConnectionFactory.getConnection(ConnectionSettings.connectionPool);
             oConnection = oConnectionImplementation.newConnection();
@@ -50,8 +53,9 @@ public class UsuarioService_1 extends GenericService implements ServiceInterface
 
             return oGson.toJson(oResponseBean);
         } catch (Exception ex) {
-            String msg = this.getClass().getName() + " ob: " + ob + "; login method ";
-            throw new Exception(msg, ex);
+            String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
+            Log4jHelper.errorLog(msg, ex);
+            throw new MyException(900, msg, ex);
         } finally {
             if (oConnection != null) {
                 oConnection.close();
@@ -62,7 +66,7 @@ public class UsuarioService_1 extends GenericService implements ServiceInterface
         }
     }
 
-    public String check() throws Exception {
+    public String check() throws MyException, SQLException {
         try {
             oConnectionImplementation = ConnectionFactory.getConnection(ConnectionSettings.connectionPool);
             oConnection = oConnectionImplementation.newConnection();
@@ -78,8 +82,9 @@ public class UsuarioService_1 extends GenericService implements ServiceInterface
             }
 
         } catch (Exception ex) {
-            String msg = this.getClass().getName() + " ob: " + ob + "; check method ";
-            throw new Exception(msg, ex);
+            String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
+            Log4jHelper.errorLog(msg, ex);
+            throw new MyException(901, msg, ex);
         } finally {
             if (oConnection != null) {
                 oConnection.close();
@@ -105,7 +110,7 @@ public class UsuarioService_1 extends GenericService implements ServiceInterface
     String[] apellido2 = {"Pacoco", "Clapés",
         "Trencapins", "Palla", "Cargols", "Metge", "Murallot", "Porrons", "Cigrons", "Llobarro", "Faves", "Cebes", "Freda"};
     
-    public String fill() throws Exception {
+    public String fill() throws MyException, SQLException {
         try {
             oConnectionImplementation = ConnectionFactory
                     .getConnection(ConnectionSettings.connectionPool);
@@ -134,8 +139,9 @@ public class UsuarioService_1 extends GenericService implements ServiceInterface
             }
             oResponseBean = new ResponseBean(200, "Insertados los registros con exito");
         } catch (Exception ex) {
-            String msg = this.getClass().getName() + " ob: " + ob + "; check method ";
-            throw new Exception(msg, ex);
+            String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
+            Log4jHelper.errorLog(msg, ex);
+            throw new MyException(902, msg, ex);
         } finally {
             if (oConnection != null) {
                 oConnection.close();

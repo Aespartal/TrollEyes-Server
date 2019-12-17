@@ -3,9 +3,8 @@ package net.ausiasmarch.service.genericservice;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import net.ausiasmarch.bean.BeanInterface;
@@ -13,10 +12,12 @@ import net.ausiasmarch.bean.ResponseBean;
 import net.ausiasmarch.bean.UsuarioBean;
 import net.ausiasmarch.connection.ConnectionInterface;
 import net.ausiasmarch.dao.daointerface.DaoInterface;
+import net.ausiasmarch.exceptions.MyException;
 import net.ausiasmarch.factory.BeanFactory;
 import net.ausiasmarch.factory.ConnectionFactory;
 import net.ausiasmarch.factory.DaoFactory;
 import net.ausiasmarch.factory.GsonFactory;
+import net.ausiasmarch.helper.Log4jHelper;
 import net.ausiasmarch.service.serviceinterface.ServiceInterface;
 import net.ausiasmarch.setting.ConnectionSettings;
 
@@ -33,9 +34,10 @@ public class GenericService implements ServiceInterface {
         this.ob = oRequest.getParameter("ob");
         oUsuarioBeanSession = (UsuarioBean) oRequest.getSession().getAttribute("usuario");
     }
+   
 
     @Override
-    public String get() throws Exception {
+    public String get() throws MyException, SQLException {
         ConnectionInterface oConnectionImplementation = null;
         Connection oConnection = null;
         String strJson = null;
@@ -48,8 +50,9 @@ public class GenericService implements ServiceInterface {
             strJson = oGson.toJson(oBean);
 
         } catch (Exception ex) {
-            String msg = this.getClass().getName() + " ob: " + ob + "; get method ";
-            throw new Exception(msg, ex);
+            String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
+            Log4jHelper.errorLog(msg, ex);
+            throw new MyException(200,msg,ex);
         } finally {
             if (oConnection != null) {
                 oConnection.close();
@@ -62,7 +65,7 @@ public class GenericService implements ServiceInterface {
     }
 
     @Override
-    public String getPage() throws Exception {
+    public String getPage() throws MyException, SQLException {
 
         ConnectionInterface oConnectionImplementation = null;
         Connection oConnection = null;
@@ -100,8 +103,9 @@ public class GenericService implements ServiceInterface {
             strJson = oGson.toJson(alBean);
             return "{\"status\":200,\"message\":" + strJson + "}";
         } catch (Exception ex) {
-            String msg = this.getClass().getName() + " ob: " + ob + "; getPage method ";
-            throw new Exception(msg, ex);
+            String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
+            Log4jHelper.errorLog(msg, ex);
+            throw new MyException(201,msg,ex);
         } finally {
             if (oConnection != null) {
                 oConnection.close();
@@ -113,7 +117,7 @@ public class GenericService implements ServiceInterface {
     }
 
     @Override
-    public String getCount() throws Exception {
+    public String getCount() throws MyException, SQLException {
         ConnectionInterface oConnectionImplementation = null;
         Connection oConnection = null;
         Integer iCount = null;
@@ -137,8 +141,9 @@ public class GenericService implements ServiceInterface {
             }
             return oGson.toJson(oResponseBean);
         } catch (Exception ex) {
-            String msg = this.getClass().getName() + " ob: " + ob + "; getCount method ";
-            throw new Exception(msg, ex);
+            String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
+            Log4jHelper.errorLog(msg, ex);
+            throw new MyException(202,msg,ex);
         } finally {
             if (oConnection != null) {
                 oConnection.close();
@@ -150,7 +155,7 @@ public class GenericService implements ServiceInterface {
     }
 
     @Override
-    public String update() throws Exception {
+    public String update() throws MyException, SQLException {
         if (oUsuarioBeanSession.getTipo_usuario_obj().getId() == 1) {
             HttpSession oSession = oRequest.getSession();
             if (oSession.getAttribute("usuario") != null) {
@@ -170,8 +175,9 @@ public class GenericService implements ServiceInterface {
                     }
                     return oGson.toJson(oResponseBean);
                 } catch (Exception ex) {
-                    String msg = this.getClass().getName() + " ob: " + ob + "; update method ";
-                    throw new Exception(msg, ex);
+                    String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
+                    Log4jHelper.errorLog(msg, ex);
+                    throw new MyException(203,msg,ex);
                 } finally {
                     if (oConnection != null) {
                         oConnection.close();
@@ -190,7 +196,7 @@ public class GenericService implements ServiceInterface {
     }
 
     @Override
-    public String insert() throws Exception {
+    public String insert() throws MyException, SQLException {
         HttpSession oSession = oRequest.getSession();
         ResponseBean oResponseBean = null;
         Gson oGson = GsonFactory.getGson();
@@ -212,8 +218,9 @@ public class GenericService implements ServiceInterface {
                 }
                 return oGson.toJson(oResponseBean);
             } catch (Exception ex) {
-                String msg = this.getClass().getName() + " ob: " + ob + "; insert method ";
-                throw new Exception(msg, ex);
+                String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
+                Log4jHelper.errorLog(msg, ex);
+                throw new MyException(204,msg,ex);
             } finally {
                 if (oConnection != null) {
                     oConnection.close();
@@ -229,7 +236,7 @@ public class GenericService implements ServiceInterface {
     }
 
     @Override
-    public String remove() throws Exception {
+    public String remove() throws MyException, SQLException {
         HttpSession oSession = oRequest.getSession();
         ResponseBean oResponseBean = null;
         Gson oGson = GsonFactory.getGson();
@@ -248,8 +255,9 @@ public class GenericService implements ServiceInterface {
                 }
                 return oGson.toJson(oResponseBean);
             } catch (Exception ex) {
-                String msg = this.getClass().getName() + " ob: " + ob + "; remove method ";
-                throw new Exception(msg, ex);
+                String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
+                Log4jHelper.errorLog(msg, ex);
+                throw new MyException(205,msg,ex);
             } finally {
                 if (oConnection != null) {
                     oConnection.close();

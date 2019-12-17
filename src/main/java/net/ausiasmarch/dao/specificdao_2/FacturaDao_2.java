@@ -2,10 +2,12 @@ package net.ausiasmarch.dao.specificdao_2;
 
 import net.ausiasmarch.dao.daointerface.DaoInterface;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import net.ausiasmarch.bean.BeanInterface;
 import net.ausiasmarch.bean.UsuarioBean;
 import net.ausiasmarch.dao.genericdao.GenericDao;
+import net.ausiasmarch.exceptions.MyException;
 
 public class FacturaDao_2 extends GenericDao implements DaoInterface {
 
@@ -16,31 +18,31 @@ public class FacturaDao_2 extends GenericDao implements DaoInterface {
     }
 
     @Override
-    public BeanInterface get(int id) throws Exception {
+    public BeanInterface get(int id) throws  MyException, SQLException {
         strGetSQL += " WHERE usuario_id=" + oUsuarioBeanSession.getId();
         return super.get(id);
     }
     
     @Override
-    public Integer getCount(Integer id, String filter) throws Exception {
+    public Integer getCount(Integer id, String filter) throws  MyException, SQLException {
         strCountSQL += " WHERE usuario_id=" + oUsuarioBeanSession.getId();
         return super.getCount(id, filter);
     }
 
     @Override
-    public ArrayList<BeanInterface> getPage(int page, int rpp, String orden, String direccion, String word, Integer id, String filter) throws Exception {
+    public ArrayList<BeanInterface> getPage(int page, int rpp, String orden, String direccion, String word, Integer id, String filter) throws  MyException, SQLException {
         strSQL += " WHERE usuario_id = " + oUsuarioBeanSession.getId();
         return super.getPage(page, rpp, orden, direccion, word, id, filter);
     }
 
     @Override
-    public Integer remove(int id) throws Exception {
-        throw new Exception("Error en Dao remove de " + ob + ": No autorizado");
+    public Integer remove(int id) throws MyException, SQLException {
+        throw new MyException(4000,"Error en Dao remove de " + ob + ": No autorizado");
     }
 
     @Override
-    public Integer update(BeanInterface oBeanParam) throws Exception {
-        throw new Exception("Error en Dao update de " + ob + ": No autorizado");
+    public Integer update(BeanInterface oBeanParam) throws MyException, SQLException {
+        throw new MyException(4001,"Error en Dao update de " + ob + ": No autorizado");
     }
 
 }

@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import net.ausiasmarch.dao.specificdao_1.CompraDao_1;
 import net.ausiasmarch.dao.specificdao_1.UsuarioDao_1;
+import net.ausiasmarch.exceptions.MyException;
 
 public class FacturaBean implements BeanInterface {
 
@@ -108,7 +109,7 @@ public class FacturaBean implements BeanInterface {
     }
 
     @Override
-    public FacturaBean fill(ResultSet oResultSet, Connection oConnection, int spread,UsuarioBean oUsuarioBeanSession) throws Exception {
+    public FacturaBean fill(ResultSet oResultSet, Connection oConnection, int spread,UsuarioBean oUsuarioBeanSession) throws MyException, SQLException {
         this.setId(oResultSet.getInt("id"));
         this.setFecha(oResultSet.getDate("fecha"));
         this.setIva(oResultSet.getInt("iva"));
@@ -135,7 +136,7 @@ public class FacturaBean implements BeanInterface {
     }
 
     @Override
-    public PreparedStatement orderSQL(List<String> orden, PreparedStatement oPreparedStatement) throws Exception {
+    public PreparedStatement orderSQL(List<String> orden, PreparedStatement oPreparedStatement) throws MyException, SQLException {
         for (int i = 1; i < orden.size(); i++) {
             if (orden.get((i - 1)).equalsIgnoreCase("id")) {
                 oPreparedStatement.setInt(i, 1);
@@ -168,7 +169,7 @@ public class FacturaBean implements BeanInterface {
     }
 
     @Override
-    public PreparedStatement setFilter(int numparam,PreparedStatement oPreparedStatement,String word,int rpp, int offset) throws SQLException{
+    public PreparedStatement setFilter(int numparam,PreparedStatement oPreparedStatement,String word,int rpp, int offset) throws MyException, SQLException{
         for (int i=0;i<=2;i++){
                             oPreparedStatement.setString(++numparam, word);
         }
@@ -214,7 +215,7 @@ public class FacturaBean implements BeanInterface {
     }
     
     @Override
-    public PreparedStatement setFieldId(int numparam,PreparedStatement oPreparedStatement, int id, int rpp,int offset) throws SQLException {
+    public PreparedStatement setFieldId(int numparam,PreparedStatement oPreparedStatement, int id, int rpp,int offset) throws MyException, SQLException {
         oPreparedStatement.setInt(++numparam, id);
         oPreparedStatement.setInt(++numparam, rpp);
         oPreparedStatement.setInt(++numparam, offset);

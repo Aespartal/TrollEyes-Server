@@ -12,8 +12,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.ausiasmarch.bean.ResponseBean;
 import net.ausiasmarch.connection.ConnectionInterface;
+import net.ausiasmarch.exceptions.MyException;
 import net.ausiasmarch.factory.ConnectionFactory;
 import net.ausiasmarch.factory.ServiceCall;
+import net.ausiasmarch.helper.Log4jHelper;
 import net.ausiasmarch.setting.ConfigurationSettings;
 import net.ausiasmarch.setting.ConfigurationSettings.EnvironmentConstans;
 import net.ausiasmarch.setting.ConnectionSettings;
@@ -73,9 +75,10 @@ public class Json extends HttpServlet {
             try (PrintWriter out = response.getWriter()) {
                 try {
                     out.print(ServiceCall.executeService(request));
-                } catch (Exception ex) {
+                } catch (MyException | SQLException ex) {
                     if (ConfigurationSettings.environment == EnvironmentConstans.Debug) {
                         out.print(ex);
+                       // Log4jHelper.errorLog(ex.getDescripcion(), ex);
                         ex.printStackTrace();
                     } else {
                         ResponseBean oResponseBean = new ResponseBean(500, "Trolleyes ERROR: Please contact your administrator");
