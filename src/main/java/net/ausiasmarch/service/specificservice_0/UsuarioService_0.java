@@ -27,19 +27,20 @@ import net.ausiasmarch.setting.ConnectionSettings;
  * @author alejandro
  */
 public class UsuarioService_0 extends GenericService implements ServiceInterface {
+
     ResponseBean oResponseBean = null;
     UsuarioBean oUsuarioBeanSession;
+    ConnectionInterface oConnectionImplementation = null;
     Connection oConnection = null;
     Gson oGson = GsonFactory.getGson();
     HttpSession oSession = oRequest.getSession();
-    
+
     public UsuarioService_0(HttpServletRequest oRequest) {
         super(oRequest);
         ob = oRequest.getParameter("ob");
     }
-    
-    public String login() throws MyException, SQLException {   
-        ConnectionInterface oConnectionImplementation = null;
+
+    public String login() throws MyException, SQLException {
         try {
             oConnectionImplementation = ConnectionFactory.getConnection(ConnectionSettings.connectionPool);
             oConnection = oConnectionImplementation.newConnection();
@@ -50,7 +51,7 @@ public class UsuarioService_0 extends GenericService implements ServiceInterface
             oUsuarioBean = oUsuarioDao.get(login, password);
 
             if (oUsuarioBean != null) {
-                if (oRequest.getParameter("username").equals(oUsuarioBean.getLogin()) && oRequest.getParameter("password").equalsIgnoreCase(oUsuarioBean.getPassword())) {                 
+                if (oRequest.getParameter("username").equals(oUsuarioBean.getLogin()) && oRequest.getParameter("password").equalsIgnoreCase(oUsuarioBean.getPassword())) {
                     oSession.setAttribute("usuario", oUsuarioBean);
                     oResponseBean = new ResponseBean(200, "Welcome");
                 } else {
@@ -64,7 +65,7 @@ public class UsuarioService_0 extends GenericService implements ServiceInterface
         } catch (SQLException ex) {
             String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
             Log4jHelper.errorLog(msg, ex);
-            throw new MyException(400,msg,ex);
+            throw new MyException(400, msg, ex);
         } finally {
             if (oConnection != null) {
                 oConnection.close();
@@ -74,22 +75,21 @@ public class UsuarioService_0 extends GenericService implements ServiceInterface
             }
         }
     }
-    
+
     public String logout() {
         oRequest.getSession().invalidate();
-        ResponseBean oResponseBean = new ResponseBean(200, "No active session");
+        oResponseBean = new ResponseBean(200, "No active session");
         return oGson.toJson(oResponseBean);
     }
-    
+
     public String check() throws MyException, SQLException {
-        ConnectionInterface oConnectionImplementation = null;
         try {
             oConnectionImplementation = ConnectionFactory.getConnection(ConnectionSettings.connectionPool);
             oConnection = oConnectionImplementation.newConnection();
             UsuarioBean oUsuarioBean;
             oUsuarioBean = (UsuarioBean) oSession.getAttribute("usuario");
-            UsuarioDao_0 oUsuarioDao = new UsuarioDao_0(oConnection,"usuario", oUsuarioBeanSession);
-            
+            UsuarioDao_0 oUsuarioDao = new UsuarioDao_0(oConnection, "usuario", oUsuarioBeanSession);
+
             if (oUsuarioBean == null) {
                 oResponseBean = new ResponseBean(500, "No autorizado");
             } else {
@@ -100,7 +100,7 @@ public class UsuarioService_0 extends GenericService implements ServiceInterface
         } catch (SQLException ex) {
             String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
             Log4jHelper.errorLog(msg, ex);
-            throw new MyException(401,msg,ex);
+            throw new MyException(401, msg, ex);
         } finally {
             if (oConnection != null) {
                 oConnection.close();
@@ -111,12 +111,8 @@ public class UsuarioService_0 extends GenericService implements ServiceInterface
         }
         return oGson.toJson(oResponseBean);
     }
-    
-     public String singup() throws MyException, SQLException, Exception {
-        ConnectionInterface oConnectionImplementation = null;
-        Connection oConnection = null;
-        ResponseBean oResponseBean = null;
-        Gson oGson = GsonFactory.getGson();
+
+    public String singup() throws MyException, SQLException, Exception {
         try {
             oConnectionImplementation = ConnectionFactory.getConnection(ConnectionSettings.connectionPool);
             oConnection = oConnectionImplementation.newConnection();
@@ -141,7 +137,7 @@ public class UsuarioService_0 extends GenericService implements ServiceInterface
         } catch (SQLException ex) {
             String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
             Log4jHelper.errorLog(msg, ex);
-            throw new MyException(402,msg,ex);
+            throw new MyException(402, msg, ex);
         } finally {
             if (oConnection != null) {
                 oConnection.close();
@@ -152,8 +148,8 @@ public class UsuarioService_0 extends GenericService implements ServiceInterface
         }
         return oGson.toJson(oResponseBean);
     }
-     
-     private String generaToken() {
+
+    private String generaToken() {
         int numAleatorio = (int) Math.floor(Math.random() * (100000 - 999999) + 999999);
         String tokenAleatorio = String.valueOf(numAleatorio) + "TROLL";
         return tokenAleatorio;

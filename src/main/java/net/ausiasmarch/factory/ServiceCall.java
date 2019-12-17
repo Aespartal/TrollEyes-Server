@@ -26,7 +26,7 @@ public class ServiceCall {
 
     HttpServletRequest oRequest;
 
-    public static String executeService(HttpServletRequest oRequest) throws MyException, SQLException {
+    public static String executeService(HttpServletRequest oRequest) throws MyException, SQLException, Exception {
         String ob = oRequest.getParameter("ob");
         String op = oRequest.getParameter("op");
         String strResult;

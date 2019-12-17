@@ -75,7 +75,7 @@ public class Json extends HttpServlet {
             try (PrintWriter out = response.getWriter()) {
                 try {
                     out.print(ServiceCall.executeService(request));
-                } catch (MyException | SQLException ex) {
+                } catch (Exception ex) {
                     if (ConfigurationSettings.environment == EnvironmentConstans.Debug) {
                         out.print(ex);
                        // Log4jHelper.errorLog(ex.getDescripcion(), ex);
