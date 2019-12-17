@@ -36,7 +36,38 @@ public class UsuarioBean implements BeanInterface {
     private TipoUsuarioBean tipo_usuario_obj;
     @Expose(deserialize = false)
     private Integer link_factura;
+    @Expose
+    private Boolean canCreate;
+    @Expose
+    private Boolean canUpdate;
+    @Expose
+    private Boolean canDelete;
 
+        public Boolean getCanCreate() {
+        return canCreate;
+    }
+
+    public void setCanCreate(Boolean canCreate) {
+        this.canCreate = canCreate;
+    }
+
+    public Boolean getCanUpdate() {
+        return canUpdate;
+    }
+
+    public void setCanUpdate(Boolean canUpdate) {
+        this.canUpdate = canUpdate;
+    }
+
+    public Boolean getCanDelete() {
+        return canDelete;
+    }
+
+    public void setCanDelete(Boolean canDelete) {
+        this.canDelete = canDelete;
+    }
+    
+    
     public Integer getLink_factura() {
         return link_factura;
     }
@@ -146,7 +177,7 @@ public class UsuarioBean implements BeanInterface {
         this.setLogin(oResultSet.getString("login"));
         this.setPassword(oResultSet.getString("password"));
         this.setTipo_usuario_id(oResultSet.getInt("tipo_usuario_id"));
-
+        
         DaoInterface oFacturaDao = DaoFactory.getDao(oConnection, "factura", oUsuarioBeanSession);
         if (oFacturaDao != null) {
             if (oFacturaDao.getClass() == FacturaDao_1.class) {
@@ -157,7 +188,7 @@ public class UsuarioBean implements BeanInterface {
                 this.setLink_factura(oFacturaDao_2.getCount(id, "usuario"));
             }
         }
-
+        
         if (spread > 0) {
             spread--;
             TipoUsuarioDao_1 oTipoUsuarioDao = new TipoUsuarioDao_1(oConnection, "tipo_usuario", oUsuarioBeanSession);

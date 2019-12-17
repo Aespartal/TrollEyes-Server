@@ -150,15 +150,15 @@ public class ProductoBean implements BeanInterface {
         this.setImagen(oResultSet.getString("imagen"));
         this.setDescripcion(oResultSet.getString("descripcion"));
         this.setTipo_producto_id(oResultSet.getInt("tipo_producto_id"));
-
-        CompraDao_1 oCompraDao = new CompraDao_1(oConnection,"compra",oUsuarioBeanSession);
-        if(this.link_compra > 0){
-        this.canDelete = false;
-        } else {
-        this.canDelete = true;
-        }
+        
+         CompraDao_1 oCompraDao = new CompraDao_1(oConnection,"compra",oUsuarioBeanSession);
         this.setLink_compra(oCompraDao.getCount(id, "producto"));
-
+        
+        if(this.getLink_compra() > 0){               
+            this.setCanDelete(false);
+        } else {
+            this.setCanDelete(true);
+        }
         
         if (spread > 0) {
             spread--;

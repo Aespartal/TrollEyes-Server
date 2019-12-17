@@ -229,6 +229,9 @@ public class ServiceCall {
                             case "remove":
                                 strResult = oProductoService.remove();
                                 break;
+                            case "fill":
+                                strResult = oProductoService.fill();
+                                break;    
                             case "getcount":
                                 strResult = oProductoService.getCount();
                                 break;

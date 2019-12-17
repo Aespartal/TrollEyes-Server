@@ -24,6 +24,38 @@ public class FacturaBean implements BeanInterface {
     private UsuarioBean usuario_obj;
     @Expose(deserialize = false)
     private Integer link_compra;
+     @Expose
+    private Boolean canCreate;
+    @Expose
+    private Boolean canUpdate;
+    @Expose
+    private Boolean canDelete;
+
+    public Boolean getCanCreate() {
+        return canCreate;
+    }
+
+    public void setCanCreate(Boolean canCreate) {
+        this.canCreate = canCreate;
+    }
+
+    public Boolean getCanUpdate() {
+        return canUpdate;
+    }
+
+    public void setCanUpdate(Boolean canUpdate) {
+        this.canUpdate = canUpdate;
+    }
+
+    public Boolean getCanDelete() {
+        return canDelete;
+    }
+
+    public void setCanDelete(Boolean canDelete) {
+        this.canDelete = canDelete;
+    }
+    
+    
     
     public Integer getLink_compra() {
         return link_compra;
@@ -84,6 +116,12 @@ public class FacturaBean implements BeanInterface {
 
         CompraDao_1 oCompraDao = new CompraDao_1(oConnection,"compra",oUsuarioBeanSession);
         this.setLink_compra(oCompraDao.getCount(id, "factura"));
+        
+        if(this.getLink_compra() > 0){               
+            this.setCanDelete(false);
+        } else {
+            this.setCanDelete(true);
+        }      
 
         if (spread > 0) {
             spread--;
