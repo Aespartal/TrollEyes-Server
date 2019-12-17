@@ -49,6 +49,9 @@ public class ServiceCall {
                                 break;
                             case "check":
                                 strResult = oUsuarioService.check();
+                                break;  
+                            case "singup":
+                                strResult = oUsuarioService.singup();
                                 break;    
                             default:
                                 strResult = "Operation doesn't exist";

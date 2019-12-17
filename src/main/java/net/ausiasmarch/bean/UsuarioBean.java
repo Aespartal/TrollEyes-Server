@@ -29,6 +29,10 @@ public class UsuarioBean implements BeanInterface {
     private String email;
     @Expose
     private String login;
+    @Expose
+    private String token;
+    @Expose
+    private Boolean validate;
     @Expose(serialize = false)
     private String password;
     @Expose(serialize = false)
@@ -67,7 +71,22 @@ public class UsuarioBean implements BeanInterface {
     public void setCanDelete(Boolean canDelete) {
         this.canDelete = canDelete;
     }
+
+    public Boolean getValidate() {
+        return validate;
+    }
+
+    public void setValidate(Boolean validate) {
+        this.validate = validate;
+    }
     
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
     
     public Integer getLink_factura() {
         return link_factura;

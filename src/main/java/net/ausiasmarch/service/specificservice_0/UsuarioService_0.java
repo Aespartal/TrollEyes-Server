@@ -61,7 +61,7 @@ public class UsuarioService_0 extends GenericService implements ServiceInterface
             }
 
             return oGson.toJson(oResponseBean);
-        } catch (Exception ex) {
+        } catch (SQLException ex) {
             String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
             Log4jHelper.errorLog(msg, ex);
             throw new MyException(400,msg,ex);
@@ -97,7 +97,7 @@ public class UsuarioService_0 extends GenericService implements ServiceInterface
                 return "{\"status\":200,\"message\":" + oGson.toJson(oUsuarioBean) + "}";
             }
 
-        } catch (Exception ex) {
+        } catch (SQLException ex) {
             String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
             Log4jHelper.errorLog(msg, ex);
             throw new MyException(401,msg,ex);
@@ -110,5 +110,52 @@ public class UsuarioService_0 extends GenericService implements ServiceInterface
             }
         }
         return oGson.toJson(oResponseBean);
+    }
+    
+     public String singup() throws MyException, SQLException, Exception {
+        ConnectionInterface oConnectionImplementation = null;
+        Connection oConnection = null;
+        ResponseBean oResponseBean = null;
+        Gson oGson = GsonFactory.getGson();
+        try {
+            oConnectionImplementation = ConnectionFactory.getConnection(ConnectionSettings.connectionPool);
+            oConnection = oConnectionImplementation.newConnection();
+            UsuarioDao_0 oUsuarioDao = new UsuarioDao_0(oConnection, "usuario", oUsuarioBeanSession);
+            UsuarioBean oUsuarioBean = new UsuarioBean();
+            oUsuarioBean.setDni(oRequest.getParameter("dni"));
+            oUsuarioBean.setNombre(oRequest.getParameter("nombre"));
+            oUsuarioBean.setApellido1(oRequest.getParameter("apellido1"));
+            oUsuarioBean.setApellido2(oRequest.getParameter("apellido2"));
+            oUsuarioBean.setLogin(oRequest.getParameter("username"));
+            oUsuarioBean.setPassword(oRequest.getParameter("password"));
+            oUsuarioBean.setEmail(oRequest.getParameter("email"));
+            oUsuarioBean.setToken(generaToken());
+            oUsuarioBean.setValidate(Boolean.FALSE);
+            String token = oUsuarioBean.getToken();
+            String email = oRequest.getParameter("email");
+            String username = oRequest.getParameter("username");
+            String emailText = "Hola, " + username + "\n Hemos recibido su solicitud para acceder a TrollEyes. Si has sido tú, accede al siguienete enlace para la confirmación: http://http://localhost:8081/trolleyes/" + token + "\n Si no has solicitado el registro, puedes ignorar este correo.";
+            EmailRegister.sendEmail("trolleyesclient@gmail.com", email, "trolleyes1234", "Registro en TrollEyes, se necesita confirmación", emailText, "html");
+            oUsuarioDao.register(oUsuarioBean);
+            oResponseBean = new ResponseBean(200, "Usuario registrado con exito, falta validar");
+        } catch (SQLException ex) {
+            String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
+            Log4jHelper.errorLog(msg, ex);
+            throw new MyException(402,msg,ex);
+        } finally {
+            if (oConnection != null) {
+                oConnection.close();
+            }
+            if (oConnectionImplementation != null) {
+                oConnectionImplementation.disposeConnection();
+            }
+        }
+        return oGson.toJson(oResponseBean);
+    }
+     
+     private String generaToken() {
+        int numAleatorio = (int) Math.floor(Math.random() * (100000 - 999999) + 999999);
+        String tokenAleatorio = String.valueOf(numAleatorio) + "TROLL";
+        return tokenAleatorio;
     }
 }

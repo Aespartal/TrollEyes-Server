@@ -18,7 +18,7 @@ public class UsuarioDao_0 extends GenericDao implements DaoInterface {
         super(oConnection, "usuario", oUsuarioBeanSession);
     }
     
-     public UsuarioBean get(String username, String password) throws Exception {
+     public UsuarioBean get(String username, String password) throws MyException, SQLException {
         strSQL += " AND login=?";
         strSQL += " AND password=?";    
         
@@ -36,7 +36,7 @@ public class UsuarioDao_0 extends GenericDao implements DaoInterface {
             } else {
                 oUsuarioBean = null;
             }
-        } catch (Exception ex) {
+        } catch (SQLException ex) {
             String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
              Log4jHelper.errorLog(msg, ex);
              throw new MyException(405,msg,ex);
@@ -51,7 +51,7 @@ public class UsuarioDao_0 extends GenericDao implements DaoInterface {
         return oUsuarioBean;
     }
 
-    public UsuarioBean get(String username)throws Exception {
+    public UsuarioBean get(String username)throws MyException, SQLException {
         strSQL += " AND login=?";
           UsuarioBean oUsuarioBean;
         ResultSet oResultSet = null;
@@ -66,10 +66,10 @@ public class UsuarioDao_0 extends GenericDao implements DaoInterface {
             } else {
                 oUsuarioBean = null;
             }
-        } catch (Exception ex) {
+        } catch (SQLException ex) {
              String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
              Log4jHelper.errorLog(msg, ex);
-             throw new MyException(106,msg,ex);
+             throw new MyException(406,msg,ex);
         } finally {
             if (oResultSet != null) {
                 oResultSet.close();
@@ -79,5 +79,37 @@ public class UsuarioDao_0 extends GenericDao implements DaoInterface {
             }
         }
         return oUsuarioBean;
+    }
+    
+    public Integer register(UsuarioBean oUsuarioBean) throws MyException, SQLException {
+        strSQL = "INSERT INTO usuario (dni, nombre, apellido1, apellido2, login, password, email, tipo_usuario_id, token, validate) VALUES (?,?,?,?,?,?,?,2,?,0)";
+        ResultSet oResultSet = null;
+        PreparedStatement oPreparedStatement = null;
+        int iResult = 0;
+        try {
+            oPreparedStatement = oConnection.prepareStatement(strSQL);
+            oPreparedStatement.setString(1, oUsuarioBean.getDni());
+            oPreparedStatement.setString(2, oUsuarioBean.getNombre());
+            oPreparedStatement.setString(3, oUsuarioBean.getApellido1());
+            oPreparedStatement.setString(4, oUsuarioBean.getApellido2());
+            oPreparedStatement.setString(5, oUsuarioBean.getLogin());
+            oPreparedStatement.setString(6, oUsuarioBean.getPassword());
+            oPreparedStatement.setString(7, oUsuarioBean.getEmail());
+            oPreparedStatement.setString(8, oUsuarioBean.getToken());
+            oPreparedStatement.setBoolean(9, oUsuarioBean.getValidate());
+            iResult = oPreparedStatement.executeUpdate();
+        } catch (SQLException ex) {
+            String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
+            Log4jHelper.errorLog(msg, ex);
+            throw new MyException(407, msg, ex);
+        } finally {
+            if (oResultSet != null) {
+                oResultSet.close();
+            }
+            if (oPreparedStatement != null) {
+                oPreparedStatement.close();
+            }
+        }
+        return iResult;
     }
 }
