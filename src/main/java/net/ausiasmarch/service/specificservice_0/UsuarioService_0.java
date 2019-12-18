@@ -5,9 +5,15 @@
  */
 package net.ausiasmarch.service.specificservice_0;
 
+import com.google.api.client.auth.openidconnect.IdToken.Payload;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.gson.Gson;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collections;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import net.ausiasmarch.bean.ResponseBean;
@@ -42,27 +48,42 @@ public class UsuarioService_0 extends GenericService implements ServiceInterface
 
     public String login() throws MyException, SQLException {
         try {
-            oConnectionImplementation = ConnectionFactory.getConnection(ConnectionSettings.connectionPool);
-            oConnection = oConnectionImplementation.newConnection();
-            UsuarioDao_0 oUsuarioDao = new UsuarioDao_0(oConnection, "usuario", oUsuarioBeanSession);
-            UsuarioBean oUsuarioBean;
-            String login = oRequest.getParameter("username");
-            String password = oRequest.getParameter("password");
-            oUsuarioBean = oUsuarioDao.get(login, password);
+            if (oRequest.getParameter("token") == null || oRequest.getParameter("token").equalsIgnoreCase("")){
+                oConnectionImplementation = ConnectionFactory.getConnection(ConnectionSettings.connectionPool);
+                oConnection = oConnectionImplementation.newConnection();
+                UsuarioDao_0 oUsuarioDao = new UsuarioDao_0(oConnection, "usuario", oUsuarioBeanSession);
+                UsuarioBean oUsuarioBean;
+                String login = oRequest.getParameter("username");
+                String password = oRequest.getParameter("password");
+                oUsuarioBean = oUsuarioDao.get(login, password);
 
-            if (oUsuarioBean != null) {
-                if (oRequest.getParameter("username").equals(oUsuarioBean.getLogin()) && oRequest.getParameter("password").equalsIgnoreCase(oUsuarioBean.getPassword())) {
-                    oSession.setAttribute("usuario", oUsuarioBean);
-                    oResponseBean = new ResponseBean(200, "Welcome");
+                if (oUsuarioBean != null) {
+                    if (oRequest.getParameter("username").equals(oUsuarioBean.getLogin()) && oRequest.getParameter("password").equalsIgnoreCase(oUsuarioBean.getPassword())) {
+                        oSession.setAttribute("usuario", oUsuarioBean);
+                        oResponseBean = new ResponseBean(200, "Welcome");
+                    } else {
+                        oResponseBean = new ResponseBean(500, "Wrong password");
+                    }
                 } else {
                     oResponseBean = new ResponseBean(500, "Wrong password");
                 }
-            } else {
-                oResponseBean = new ResponseBean(500, "Wrong password");
+            }else {
+                String token = oRequest.getParameter("token");
+                GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new JacksonFactory())
+                        .setAudience(Collections.singletonList("797685668265-d6m9g3nr3f0l996p0sjmeo4riaicitks.apps.googleusercontent.com")).build();
+                GoogleIdToken idToken = verifier.verify(token);
+                if(idToken != null) {
+                    Payload payload = idToken.getPayload();
+                    //userId es el id de usuario que tratar
+                    String userId = payload.getSubject();
+                    oSession.setAttribute("usuario", userId);
+                    oResponseBean = new ResponseBean(200, "Welcome");
+                } else {
+                    oResponseBean = new ResponseBean(500, "Invalid Google User");
+                }
             }
-
             return oGson.toJson(oResponseBean);
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
             Log4jHelper.errorLog(msg, ex);
             throw new MyException(400, msg, ex);
