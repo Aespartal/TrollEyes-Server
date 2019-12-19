@@ -76,7 +76,8 @@ public class CompraBean implements BeanInterface {
     }
 
     @Override
-    public CompraBean fill(ResultSet oResultSet, Connection oConnection, int spread,UsuarioBean oUsuarioBeanSession) throws MyException, SQLException {
+    public CompraBean fill(ResultSet oResultSet, Connection oConnection, int spread,
+            UsuarioBean oUsuarioBeanSession) throws Exception {
         this.setId(oResultSet.getInt("id"));
         this.setCantidad(oResultSet.getInt("cantidad"));
         this.setFactura_id(oResultSet.getInt("factura_id"));
@@ -98,7 +99,8 @@ public class CompraBean implements BeanInterface {
     }
 
     @Override
-    public PreparedStatement orderSQL(List<String> orden, PreparedStatement oPreparedStatement) throws MyException, SQLException {
+    public PreparedStatement orderSQL(List<String> orden, PreparedStatement oPreparedStatement) 
+            throws Exception {
         for (int i = 1; i < orden.size(); i++) {
             if (orden.get((i - 1)).equalsIgnoreCase("id")) {
                 oPreparedStatement.setInt(i, 1);

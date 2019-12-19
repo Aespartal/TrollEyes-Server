@@ -14,7 +14,7 @@ public class ProductoDao_2 extends GenericDao implements DaoInterface {
     }
     
      @Override
-    public Integer remove(int id) throws  MyException, SQLException {
+    public Integer remove(int id) throws  Exception {
         throw new MyException(5000,"Error en Dao remove de " + ob + ": No autorizado");
     }
 

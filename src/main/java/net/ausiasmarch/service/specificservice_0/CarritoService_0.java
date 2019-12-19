@@ -42,7 +42,7 @@ public class CarritoService_0 {
     }
 */
      
-    public String add() throws MyException, SQLException {
+    public String add() throws Exception {
         @SuppressWarnings("unchecked")
         ItemBean oItemBean = null;
         int id = Integer.parseInt(oRequest.getParameter("id"));
@@ -95,7 +95,8 @@ public class CarritoService_0 {
         } catch (MyException ex) {
             String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
             Log4jHelper.errorLog(msg, ex);
-            throw new MyException(300,msg,ex);
+            ex.addDescripcion(msg);
+            throw ex;
         } finally {
             if (oConnection != null) {
                 oConnection.close();
@@ -107,7 +108,7 @@ public class CarritoService_0 {
         return oGson.toJson(oResponseBean);
     }
 
-    public String remove() throws MyException, SQLException {
+    public String remove() throws Exception {
         int id = Integer.parseInt(oRequest.getParameter("id"));
         HttpSession oSession = oRequest.getSession();
         ConnectionInterface oConnectionImplementation = null;
@@ -143,10 +144,11 @@ public class CarritoService_0 {
             } else {
                 oResponseBean = new ResponseBean(400, "El producto que quieres eliminar no existe");
             }
-        } catch (Exception ex) {
+       } catch (MyException ex) {
             String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
             Log4jHelper.errorLog(msg, ex);
-            throw new MyException(301,msg,ex);
+            ex.addDescripcion(msg);
+            throw ex;
         } finally {
             if (oConnection != null) {
                 oConnection.close();
@@ -158,7 +160,7 @@ public class CarritoService_0 {
         return oGson.toJson(oResponseBean);
     }
 
-    public String list() throws MyException, SQLException {
+    public String list() throws Exception {
         try {
             HttpSession oSession = oRequest.getSession();
             @SuppressWarnings("unchecked")

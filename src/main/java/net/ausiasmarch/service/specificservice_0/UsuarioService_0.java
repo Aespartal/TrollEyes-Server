@@ -46,7 +46,7 @@ public class UsuarioService_0 extends GenericService implements ServiceInterface
         ob = oRequest.getParameter("ob");
     }
 
-    public String login() throws MyException, SQLException {
+    public String login() throws Exception {
         try {
             if (oRequest.getParameter("token") == null || oRequest.getParameter("token").equalsIgnoreCase("")){
                 oConnectionImplementation = ConnectionFactory.getConnection(ConnectionSettings.connectionPool);
@@ -83,10 +83,11 @@ public class UsuarioService_0 extends GenericService implements ServiceInterface
                 }
             }
             return oGson.toJson(oResponseBean);
-        } catch (Exception ex) {
+        } catch (MyException ex) {
             String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
             Log4jHelper.errorLog(msg, ex);
-            throw new MyException(400, msg, ex);
+            ex.addDescripcion(msg);
+            throw ex;
         } finally {
             if (oConnection != null) {
                 oConnection.close();
@@ -103,7 +104,7 @@ public class UsuarioService_0 extends GenericService implements ServiceInterface
         return oGson.toJson(oResponseBean);
     }
 
-    public String check() throws MyException, SQLException {
+    public String check() throws Exception {
         try {
             oConnectionImplementation = ConnectionFactory.getConnection(ConnectionSettings.connectionPool);
             oConnection = oConnectionImplementation.newConnection();
@@ -118,10 +119,11 @@ public class UsuarioService_0 extends GenericService implements ServiceInterface
                 return "{\"status\":200,\"message\":" + oGson.toJson(oUsuarioBean) + "}";
             }
 
-        } catch (SQLException ex) {
+        } catch (MyException ex) {
             String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
             Log4jHelper.errorLog(msg, ex);
-            throw new MyException(401, msg, ex);
+            ex.addDescripcion(msg);
+            throw ex;
         } finally {
             if (oConnection != null) {
                 oConnection.close();
@@ -133,7 +135,7 @@ public class UsuarioService_0 extends GenericService implements ServiceInterface
         return oGson.toJson(oResponseBean);
     }
 
-    public String singup() throws MyException, SQLException, Exception {
+    public String signup() throws Exception {
         try {
             oConnectionImplementation = ConnectionFactory.getConnection(ConnectionSettings.connectionPool);
             oConnection = oConnectionImplementation.newConnection();
@@ -155,10 +157,11 @@ public class UsuarioService_0 extends GenericService implements ServiceInterface
             EmailRegister.sendEmail("trolleyesclient@gmail.com", email, "trolleyes1234", "Registro en TrollEyes, se necesita confirmación", emailText, "html");
             oUsuarioDao.register(oUsuarioBean);
             oResponseBean = new ResponseBean(200, "Usuario registrado con exito, falta validar");
-        } catch (SQLException ex) {
+         } catch (MyException ex) {
             String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
             Log4jHelper.errorLog(msg, ex);
-            throw new MyException(402, msg, ex);
+            ex.addDescripcion(msg);
+            throw ex;
         } finally {
             if (oConnection != null) {
                 oConnection.close();

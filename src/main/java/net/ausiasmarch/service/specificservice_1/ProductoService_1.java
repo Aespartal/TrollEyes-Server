@@ -3,12 +3,9 @@ package net.ausiasmarch.service.specificservice_1;
 import com.google.gson.Gson;
 import java.io.File;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import net.ausiasmarch.bean.ProductoBean;
 import net.ausiasmarch.bean.ResponseBean;
@@ -22,7 +19,6 @@ import net.ausiasmarch.service.genericservice.GenericService;
 import net.ausiasmarch.service.serviceinterface.ServiceInterface;
 import net.ausiasmarch.setting.ConnectionSettings;
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
@@ -40,7 +36,7 @@ public class ProductoService_1 extends GenericService implements ServiceInterfac
         ob = oRequest.getParameter("ob");
     }
 
-    public String fill() throws MyException, SQLException {
+    public String fill() throws Exception {
         ConnectionInterface oConnectionImplementation = null;
         Connection oConnection = null;
         ResponseBean oResponseBean = null;
@@ -68,10 +64,11 @@ public class ProductoService_1 extends GenericService implements ServiceInterfac
                 oProductoDao.insert(oProductoBean);
             }
             oResponseBean = new ResponseBean(200, "Insertados los registros con exito");
-        } catch (Exception ex) {
+        } catch (MyException ex) {
             String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
             Log4jHelper.errorLog(msg, ex);
-            throw new MyException(700, msg, ex);
+            ex.addDescripcion(msg);
+            throw ex;
         } finally {
             if (oConnection != null) {
                 oConnection.close();
@@ -100,7 +97,7 @@ public class ProductoService_1 extends GenericService implements ServiceInterfac
         return imageRandom;
     }
 
-    public String addimage() throws MyException, SQLException {
+    public String addimage() throws Exception {
         ResponseBean oResponseBean = null;
         String name = "";
         HashMap<String, String> hash = new HashMap<>();
@@ -116,14 +113,11 @@ public class ProductoService_1 extends GenericService implements ServiceInterfac
                     }
                 }
                 oResponseBean = new ResponseBean(200, "Imagen subida con exito");
-            } catch (FileUploadException ex) {
+            } catch (MyException ex) {
                 String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
                 Log4jHelper.errorLog(msg, ex);
-                throw new MyException(701, msg, ex);
-            } catch (Exception ex) {
-                String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
-                Log4jHelper.errorLog(msg, ex);
-                throw new MyException(711, msg, ex);
+                ex.addDescripcion(msg);
+                throw ex;
             }
         }
         Gson oGson = new Gson();

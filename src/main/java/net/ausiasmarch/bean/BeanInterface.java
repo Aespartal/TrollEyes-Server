@@ -13,9 +13,11 @@ public interface BeanInterface {
 
     void setId(Integer id);
 
-    public BeanInterface fill(ResultSet oResultSet, Connection oConnection, int spread,UsuarioBean oUsuarioBeanSession) throws MyException, SQLException;
+    public BeanInterface fill(ResultSet oResultSet, Connection oConnection, 
+            int spread,UsuarioBean oUsuarioBeanSession) throws Exception;
 
-    public PreparedStatement orderSQL(List<String> orden, PreparedStatement oPreparedStatement) throws MyException, SQLException;
+    public PreparedStatement orderSQL(List<String> orden, 
+            PreparedStatement oPreparedStatement) throws Exception;
 
     public String getFieldInsert();
 
@@ -25,15 +27,20 @@ public interface BeanInterface {
     
     public String getFieldId(String filter);
     
-    public PreparedStatement setFieldId(int numparam,PreparedStatement oPreparedStatement, int id, int rpp,int offset) throws MyException, SQLException;
+    public PreparedStatement setFieldId(int numparam,
+            PreparedStatement oPreparedStatement, int id, int rpp,int offset) throws Exception;
     
-    public PreparedStatement setFilter(int numparam, PreparedStatement oPreparedStatement, String word, int rpp, int offset) throws MyException, SQLException;
+    public PreparedStatement setFilter(int numparam,
+            PreparedStatement oPreparedStatement, String word, int rpp, int offset) 
+            throws Exception;
     
-    public PreparedStatement setFieldInsert(BeanInterface oBeanParam, PreparedStatement oPreparedStatement) throws MyException, SQLException;
+    public PreparedStatement setFieldInsert(BeanInterface oBeanParam,
+            PreparedStatement oPreparedStatement) throws Exception;
 
     public String getFieldUpdate();
 
-    public PreparedStatement setFieldUpdate(BeanInterface oBeanParam, PreparedStatement oPreparedStatement) throws MyException, SQLException;
+    public PreparedStatement setFieldUpdate(BeanInterface oBeanParam,
+            PreparedStatement oPreparedStatement) throws Exception;
     
     public String getFieldOrder(String orden);
 

@@ -26,14 +26,14 @@ public class TipoProductoService_1 extends GenericService implements ServiceInte
         ob = oRequest.getParameter("ob");
     }
 
-    public String fill() throws MyException, SQLException {
+    public String fill() throws Exception {
         ConnectionInterface oConnectionImplementation = null;
         Connection oConnection = null;
         try {
             oConnectionImplementation = ConnectionFactory
                     .getConnection(ConnectionSettings.connectionPool);
             oConnection = oConnectionImplementation.newConnection();
-            TipoProductoDao_1 oTipoProductoDao = new TipoProductoDao_1(oConnection,ob, oUsuarioBeanSession);
+            TipoProductoDao_1 oTipoProductoDao = new TipoProductoDao_1(oConnection, ob, oUsuarioBeanSession);
             Gson oGson = GsonFactory.getGson();
             int numProd = Integer.parseInt(oRequest.getParameter("number"));
             for (int i = 0; i < numProd; i++) {
@@ -43,10 +43,11 @@ public class TipoProductoService_1 extends GenericService implements ServiceInte
             }
             ResponseBean oResponseBean = new ResponseBean(200, "Insertados los registros con exito");
             return oGson.toJson(oResponseBean);
-        } catch (Exception ex) {
+        } catch (MyException ex) {
             String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
             Log4jHelper.errorLog(msg, ex);
-            throw new MyException(800, msg, ex);
+            ex.addDescripcion(msg);
+            throw ex;
         } finally {
             if (oConnection != null) {
                 oConnection.close();

@@ -9,6 +9,7 @@ package net.ausiasmarch.helper;
  *
  * @author alejandro
  */
+import java.sql.SQLException;
 import org.apache.log4j.Logger;
 
 public class Log4jHelper {
@@ -23,7 +24,7 @@ public class Log4jHelper {
         log.error(strMessage);
     }
 
-    public static void errorLog(String strMessage, Exception ex) {
+    public static void errorLog(String strMessage, Throwable ex) {
         Logger log = Logger.getLogger("trolleyes");
         log.error(strMessage, ex);
         TraceHelper.trace(strMessage + " " + ex.getMessage());

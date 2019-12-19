@@ -34,10 +34,9 @@ public class GenericService implements ServiceInterface {
         this.ob = oRequest.getParameter("ob");
         oUsuarioBeanSession = (UsuarioBean) oRequest.getSession().getAttribute("usuario");
     }
-   
 
     @Override
-    public String get() throws MyException, SQLException {
+    public String get() throws Exception {
         ConnectionInterface oConnectionImplementation = null;
         Connection oConnection = null;
         String strJson = null;
@@ -49,10 +48,11 @@ public class GenericService implements ServiceInterface {
             BeanInterface oBean = oDao.get(id);
             strJson = oGson.toJson(oBean);
 
-        } catch (Exception ex) {
+        } catch (MyException ex) {
             String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
             Log4jHelper.errorLog(msg, ex);
-            throw new MyException(200,msg,ex);
+            ex.addDescripcion(msg);
+            throw ex;
         } finally {
             if (oConnection != null) {
                 oConnection.close();
@@ -65,7 +65,7 @@ public class GenericService implements ServiceInterface {
     }
 
     @Override
-    public String getPage() throws MyException, SQLException {
+    public String getPage() throws Exception {
 
         ConnectionInterface oConnectionImplementation = null;
         Connection oConnection = null;
@@ -80,32 +80,31 @@ public class GenericService implements ServiceInterface {
             String orden = null;
             String direccion = null;
             String word = null; // filtro para la busqueda
-        
-            if (oRequest.getParameter("filter") != null ) {
+
+            if (oRequest.getParameter("filter") != null) {
                 filter = oRequest.getParameter("filter");
             }
-            if(oRequest.getParameter("id") != null){
-              id = Integer.parseInt(oRequest.getParameter("id"));
+            if (oRequest.getParameter("id") != null) {
+                id = Integer.parseInt(oRequest.getParameter("id"));
             }
             if (oRequest.getParameter("order") != null && oRequest.getParameter("direccion") != null) {
-                orden = oRequest.getParameter("order").replace("\"", "`");              
+                orden = oRequest.getParameter("order").replace("\"", "`");
                 direccion = oRequest.getParameter("direccion");
             }
             if (oRequest.getParameter("word") != null) {
                 word = oRequest.getParameter("word");
             }
-            
-            
             // acaba opcional
             DaoInterface oDao = DaoFactory.getDao(oConnection, ob, oUsuarioBeanSession);
             ArrayList alBean = oDao.getPage(iPage, iRpp, orden, direccion, word, id, filter); //--------DAO GETPAGE--------
             String strJson = null;
             strJson = oGson.toJson(alBean);
             return "{\"status\":200,\"message\":" + strJson + "}";
-        } catch (Exception ex) {
+        } catch (MyException ex) {
             String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
             Log4jHelper.errorLog(msg, ex);
-            throw new MyException(201,msg,ex);
+            ex.addDescripcion(msg);
+            throw ex;
         } finally {
             if (oConnection != null) {
                 oConnection.close();
@@ -117,7 +116,7 @@ public class GenericService implements ServiceInterface {
     }
 
     @Override
-    public String getCount() throws MyException, SQLException {
+    public String getCount() throws Exception {
         ConnectionInterface oConnectionImplementation = null;
         Connection oConnection = null;
         Integer iCount = null;
@@ -126,11 +125,11 @@ public class GenericService implements ServiceInterface {
             oConnection = oConnectionImplementation.newConnection();
             Integer id = null;
             String filter = null;
-            if (oRequest.getParameter("filter")!= null) {
-                filter = oRequest.getParameter("filter");     
+            if (oRequest.getParameter("filter") != null) {
+                filter = oRequest.getParameter("filter");
             }
-            if(oRequest.getParameter("id") != null){
-                  id = Integer.parseInt(oRequest.getParameter("id"));
+            if (oRequest.getParameter("id") != null) {
+                id = Integer.parseInt(oRequest.getParameter("id"));
             }
             DaoInterface oDao = DaoFactory.getDao(oConnection, ob, oUsuarioBeanSession);
             iCount = oDao.getCount(id, filter);
@@ -140,10 +139,11 @@ public class GenericService implements ServiceInterface {
                 oResponseBean = new ResponseBean(200, iCount.toString());
             }
             return oGson.toJson(oResponseBean);
-        } catch (Exception ex) {
+        } catch (MyException ex) {
             String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
             Log4jHelper.errorLog(msg, ex);
-            throw new MyException(202,msg,ex);
+            ex.addDescripcion(msg);
+            throw ex;
         } finally {
             if (oConnection != null) {
                 oConnection.close();
@@ -155,7 +155,7 @@ public class GenericService implements ServiceInterface {
     }
 
     @Override
-    public String update() throws MyException, SQLException {
+    public String update() throws Exception {
         if (oUsuarioBeanSession.getTipo_usuario_obj().getId() == 1) {
             HttpSession oSession = oRequest.getSession();
             if (oSession.getAttribute("usuario") != null) {
@@ -174,10 +174,11 @@ public class GenericService implements ServiceInterface {
                         oResponseBean = new ResponseBean(200, "OK");
                     }
                     return oGson.toJson(oResponseBean);
-                } catch (Exception ex) {
+                } catch (MyException ex) {
                     String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
                     Log4jHelper.errorLog(msg, ex);
-                    throw new MyException(203,msg,ex);
+                    ex.addDescripcion(msg);
+                    throw ex;
                 } finally {
                     if (oConnection != null) {
                         oConnection.close();
@@ -196,7 +197,7 @@ public class GenericService implements ServiceInterface {
     }
 
     @Override
-    public String insert() throws MyException, SQLException {
+    public String insert() throws Exception {
         HttpSession oSession = oRequest.getSession();
         ResponseBean oResponseBean = null;
         Gson oGson = GsonFactory.getGson();
@@ -217,10 +218,11 @@ public class GenericService implements ServiceInterface {
                     oResponseBean = new ResponseBean(200, "OK");
                 }
                 return oGson.toJson(oResponseBean);
-            } catch (Exception ex) {
+            } catch (MyException ex) {
                 String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
                 Log4jHelper.errorLog(msg, ex);
-                throw new MyException(204,msg,ex);
+                ex.addDescripcion(msg);
+                throw ex;
             } finally {
                 if (oConnection != null) {
                     oConnection.close();
@@ -236,7 +238,7 @@ public class GenericService implements ServiceInterface {
     }
 
     @Override
-    public String remove() throws MyException, SQLException {
+    public String remove() throws Exception {
         HttpSession oSession = oRequest.getSession();
         ResponseBean oResponseBean = null;
         Gson oGson = GsonFactory.getGson();
@@ -254,10 +256,11 @@ public class GenericService implements ServiceInterface {
                     oResponseBean = new ResponseBean(200, "OK");
                 }
                 return oGson.toJson(oResponseBean);
-            } catch (Exception ex) {
+            } catch (MyException ex) {
                 String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
                 Log4jHelper.errorLog(msg, ex);
-                throw new MyException(205,msg,ex);
+                ex.addDescripcion(msg);
+                throw ex;
             } finally {
                 if (oConnection != null) {
                     oConnection.close();

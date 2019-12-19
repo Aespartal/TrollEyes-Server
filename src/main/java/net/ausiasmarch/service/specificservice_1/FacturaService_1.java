@@ -27,7 +27,7 @@ public class FacturaService_1 extends GenericService implements ServiceInterface
         ob = oRequest.getParameter("ob");
     }
 
-    public String fill() throws MyException, SQLException {
+    public String fill() throws Exception {
         ConnectionInterface oConnectionImplementation = null;
         Connection oConnection = null;
         ResponseBean oResponseBean = null;
@@ -49,10 +49,11 @@ public class FacturaService_1 extends GenericService implements ServiceInterface
                 oFacturaDao.insert(oFacturaBean);
             }
             oResponseBean = new ResponseBean(200, "Insertados los registros con exito");
-        } catch (Exception ex) {
+         } catch (MyException ex) {
             String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
             Log4jHelper.errorLog(msg, ex);
-            throw new MyException(600, msg, ex);
+            ex.addDescripcion(msg);
+            throw ex;
         } finally {
             if (oConnection != null) {
                 oConnection.close();

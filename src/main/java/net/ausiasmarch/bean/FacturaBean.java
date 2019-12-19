@@ -109,7 +109,8 @@ public class FacturaBean implements BeanInterface {
     }
 
     @Override
-    public FacturaBean fill(ResultSet oResultSet, Connection oConnection, int spread,UsuarioBean oUsuarioBeanSession) throws MyException, SQLException {
+    public FacturaBean fill(ResultSet oResultSet, Connection oConnection,
+            int spread,UsuarioBean oUsuarioBeanSession) throws Exception {
         this.setId(oResultSet.getInt("id"));
         this.setFecha(oResultSet.getDate("fecha"));
         this.setIva(oResultSet.getInt("iva"));
@@ -136,7 +137,8 @@ public class FacturaBean implements BeanInterface {
     }
 
     @Override
-    public PreparedStatement orderSQL(List<String> orden, PreparedStatement oPreparedStatement) throws MyException, SQLException {
+    public PreparedStatement orderSQL(List<String> orden,
+            PreparedStatement oPreparedStatement) throws Exception {
         for (int i = 1; i < orden.size(); i++) {
             if (orden.get((i - 1)).equalsIgnoreCase("id")) {
                 oPreparedStatement.setInt(i, 1);
@@ -169,7 +171,9 @@ public class FacturaBean implements BeanInterface {
     }
 
     @Override
-    public PreparedStatement setFilter(int numparam,PreparedStatement oPreparedStatement,String word,int rpp, int offset) throws MyException, SQLException{
+    public PreparedStatement setFilter(int numparam,
+            PreparedStatement oPreparedStatement,String word,int rpp, int offset) 
+            throws Exception{
         for (int i=0;i<=2;i++){
                             oPreparedStatement.setString(++numparam, word);
         }
@@ -180,7 +184,7 @@ public class FacturaBean implements BeanInterface {
     
     @Override
     public PreparedStatement setFieldInsert(BeanInterface oBeanParam, PreparedStatement oPreparedStatement)
-            throws SQLException {
+            throws Exception {
         FacturaBean oFacturaBean = (FacturaBean) oBeanParam;
         oPreparedStatement.setDate(1, new java.sql.Date(oFacturaBean.getFecha().getTime()));
         oPreparedStatement.setInt(2, oFacturaBean.getIva());
@@ -195,7 +199,7 @@ public class FacturaBean implements BeanInterface {
 
     @Override
     public PreparedStatement setFieldUpdate(BeanInterface oBeanParam, PreparedStatement oPreparedStatement)
-            throws SQLException {
+            throws Exception {
         FacturaBean oFacturaBean = (FacturaBean) oBeanParam;
         oPreparedStatement.setDate(1,  new java.sql.Date(oFacturaBean.getFecha().getTime()));
         oPreparedStatement.setInt(2, oFacturaBean.getIva());

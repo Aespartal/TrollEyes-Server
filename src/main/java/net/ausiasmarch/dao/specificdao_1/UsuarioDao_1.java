@@ -36,10 +36,11 @@ public class UsuarioDao_1 extends GenericDao implements DaoInterface {
             } else {
                 oUsuarioBean = null;
             }
-        } catch (Exception ex) {
+        } catch (MyException ex) {
             String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
-             Log4jHelper.errorLog(msg, ex);
-             throw new MyException(405,msg,ex);
+            Log4jHelper.errorLog(msg, ex);
+            ex.addDescripcion(msg);
+            throw ex;
         } finally {
             if (oResultSet != null) {
                 oResultSet.close();
@@ -66,10 +67,11 @@ public class UsuarioDao_1 extends GenericDao implements DaoInterface {
             } else {
                 oUsuarioBean = null;
             }
-        } catch (Exception ex) {
+        } catch (MyException ex) {
             String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
-             Log4jHelper.errorLog(msg, ex);
-             throw new MyException(107,msg,ex);
+            Log4jHelper.errorLog(msg, ex);
+            ex.addDescripcion(msg);
+            throw ex;
         } finally {
             if (oResultSet != null) {
                 oResultSet.close();

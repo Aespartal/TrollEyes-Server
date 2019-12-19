@@ -7,6 +7,8 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import net.ausiasmarch.exceptions.MyException;
+import net.ausiasmarch.helper.Log4jHelper;
 
 public class EmailRegister {
     public static void main(String[] args) {
@@ -43,7 +45,10 @@ public class EmailRegister {
             oTransport.close();
             System.out.println("Mensaje enviado con éxito");
         } catch (MessagingException oMessagingException) {
-            System.out.println("Ha habido un error al enviar el mensaje: " + oMessagingException.getMessage());
+            String msg = "Ha habido un error al enviar el mensaje: " + oMessagingException.getMessage();
+            System.out.println(msg);
+            Log4jHelper.errorLog(msg, oMessagingException);
+            throw new MessagingException(msg,oMessagingException);
         } finally {
             System.out.println("FIN");
         }

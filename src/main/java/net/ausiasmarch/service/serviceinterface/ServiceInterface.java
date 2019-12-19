@@ -5,16 +5,16 @@ import net.ausiasmarch.exceptions.MyException;
 
 public interface ServiceInterface {
 
-    public String get() throws MyException, SQLException;
+    public String get() throws Exception;
 
-    public String getCount() throws MyException, SQLException;
+    public String getCount() throws Exception;
 
-    public String getPage() throws MyException, SQLException;
+    public String getPage() throws Exception;
 
-    public String insert() throws MyException, SQLException;
+    public String insert() throws Exception;
 
-    public String remove() throws MyException, SQLException;
+    public String remove() throws Exception;
 
-    public String update() throws MyException, SQLException;
+    public String update() throws Exception;
     
 }

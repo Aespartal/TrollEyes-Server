@@ -44,7 +44,7 @@ public class CarritoService_2 {
         return oUsuarioBeanSession != null;
     }
      
-    public String add() throws MyException, SQLException {
+    public String add() throws Exception {
         HttpSession oSession = oRequest.getSession();
         int id = Integer.parseInt(oRequest.getParameter("id"));
         int cantidad = Integer.parseInt(oRequest.getParameter("cantidad"));
@@ -94,10 +94,11 @@ public class CarritoService_2 {
                 oResponseBean = new ResponseBean(400, "Este producto no esta almacenador en la tienda");
             }
 
-        } catch (Exception ex) {
+        } catch (MyException ex) {
             String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
             Log4jHelper.errorLog(msg, ex);
-            throw new MyException(1000, msg, ex);
+            ex.addDescripcion(msg);
+            throw ex;
         } finally {
             if (oConnection != null) {
                 oConnection.close();
@@ -109,7 +110,7 @@ public class CarritoService_2 {
         return oGson.toJson(oResponseBean);
     }
 
-    public String remove() throws MyException, SQLException {
+    public String remove() throws Exception {
         int id = Integer.parseInt(oRequest.getParameter("id"));
         ProductoDao_2 oProductoDao;
         ProductoBean oProductoBean;
@@ -145,10 +146,11 @@ public class CarritoService_2 {
             } else {
                 oResponseBean = new ResponseBean(400, "El producto que quieres eliminar no existe");
             }
-        } catch (Exception ex) {
+         } catch (MyException ex) {
             String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
             Log4jHelper.errorLog(msg, ex);
-            throw new MyException(1001, msg, ex);
+            ex.addDescripcion(msg);
+            throw ex;
         } finally {
             if (oConnection != null) {
                 oConnection.close();
@@ -204,8 +206,8 @@ public class CarritoService_2 {
         }
         return -1;
     }
-    public String buy() throws MyException, SQLException {
-         HttpSession oSession = oRequest.getSession();
+    public String buy() throws Exception {
+        HttpSession oSession = oRequest.getSession();
         ArrayList<ItemBean> alCarrito = (ArrayList) oSession.getAttribute("carrito");
         UsuarioBean oUsuarioBean = (UsuarioBean) oSession.getAttribute("usuario");
         ConnectionInterface oConnectionImplementation = null;
@@ -257,11 +259,11 @@ public class CarritoService_2 {
             } else {
                 oResponseBean = new ResponseBean(400, "Regístrate para realizar la compra");
             }
-        } catch (Exception ex) {
-            oConnection.rollback();
+        } catch (MyException ex) {
             String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
             Log4jHelper.errorLog(msg, ex);
-            throw new MyException(1004, msg, ex);
+            ex.addDescripcion(msg);
+            throw ex;
         } finally {
             if (oConnection != null) {
                 oConnection.close();

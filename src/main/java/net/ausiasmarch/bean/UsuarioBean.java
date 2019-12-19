@@ -187,7 +187,8 @@ public class UsuarioBean implements BeanInterface {
     }
 
     @Override
-    public UsuarioBean fill(ResultSet oResultSet, Connection oConnection, int spread, UsuarioBean oUsuarioBeanSession) throws MyException, SQLException {
+    public UsuarioBean fill(ResultSet oResultSet, Connection oConnection,
+            int spread, UsuarioBean oUsuarioBeanSession) throws Exception {
         this.setId(oResultSet.getInt("id"));
         this.setDni(oResultSet.getString("dni"));
         this.setNombre(oResultSet.getString("nombre"));
@@ -220,7 +221,8 @@ public class UsuarioBean implements BeanInterface {
     }
 
     @Override
-    public PreparedStatement orderSQL(List<String> orden, PreparedStatement oPreparedStatement) throws MyException, SQLException {
+    public PreparedStatement orderSQL(List<String> orden,
+            PreparedStatement oPreparedStatement) throws Exception {
         for (int i = 1; i < orden.size(); i++) {
             if (orden.get((i - 1)).equalsIgnoreCase("id")) {
                 oPreparedStatement.setInt(i, 1);
@@ -265,7 +267,9 @@ public class UsuarioBean implements BeanInterface {
     }
 
     @Override
-    public PreparedStatement setFilter(int numparam, PreparedStatement oPreparedStatement, String word,int rpp, int offset) throws MyException, SQLException {
+    public PreparedStatement setFilter(int numparam,
+            PreparedStatement oPreparedStatement, String word,int rpp, int offset) 
+            throws Exception {
         for (int i = 0; i <= 6; i++) {
             oPreparedStatement.setString(++numparam, word);
         }
@@ -276,7 +280,7 @@ public class UsuarioBean implements BeanInterface {
 
     @Override
     public PreparedStatement setFieldInsert(BeanInterface oBeanParam, PreparedStatement oPreparedStatement)
-            throws SQLException {
+            throws Exception {
         UsuarioBean oUsuarioBean = (UsuarioBean) oBeanParam;
         oPreparedStatement.setString(1, oUsuarioBean.getDni());
         oPreparedStatement.setString(2, oUsuarioBean.getNombre());
@@ -296,7 +300,7 @@ public class UsuarioBean implements BeanInterface {
 
     @Override
     public PreparedStatement setFieldUpdate(BeanInterface oBeanParam, PreparedStatement oPreparedStatement)
-            throws SQLException {
+            throws Exception {
         UsuarioBean oUsuarioBean = (UsuarioBean) oBeanParam;
         oPreparedStatement.setString(1, oUsuarioBean.getDni());
         oPreparedStatement.setString(2, oUsuarioBean.getNombre());
@@ -321,7 +325,8 @@ public class UsuarioBean implements BeanInterface {
     }
 
     @Override
-    public PreparedStatement setFieldId(int numparam,PreparedStatement oPreparedStatement, int id, int rpp,int offset) throws MyException, SQLException {
+    public PreparedStatement setFieldId(int numparam,
+            PreparedStatement oPreparedStatement, int id, int rpp,int offset) throws Exception {
         oPreparedStatement.setInt(++numparam, id);
         oPreparedStatement.setInt(++numparam, rpp);
         oPreparedStatement.setInt(++numparam, offset);

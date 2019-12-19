@@ -44,14 +44,17 @@ public class TipoUsuarioBean implements BeanInterface {
     }
 
     @Override
-    public TipoUsuarioBean fill(ResultSet oResultSet, Connection oConnection, int spread, UsuarioBean oUsuarioBeanSession) throws MyException, SQLException {
+    public TipoUsuarioBean fill(ResultSet oResultSet, 
+            Connection oConnection, int spread, 
+            UsuarioBean oUsuarioBeanSession) throws Exception {
         this.setId(oResultSet.getInt("id"));
         this.setDescripcion(oResultSet.getString("descripcion"));
         return this;
     }
 
     @Override
-    public PreparedStatement orderSQL(List<String> orden, PreparedStatement oPreparedStatement) throws MyException, SQLException {
+    public PreparedStatement orderSQL(List<String> orden, 
+            PreparedStatement oPreparedStatement) throws Exception {
         for (int i = 1; i < orden.size(); i++) {
             if (orden.get((i - 1)).equalsIgnoreCase("id")) {
                 oPreparedStatement.setInt(i, 1);
@@ -78,7 +81,9 @@ public class TipoUsuarioBean implements BeanInterface {
                 getFieldFilter("descripcion");
     }
     @Override
-    public PreparedStatement setFilter(int numparam,PreparedStatement oPreparedStatement,String word,int rpp, int offset) throws MyException, SQLException{
+    public PreparedStatement setFilter(int numparam,
+            PreparedStatement oPreparedStatement,String word,
+            int rpp, int offset) throws Exception {
         for (int i=0;i<=1;i++){
                             oPreparedStatement.setString(++numparam, word);
         }
@@ -89,7 +94,7 @@ public class TipoUsuarioBean implements BeanInterface {
     
     @Override
     public PreparedStatement setFieldInsert(BeanInterface oBeanParam, PreparedStatement oPreparedStatement)
-            throws SQLException {
+            throws Exception {
         TipoUsuarioBean oTipoUsuarioBean = (TipoUsuarioBean) oBeanParam;
         oPreparedStatement.setString(1, oTipoUsuarioBean.getDescripcion());
         return oPreparedStatement;
@@ -102,7 +107,7 @@ public class TipoUsuarioBean implements BeanInterface {
 
     @Override
     public PreparedStatement setFieldUpdate(BeanInterface oBeanParam, PreparedStatement oPreparedStatement)
-            throws SQLException {
+            throws Exception {
         TipoUsuarioBean oTipoUsuarioBean = (TipoUsuarioBean) oBeanParam;
         oPreparedStatement.setString(1, oTipoUsuarioBean.getDescripcion());
         oPreparedStatement.setInt(2, oTipoUsuarioBean.getId());
@@ -120,7 +125,8 @@ public class TipoUsuarioBean implements BeanInterface {
     }
     
     @Override
-    public PreparedStatement setFieldId(int numparam,PreparedStatement oPreparedStatement, int id, int rpp,int offset) throws MyException, SQLException {
+    public PreparedStatement setFieldId(int numparam,
+            PreparedStatement oPreparedStatement, int id, int rpp,int offset) throws Exception {
         oPreparedStatement.setInt(++numparam, id);
         oPreparedStatement.setInt(++numparam, rpp);
         oPreparedStatement.setInt(++numparam, offset);

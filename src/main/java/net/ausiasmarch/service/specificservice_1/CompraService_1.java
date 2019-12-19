@@ -26,7 +26,7 @@ public class CompraService_1 extends GenericService implements ServiceInterface 
         ob = oRequest.getParameter("ob");
     }
 
-    public String fill() throws MyException, SQLException {
+    public String fill() throws Exception {
          ConnectionInterface oConnectionImplementation = null;
          Connection oConnection = null;
          ResponseBean oResponseBean = null;
@@ -50,10 +50,11 @@ public class CompraService_1 extends GenericService implements ServiceInterface 
             oCompraDao.insert(oCompraBean);
         }
         oResponseBean = new ResponseBean(200, "Insertados los registros con exito");
-          } catch (Exception ex) {
-             String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
+           } catch (MyException ex) {
+            String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
             Log4jHelper.errorLog(msg, ex);
-            throw new MyException(500,msg,ex);
+            ex.addDescripcion(msg);
+            throw ex;
          } finally {
                 if (oConnection != null) {
                     oConnection.close();

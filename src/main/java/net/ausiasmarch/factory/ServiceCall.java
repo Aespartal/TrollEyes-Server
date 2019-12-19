@@ -4,7 +4,6 @@ import java.sql.SQLException;
 import javax.servlet.http.HttpServletRequest;
 import net.ausiasmarch.bean.UsuarioBean;
 import net.ausiasmarch.exceptions.MyException;
-import net.ausiasmarch.service.genericservice.GenericService;
 import net.ausiasmarch.service.specificservice_0.CarritoService_0;
 import net.ausiasmarch.service.specificservice_0.ProductoService_0;
 import net.ausiasmarch.service.specificservice_0.UsuarioService_0;
@@ -26,7 +25,7 @@ public class ServiceCall {
 
     HttpServletRequest oRequest;
 
-    public static String executeService(HttpServletRequest oRequest) throws MyException, SQLException, Exception {
+    public static String executeService(HttpServletRequest oRequest) throws Exception {
         String ob = oRequest.getParameter("ob");
         String op = oRequest.getParameter("op");
         String strResult;
@@ -50,8 +49,8 @@ public class ServiceCall {
                             case "check":
                                 strResult = oUsuarioService.check();
                                 break;  
-                            case "singup":
-                                strResult = oUsuarioService.singup();
+                            case "signup":
+                                strResult = oUsuarioService.signup();
                                 break;    
                             default:
                                 strResult = "Operation doesn't exist";
