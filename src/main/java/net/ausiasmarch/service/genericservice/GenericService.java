@@ -66,7 +66,7 @@ public class GenericService implements ServiceInterface {
 
     @Override
     public String getPage() throws Exception {
-
+        
         ConnectionInterface oConnectionImplementation = null;
         Connection oConnection = null;
         try {
@@ -99,6 +99,7 @@ public class GenericService implements ServiceInterface {
             ArrayList alBean = oDao.getPage(iPage, iRpp, orden, direccion, word, id, filter); //--------DAO GETPAGE--------
             String strJson = null;
             strJson = oGson.toJson(alBean);
+            Log4jHelper.infoLog("Esto es un getpage");
             return "{\"status\":200,\"message\":" + strJson + "}";
         } catch (MyException ex) {
             String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
