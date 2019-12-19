@@ -2,7 +2,6 @@ package net.ausiasmarch.service.specificservice_1;
 
 import com.google.gson.Gson;
 import java.sql.Connection;
-import java.sql.SQLException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import net.ausiasmarch.bean.ResponseBean;

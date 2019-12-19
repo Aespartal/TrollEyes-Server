@@ -4,13 +4,11 @@ import com.google.gson.annotations.Expose;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import net.ausiasmarch.dao.daointerface.DaoInterface;
 import net.ausiasmarch.dao.specificdao_1.FacturaDao_1;
 import net.ausiasmarch.dao.specificdao_1.TipoUsuarioDao_1;
 import net.ausiasmarch.dao.specificdao_2.FacturaDao_2;
-import net.ausiasmarch.exceptions.MyException;
 import net.ausiasmarch.factory.DaoFactory;
 
 public class UsuarioBean implements BeanInterface {
