@@ -76,7 +76,7 @@ public class UsuarioService_0 extends GenericService implements ServiceInterface
                     Payload payload = idToken.getPayload();
                     //userId es el id de usuario que tratar
                     String userId = payload.getSubject();
-                    oSession.setAttribute("usuario", userId);
+                    oSession.setAttribute("usuario", userId); 
                     oResponseBean = new ResponseBean(200, "Welcome");
                 } else {
                     oResponseBean = new ResponseBean(500, "Invalid Google User");
