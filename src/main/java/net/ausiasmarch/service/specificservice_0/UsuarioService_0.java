@@ -12,7 +12,6 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.gson.Gson;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Collections;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -47,12 +46,13 @@ public class UsuarioService_0 extends GenericService implements ServiceInterface
     }
 
     public String login() throws Exception {
+        UsuarioBean oUsuarioBean;
+        String token = oRequest.getParameter("token");
         try {
-            if (oRequest.getParameter("token") == null || oRequest.getParameter("token").equalsIgnoreCase("")){
+            if (token == null || token.equalsIgnoreCase("")){
                 oConnectionImplementation = ConnectionFactory.getConnection(ConnectionSettings.connectionPool);
                 oConnection = oConnectionImplementation.newConnection();
                 UsuarioDao_0 oUsuarioDao = new UsuarioDao_0(oConnection, "usuario", oUsuarioBeanSession);
-                UsuarioBean oUsuarioBean;
                 String login = oRequest.getParameter("username");
                 String password = oRequest.getParameter("password");
                 oUsuarioBean = oUsuarioDao.get(login, password);
@@ -68,19 +68,34 @@ public class UsuarioService_0 extends GenericService implements ServiceInterface
                     oResponseBean = new ResponseBean(500, "Wrong password");
                 }
             }else {
-                String token = oRequest.getParameter("token");
                 GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new JacksonFactory())
-                        .setAudience(Collections.singletonList("797685668265-d6m9g3nr3f0l996p0sjmeo4riaicitks.apps.googleusercontent.com")).build();
+                        .setAudience(Collections.singletonList("217071584820-iu9ks9m7alnc8jpbbm9if66ipitcm6hk.apps.googleusercontent.com")).build();       
                 GoogleIdToken idToken = verifier.verify(token);
-                if(idToken != null) {
-                    Payload payload = idToken.getPayload();
-                    //userId es el id de usuario que tratar
-                    String userId = payload.getSubject();
-                    oSession.setAttribute("usuario", userId); 
-                    oResponseBean = new ResponseBean(200, "Welcome");
+                
+                if (idToken != null) {
+                    String email = idToken.getPayload().getEmail();
+                    int index = email.indexOf('@');
+                    String username = email.substring(0, index);
+                    oConnectionImplementation = ConnectionFactory.getConnection(ConnectionSettings.connectionPool);
+                    oConnection = oConnectionImplementation.newConnection();
+                    UsuarioDao_0 oUsuarioDao = new UsuarioDao_0(oConnection, "usuario", oUsuarioBeanSession);
+                    oUsuarioBean = oUsuarioDao.get(username);
+
+                    if (oUsuarioBean != null) {
+                        oSession.setAttribute("usuario", oUsuarioBean);
+                        oResponseBean = new ResponseBean(200, "Welcome to Trolleyes");
+                    } else {
+                        if (oUsuarioDao.insert(email, username) == 0) {
+                            oResponseBean = new ResponseBean(400, "The account could not be created");
+                        } else {
+                            oSession.setAttribute("usuario", oUsuarioBean);
+                            oResponseBean = new ResponseBean(200, "Welcome to Trolleyes");
+                        }
+                    }
                 } else {
-                    oResponseBean = new ResponseBean(500, "Invalid Google User");
+                    oResponseBean = new ResponseBean(500, "Authentication failed");
                 }
+
             }
             return oGson.toJson(oResponseBean);
         } catch (MyException ex) {

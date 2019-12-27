@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import net.ausiasmarch.bean.UsuarioBean;
 import net.ausiasmarch.dao.genericdao.GenericDao;
 import net.ausiasmarch.exceptions.MyException;
@@ -100,6 +101,35 @@ public class UsuarioDao_0 extends GenericDao implements DaoInterface {
             oPreparedStatement.setString(8, oUsuarioBean.getToken());
             iResult = oPreparedStatement.executeUpdate();
         } catch (MyException ex) {
+            String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
+            Log4jHelper.errorLog(msg, ex);
+            ex.addDescripcion(msg);
+            throw ex;
+        } finally {
+            if (oResultSet != null) {
+                oResultSet.close();
+            }
+            if (oPreparedStatement != null) {
+                oPreparedStatement.close();
+            }
+        }
+        return iResult;
+    }
+    
+    public int insert(String email, String username) throws Exception {
+        PreparedStatement oPreparedStatement = null;
+        ResultSet oResultSet = null;
+        int iResult = 0;
+        try {
+            String strsql = "INSERT INTO " + ob + " (login, email, tipo_usuario_id) VALUES (?, ?, 2)";
+            oPreparedStatement = oConnection.prepareStatement(strsql, Statement.RETURN_GENERATED_KEYS);
+            oPreparedStatement.setString(1, username);
+            oPreparedStatement.setString(2, email);
+            iResult = oPreparedStatement.executeUpdate();
+            oResultSet = oPreparedStatement.getGeneratedKeys();
+            oResultSet.next();
+            iResult = oResultSet.getInt(1);
+         } catch (MyException ex) {
             String msg = this.getClass().getName() + ":" + (ex.getStackTrace()[0]).getMethodName() + " ob:" + ob;
             Log4jHelper.errorLog(msg, ex);
             ex.addDescripcion(msg);
